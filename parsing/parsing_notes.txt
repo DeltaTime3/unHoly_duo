@@ -1,0 +1,17 @@
+
+LEXING
+
+Lexing (or tokenization) is the process of breaking down an input command line into a sequence of meaningful tokens. These tokens represent commands, arguments, operators, and other special characters. Essentially, the lexer identifies what's in the input string and categorizes it, without worrying about the command's validity or meaning.
+Here's a more detailed breakdown:
+	Input: The lexer takes the user's input command line as input. 
+	Tokenization: It reads the input character by character, identifying different types of tokens. 
+	Token Types: Common tokens include:
+	Commands: The executable program (e.g., ls, echo). 
+	Arguments: Data passed to the command (e.g., ls -l). 
+	Operators: Piping (|), redirection (<, >, >>), and others. 
+	Special Characters: Quotes, semicolons, and other symbols. 
+	Output: The lexer produces a list or stream of these tokens. 
+	Purpose: This token stream is then used by the parser to build an abstract syntax tree (AST) 
+	that represents the structure of the command line. 
+For example, the command ls -l | wc -w > output.txt would be lexed into tokens like: ls, -l, |, wc, -w, >, output.txt. 
+The lexer is a crucial first step in processing user input in a Minishell implementation.
