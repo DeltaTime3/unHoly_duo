@@ -5,3 +5,5 @@ https://m4nnb3ll.medium.com/minishell-building-a-mini-bash-a-42-project-b55a1059
 https://medium.com/@zouhairlrs/minishell-building-a-mini-bash-a-42-project-5dc20d671fbb
 
 https://www.youtube.com/watch?v=yTR00r8vBH8
+
+https://ganivetj.github.io/minishell/
