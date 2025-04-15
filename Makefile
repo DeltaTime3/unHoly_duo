@@ -1,7 +1,7 @@
 
-NAME		= minishell
+NAME		= minishell.a
 
-SRC 		= srcs/
+SRC 		= srcs/tokenization.c
 				
 OBJS		= $(SRCS:.c=.o)
 
@@ -9,7 +9,7 @@ LIBFT_DIR	= ./libft
 LIBFT		= $(LIBFT_DIR)/libft.a
 
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -g
+CFLAGS		= -Wall -Wextra -Werror -g -I. -Ilibft
 RM			= rm -f
 
 all:		$(LIBFT) $(NAME)
