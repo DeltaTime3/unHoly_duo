@@ -6,7 +6,7 @@
 #    By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/16 12:39:09 by ppaula-d          #+#    #+#              #
-#    Updated: 2025/04/15 10:33:05 by ppaula-d         ###   ########.fr        #
+#    Updated: 2025/04/15 11:48:39 by ppaula-d         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ SRCS    = ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c ft_isprint.c \
         ft_putchar_fd.c ft_putstr_fd.c ft_putendl_fd.c ft_putnbr_fd.c \
         ft_free.c ft_isdigitplussign.c ft_isnumeric.c ft_error.c ft_atol.c \
         ft_free_str.c ft_arraylen.c ft_free_gnl.c ft_strcmp.c ft_atoi_base.c \
-        ft_ishex.c ft_isspace.c
+        ft_ishex.c ft_isspace.c ft_lstadd_back.c ft_lstnew.c 
         
 OBJS    = $(SRCS:.c=.o)
 AR      = ar rcs

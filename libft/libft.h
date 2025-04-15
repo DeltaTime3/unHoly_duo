@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:21:20 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/04/15 10:32:07 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/04/15 11:50:17 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ int			ft_isnumeric(char *str);
 int			ft_isprint(int c);
 bool		ft_isspace(char c);
 char		*ft_itoa(int n);
+void    	ft_lstadd_back(t_list **lst, t_list *new);
+t_list		*ft_lstnew(void *content);
 void		*ft_memchr(const void *s, int c, size_t n);
 int			ft_memcmp(const void *s1, const void *s2, size_t n);
 void		*ft_memcpy(void *dest, const void *src, size_t n);
