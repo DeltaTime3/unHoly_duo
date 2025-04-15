@@ -3,14 +3,33 @@
     fork() and execve()
 
         Child process handles command execution.
+        	
+	    Use fork() to create child process
+
+	    Immediately check for fork failures (pid == -1)
+
+	    Handle resource cleanup in parent if fork fails
 
         Parent process waits for completion with waitpid().
 
-        Handle PATH resolution (e.g., /bin/ls vs ls).
+        Handle PATH resolution (e.g., /bin/ls vs ls).        	
+
+	    Check if command contains '/' → treat as absolute/relative path
+
+	    Iterate through PATH environment variable components
+
+	    Test each $PATH_COMPONENT/command combination
+
+	    Use access(full_path, X_OK) to verify executable exists
+	    
+	Use waitpid(pid, &status, 0) to await completion
 
     Command Validation
 
         Check if the command exists (use access() or stat()).
+        	
+        	Validate command exists before fork
+        	Verify execute permissions with X_OK flag
 
         Gracefully handle "command not found" errors.
 
@@ -35,6 +54,8 @@
         Read input until delimiter is entered.
 
         Use a temporary file or pipe to store input.
+        
+        
 
 3. Pipes
 
