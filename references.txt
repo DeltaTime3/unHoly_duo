@@ -9,3 +9,7 @@ https://www.youtube.com/watch?v=yTR00r8vBH8
 https://ganivetj.github.io/minishell/
 
 https://www.emertxe.com/embedded-systems/embedded-linux-on-arm/elarm-projects/embedded-linux-minishell-project/
+
+https://brennan.io/2015/01/16/write-a-shell-in-c/
+
+https://minishell.org/index.html
