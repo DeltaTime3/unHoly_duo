@@ -59,9 +59,15 @@ PARSING goes through two phases:
 	1st, Lexical analysis/tokenization, which produces "lexems" or tokens;
 	2nd, Syntax analysis (parsing the tokens);
 	
-
-
-
+TOKENS
+    Commands
+        Primary action or program to be executed
+            'ls -l', 'ls' is the command token
+    Arguments
+        Additional info or parameters provided to the command
+            'ls -l', '-l' is an argument token that modifies the behavior of 
+                the 'ls' command
+    Operators
 
 
 
