@@ -4,21 +4,23 @@ Minishell is divided into two parts:
 	Execution: where you execute what have been parsed
 
 Minishell is a command-line interpreter that mimics the bash and its basic funcionalities:
-	Shell will work only in interactive mode, meaning no scripts - the executable takes no 
-		arguments, it will start up and immediately enters a loop where it waits for user 
-		input;
+	Shell will work only in interactive mode, meaning no scripts - the 
+    executable takes no arguments, it will start up and immediately enters a    
+    loop where it waits for user input;
 	Run simple commands with absolute, relative path (e.g. /bin/ls, ../bin/ls);
 	Run simple commands without a path (e.g. ls, cat, grep, etc.);
 	Navigation through commands with up/down arrows;
 	Pipes;
 	Redirections (<, >, >>);
-	Here-doc (<<, delimeter that displays a new prompt, reads user input until reaching the 
-	delimeter, redirects user input to command input - does not update history);
-	Handle double quotes (""), and single quotes (''), which should escape special characters, 		
-		beside $ for double quotes;
-	Handle environment variables ($ followed by a sequence of characters, e.g. $USER or $VAR, that 	
-	expand to their values);
-	$?, expands to the exit status of the most recently executed foreground pipeline;
+	Here-doc (<<, delimeter that displays a new prompt, reads user input until 
+    reaching the delimeter, redirects user input to command input - does not 
+    update history);
+	Handle double quotes (""), and single quotes (''), which should escape  
+    special characters, beside $ for double quotes;
+	Handle environment variables ($ followed by a sequence of characters, e.g.  
+    $USER or $VAR, that expand to their values);
+	$?, expands to the exit status of the most recently executed foreground 
+    pipeline;
 	Handle signals like in bash:
 		ctrl + C, displays a new prompt line; 
 		ctrl + D, exits minishell;
@@ -38,15 +40,16 @@ LEXING
 Lexing (or tokenization) is the process of breaking down an input command line into a sequence of meaningful tokens. These tokens represent commands, arguments, operators, and other special characters. Essentially, the lexer identifies what's in the input string and categorizes it, without worrying about the command's validity or meaning.
 Here's a more detailed breakdown:
 	Input: The lexer takes the user's input command line as input. 
-	Tokenization: It reads the input character by character, identifying different types of tokens. 
+	Tokenization: It reads the input character by character, identifying
+    different types of tokens. 
 	Token Types: Common tokens include:
 	Commands: The executable program (e.g., ls, echo). 
 	Arguments: Data passed to the command (e.g., ls -l). 
 	Operators: Piping (|), redirection (<, >, >>), and others. 
 	Special Characters: Quotes, semicolons, and other symbols. 
 	Output: The lexer produces a list or stream of these tokens. 
-	Purpose: This token stream is then used by the parser to build an abstract syntax tree (AST) 
-	that represents the structure of the command line. 
+	Purpose: This token stream is then used by the parser to build an abstract
+    syntax tree (AST) that represents the structure of the command line. 
 For example, the command ls -l | wc -w > output.txt would be lexed into tokens like: ls, -l, |, wc, -w, >, output.txt. 
 The lexer is a crucial first step in processing user input in a Minishell implementation.
 
@@ -66,12 +69,47 @@ TOKENS
     Arguments
         Additional info or parameters provided to the command
             'ls -l', '-l' is an argument token that modifies the behavior of 
-                the 'ls' command
+            the 'ls' command
     Operators
+        Special symbols that control the flow of commands
+            Pipes ('|'), used to pass the output of one command as input to     
+            another
+            Redirection ('>', '<', '>>'), used to redirect input and output to
+            and from files
+    Delimeters
+        Characters that separate tokens
+            Spaces and newlines often serve as delimeters in shell commands
+    Quotes
+        Tokens that indicate that the enclosed text should be treated as a 
+        single argument, even if it cointain spaces
+                'echo "Hello, World!"', the quote indicates that 'Hello, 
+                 World!' is a single token
+    Comments
+        Text that is not executed but provides info to the user or developer
+        starts with a '#' and continues to the end of the line, meaning that in 
+        the parsing, when it identifies a '#' character, should ignore it
 
+    EXAMPLE
+        grep "error" logfile.txt | sort -r > errors_sorted.txt # 
+        identifying errors
+        
+        Command tokens: 'grep', 'sort'
+        Arguments: '"error"', 'logfile.txt', '-r', 'errors_sorted.txt'
+        Operators: '|', '>'
+        Delimenters: spaces between tokens
+        Comments: # identifying errors
 
-
-
+    IMPORTANCE OF TOKENS
+        Simplification
+            By breaking down input into tokens, the shell can simplify the 
+            process of interpreting and executing commands
+        Error detection
+            Tokenization helps in identifying syntax errors early in the 
+            process, making it easier to provide feedback to the user
+        Structured processing
+            Tokens allow the parser to understand the structure of the command,
+            enabling it to build an abstract representation (like an AST) for   
+            execution
 
 
 
