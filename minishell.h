@@ -5,6 +5,8 @@
 # define MAX_TOKENS 100
 # define MAX_TOKEN_LENGTH 256
 
+# include "libft.h"
+
 typedef enum s_tokens
 {
     COMMAND,
