@@ -6,13 +6,14 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:21:20 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/03/17 19:38:17 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/04/15 10:32:07 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 # include <limits.h>
+# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <strings.h>
@@ -44,6 +45,7 @@ int			ft_isdigitplussign(int i);
 int			ft_ishex(char c);
 int			ft_isnumeric(char *str);
 int			ft_isprint(int c);
+bool		ft_isspace(char c);
 char		*ft_itoa(int n);
 void		*ft_memchr(const void *s, int c, size_t n);
 int			ft_memcmp(const void *s1, const void *s2, size_t n);
