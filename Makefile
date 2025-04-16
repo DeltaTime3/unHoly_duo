@@ -1,7 +1,8 @@
 
-NAME		= minishell.a
+NAME		= minishell
 
-SRC 		= srcs/tokenization.c
+SRC 		= srcs/tokens.c \
+				srcs/tokens_helpers.c
 				
 OBJS		= $(SRCS:.c=.o)
 
