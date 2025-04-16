@@ -6,7 +6,13 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:50:04 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/04/15 11:50:05 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/04/16 11:23:40 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../minishell.h"
+
+int	ft_cd(t_token *content, t_token type)
+{
+	
+}

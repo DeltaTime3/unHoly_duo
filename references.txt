@@ -13,3 +13,5 @@ https://www.emertxe.com/embedded-systems/embedded-linux-on-arm/elarm-projects/em
 https://brennan.io/2015/01/16/write-a-shell-in-c/
 
 https://minishell.org/index.html
+
+https://appinha.notion.site/Shell-Bash-6e0f0290a0304dad93a1d25ba15d92fe
