@@ -35,5 +35,9 @@ t_token	*create_token(t_cat type, char *content);
 // tokens_helpers.c
 int		op_handling(const char *input, size_t *i, t_list **tokens);
 int		quote_handling(const char *input, size_t *i, t_list **tokens);
+int 	word_handling(const char *input, size_t *i, t_list **tokens,
+    		int *expect_command);
+int		token_handling(const char *input, size_t *i, t_list **tokens,
+        	int *expect_command);
 
 #endif

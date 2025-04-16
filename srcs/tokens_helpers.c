@@ -42,7 +42,7 @@ int op_handling(const char *input, size_t *i, t_list **tokens)
     (*i)++;
     return (0);
 }
-
+// words
 int word_handling(const char *input, size_t *i, t_list **tokens,
     int *expect_command)
 {
@@ -50,7 +50,7 @@ int word_handling(const char *input, size_t *i, t_list **tokens,
     char        *value;
     t_cat    type;
 
-    start = i;
+    start = *i;
     while(input[*i] && !ft_isspace(input[*i]) && input[*i] != '\'' &&
                 input[*i] != '"' && input[*i] != '#' && input[*i] != '<' &&
                     input[*i] != '>')
@@ -64,5 +64,29 @@ int word_handling(const char *input, size_t *i, t_list **tokens,
         type = ARGUMENT;
     *expect_command = 0;
     ft_lstadd_back(tokens, ft_lstnew(create_token(type, value)));
+    return (0);
+}
+// token handling
+int token_handling(const char *input, size_t *i, t_list **tokens,
+        int *expect_command)
+{
+    if (input[*i] == '\'' || input[*i] == '"')
+    {
+        if(quote_handling(input, i, tokens))
+            return (1);
+    }
+    else if (input[*i] == '#')
+        return (2);
+    else if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
+    {
+        if(op_handling(input, i,tokens))
+            return (1);
+        *expect_command = 1;
+    }
+    else
+    {
+        if (word_handling(input, i, tokens, expect_command))
+            return (1);
+    }
     return (0);
 }

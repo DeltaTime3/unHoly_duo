@@ -17,51 +17,22 @@ t_list  *tokenize_input(const char *input)
 {
     t_list  *tokens;
     size_t  i;
-    size_t  start;
-    char    *value;
-    int     unmatched_quote;
     int     expect_command;
-    t_cat    type;
+    int     result;
 
     tokens = NULL;
     i = 0;
-    unmatched_quote = 0;
     while (input[i])
     {
         while (input[i] && ft_isspace(input[i]))
             i++;
         if (!input[i])
             break;
-        if (input[i] == '\'' || input[i] == '"')
-        {
-            if (quote_handling(input, &i, &tokens))
-                return (NULL);
-        }
-        else if (input[i] == '#')
+        result = token_handling(input, &i, &tokens, &expect_command);
+        if (result == 1)
+            return (NULL);
+        else if (result == 2)
             break;
-        else if (input[i] == '|' || input[i] == '<' || input[i] == '>')
-        {
-            if(op_handling(input, &i, &tokens))
-                return (NULL);
-            expect_command = 1;
-        }
-        else
-        {
-            start = i;
-            while(input[i] && !ft_isspace(input[i]) && input[i] != '\'' &&
-                input[i] != '"' && input[i] != '#' && input[i] != '<' &&
-                    input[i] != '>')
-                    i++;
-            value = ft_substr(input, start, i - start);
-            if (!value)
-                return (NULL);
-            if (expect_command)
-                type = COMMAND;
-            else
-                type = ARGUMENT;
-            expect_command = 0;
-            ft_lstadd_back(&tokens, ft_lstnew(create_token(type, value)));
-        }
     }
     return (tokens);
 }
