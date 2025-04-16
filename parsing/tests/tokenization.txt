@@ -1,0 +1,56 @@
+
+// Helper function to print token types
+static const char *get_token_type(t_tokens type)
+{
+    if (type == COMMAND)
+        return "COMMAND";
+    else if (type == ARGUMENT)
+        return "ARGUMENT";
+    else if (type == OPERATOR)
+        return "OPERATOR";
+    else if (type == QUOTE)
+        return "QUOTE";
+    else
+        return "UNKNOWN";
+}
+
+// Function to print the tokens
+static void print_tokens(t_list *tokens)
+{
+    t_list *current = tokens;
+    while (current)
+    {
+        t_token *token = (t_token *)current->content;
+        printf("Type: %s, Value: '%s'\n", get_token_type(token->type), token->content);
+        current = current->next;
+    }
+}
+
+int main(void)
+{
+    const char *input = "cat file.txt | grep \"hello world\" > output.txt # This is a comment";
+    t_list *tokens = tokenize_input(input);
+
+    if (!tokens)
+    {
+        printf("Error: Tokenization failed\n");
+        return (1);
+    }
+    printf("Input: %s\n", input);
+    printf("Tokens:\n");
+    print_tokens(tokens);
+
+    // Free the tokens (optional, but recommended)
+    t_list *current = tokens;
+    while (current)
+    {
+        t_list *next = current->next;
+        t_token *token = (t_token *)current->content;
+        free(token->content); // Free the token content
+        free(token);          // Free the token itself
+        free(current);        // Free the list node
+        current = next;
+    }
+
+    return (0);
+}
