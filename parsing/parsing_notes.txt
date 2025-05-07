@@ -112,6 +112,76 @@ TOKENS
             execution
 
 
+TOKENIZATION PROCESS (tokens.c & tokens_helpers.c)
+
+The goal of the tokenization process is to parse a shell-like input string into a list of t_token objects, each representing a meaningful unit of the input. Each token has:
+	A type (t_cat) that identifies its category (e.g., COMMAND, ARGUMENT, OPERATOR, etc.);
+	A content string (t_token, *char content) that holds the actual value of the token (e.g., 
+	"ls", "-l", "|", etc.).
+
+1. Input initialization
+	The tokenize_input function initializes:
+		tokens: a linked list (t_list) to store the resulting tokens;
+		i: a position index to traverse the input string
+		expect_command: a flag to determine whether the next token is expected to be a COMMAND
+		or an ARGUMENT. Depending on this flag, the behaviour will be different in the way it
+		works the token
+		
+	Whitespace skipping
+		Leading and intermediate whitespace is skipped using ft_isspace;
+		If the end of the input string is reached after skipping whitespace, the loop exists.
+	
+	Token handling
+		The token_handling function is called to process the current segment of the input 
+		string;
+		This function determines the type of token and delegates processing to specific helper
+		funtions:
+			Operators: handled by op_handling;
+			Words: handled by word_handling;
+			Quotes: if implemented, would be handled by quote_handling.
+
+	Operator handling (op_handling)
+		If the current character is an operator (e.g., |, <, >, >>), the function:
+			Identifies the operator by checking the current and next characters;
+			Extracts the operator substring using ft_substr;
+			Creates a t_token of type OPERATOR using create_token;
+			Adds the token to the tokens list using ft_lstadd_back.
+	
+	Word handling (word_handling)
+		If the current segment is a word (e.g., a command or argument), the function:
+			Identifies the word by iterating until a delimeter is found (e.g., whitespace,
+			quotes, operators, or comments);
+			Extracts the word substring using ft_substr;
+			Determines the token type:
+				If expect_command is 1, the token is a COMMAND;
+				Otherwise, it is an ARGUMENT.
+			Creates a t_token using create_token;
+			Adds the token to the tokens list using ft_lstadd_back;
+			Resets expect_command to 0 after processing a command.
+	
+	Quote handling (if implemented)
+		If the current character is a quote (' or "), the function:
+			Extracts the quoted string, including spaces, until the closing quote;
+			Creates a t_token of type QUOTE with the quoted content;
+			Add the token to the tokens list.
+	
+	Comment handling
+		If the current character is #, the rest of the input is ignored as a comment;
+		No token is created for comments.
+	
+	Error handling
+		If any helper function fails (e.g., memory allocation issues), it returns 1, and
+		tokenize_input returns NULL to indicate failure;
+		If a special condition is encountered (e.g., end of input), token_handling may return
+		2 to break the loop.
+	
+	Token list of completion
+		Once the entire input string is processed, the tokens list contains all the parsed
+		tokens as t_token objects;
+		The function returns the tokens list.
+	
+		
+
 
 
 

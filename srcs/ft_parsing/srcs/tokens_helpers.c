@@ -35,6 +35,8 @@ int	op_handling(const char *input, size_t *i, t_list **tokens)
 	start = *i;
 	if (input[*i] == '>' && input[*i + 1] == '>')
 		(*i)++;
+	// else if (input[*i] == '<' && input[*i + 1] == '<')
+		// here doc handling
 	value = ft_substr(input, start, *i - start + 1);
 	if (!value)
 		return (1);

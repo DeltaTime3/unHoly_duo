@@ -6,6 +6,7 @@
 # define MAX_TOKEN_LENGTH 256
 
 # include "libft.h"
+# include <fcntl.h>
 # include <stdio.h>
 # include <stdlib.h>
 
@@ -39,5 +40,9 @@ int 	word_handling(const char *input, size_t *i, t_list **tokens,
     		int *expect_command);
 int		token_handling(const char *input, size_t *i, t_list **tokens,
         	int *expect_command);
+
+// tokens_helpers2.c
+int		syntax_err_handling(char unexpected_char);
+int		syntax_err_handling_nl(char unexpected_char);
 
 #endif
