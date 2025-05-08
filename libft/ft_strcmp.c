@@ -6,11 +6,11 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 17:09:50 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/02/18 17:12:33 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/05/08 12:37:23 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_strcmp(char *s1, char *s2)
+int	ft_strcmp(const char *s1, const char *s2)
 {
 	int	i;
 
@@ -20,5 +20,5 @@ int	ft_strcmp(char *s1, char *s2)
 	if (s1[i] == s2[i])
 		return (0);
 	else
-		return (s1[i] - s2[i]);
+		return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
