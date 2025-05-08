@@ -10,11 +10,11 @@ OBJS		= $(SRCS:.c=.o)
 
 LIBS		= -lreadline
 
-LIBFT_DIR	= ./libft
+LIBFT_DIR	= ../../libft
 LIBFT		= $(LIBFT_DIR)/libft.a
 
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -g -I. -Ilibft
+CFLAGS		= -Wall -Wextra -Werror -g -I. -I$(LIBFT_DIR)
 RM			= rm -f
 
 all:		$(LIBFT) $(NAME)
