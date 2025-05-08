@@ -8,6 +8,8 @@ SRC 		= srcs/tokens.c \
 				
 OBJS		= $(SRCS:.c=.o)
 
+LIBS		= -lreadline
+
 LIBFT_DIR	= ./libft
 LIBFT		= $(LIBFT_DIR)/libft.a
 
@@ -20,11 +22,15 @@ all:		$(LIBFT) $(NAME)
 $(LIBFT):
 				@$(MAKE) -C $(LIBFT_DIR)
 
-$(NAME): 	$(OBJS) $(LIBFT)	
+$(NAME): 	$(OBJS) $(LIBS) $(LIBFT)	
 				$(CC) $(CFLAGS) $(SRC) $^ -o $(NAME)
 
 %.o: %.c
 				$(CC) $(CFLAGS) -c $< -o $@
+
+valgrind: 
+	@echo "{\n   leak readline\n   Memcheck:Leak\n...\n   fun:readline\n}\n{\n   leak add_history\n   Memcheck:Leak\n...\n   fun:add_history\n}" > readline.supp
+	@valgrind --suppressions=readline.supp --leak-check=full -s --show-leak-kinds=all ./$(NAME)
 
 clean:
 				$(RM) $(OBJS)

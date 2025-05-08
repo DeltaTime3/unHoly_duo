@@ -9,6 +9,8 @@
 # include <fcntl.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
 // STRUCTS
 
@@ -43,6 +45,6 @@ int		token_handling(const char *input, size_t *i, t_list **tokens,
 
 // tokens_helpers2.c
 int		syntax_err_handling(char unexpected_char);
-int		syntax_err_handling_nl(char unexpected_char);
+int		syntax_err_handling_nl(void);
 
 #endif
