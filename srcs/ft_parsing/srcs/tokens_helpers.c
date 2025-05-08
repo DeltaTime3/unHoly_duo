@@ -41,6 +41,7 @@ int	op_handling(const char *input, size_t *i, t_list **tokens)
 	if (!value)
 		return (1);
 	ft_lstadd_back(tokens, ft_lstnew(create_token(OPERATOR, value)));
+	printf("Added operator token: '%s'\n",value);
 	(*i)++;
 	return (0);
 }
@@ -54,6 +55,7 @@ int	word_handling(const char *input, size_t *i, t_list **tokens,
 	t_cat	type;
 
 	start = *i;
+	*expect_command = 1;
 	while (input[*i] && !ft_isspace(input[*i]) && input[*i] != '\''
 		&& input[*i] != '"' && input[*i] != '#' && input[*i] != '<'
 		&& input[*i] != '>')
@@ -70,6 +72,22 @@ int	word_handling(const char *input, size_t *i, t_list **tokens,
 	return (0);
 }
 
+// pipes
+int	pipe_handling(const char *input, size_t *i, t_list **tokens)
+{
+	size_t	start;
+	char	*value;
+
+	start = *i;
+	value = ft_substr(input, start, *i - start + 1);
+	if (!value)
+		return (1);
+	ft_lstadd_back(tokens, ft_lstnew(create_token(PIPE, value)));
+	printf("Added operator token: '%s'\n",value);
+	(*i)++;
+	return (0);
+}
+
 // token handling
 int	token_handling(const char *input, size_t *i, t_list **tokens,
 		int *expect_command)
@@ -81,7 +99,12 @@ int	token_handling(const char *input, size_t *i, t_list **tokens,
 	}
 	else if (input[*i] == '#')
 		return (2);
-	else if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
+	else if (input[*i] == '|')
+	{
+		if (pipe_handling(input, i, tokens))
+			return (1);
+	}
+	else if (input[*i] == '<' || input[*i] == '>')
 	{
 		if (op_handling(input, i, tokens))
 			return (1);

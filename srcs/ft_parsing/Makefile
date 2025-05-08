@@ -4,7 +4,8 @@ NAME		= minishell
 SRC 		= srcs/tokens.c \
 				srcs/tokens_helpers.c \
 				srcs/tokens_helpers2.c \
-				srcs/main.c
+				srcs/main.c \
+				srcs/utils.c
 				
 OBJS		= $(SRCS:.c=.o)
 

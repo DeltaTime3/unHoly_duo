@@ -18,7 +18,8 @@ typedef enum s_cat
 {
 	COMMAND, // ls, echo, etc.
 	ARGUMENT, // -l, file.txt, etc.
-	OPERATOR, // |, <, >, >>
+	PIPE,
+	OPERATOR, // <, >, >>
 	DELIMETER, // spaces
 	QUOTE, // ''' and '"'
 	COMMENT // #
@@ -34,17 +35,22 @@ typedef struct s_token
 
 // tokens.c
 t_token	*create_token(t_cat type, char *content);
+t_list	*tokenize_input(const char *input);
 
 // tokens_helpers.c
 int		op_handling(const char *input, size_t *i, t_list **tokens);
 int		quote_handling(const char *input, size_t *i, t_list **tokens);
 int 	word_handling(const char *input, size_t *i, t_list **tokens,
     		int *expect_command);
+int		pipe_handling(const char *input, size_t *i, t_list **tokens);
 int		token_handling(const char *input, size_t *i, t_list **tokens,
         	int *expect_command);
 
 // tokens_helpers2.c
-int		syntax_err_handling(char unexpected_char);
-int		syntax_err_handling_nl(void);
+int		syntax_err_handling(void);
+
+// utils.c
+int		handle_op_syntax(t_token *next);
+void    free_tokens(t_list *tokens);
 
 #endif

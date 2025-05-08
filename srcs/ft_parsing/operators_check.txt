@@ -1,17 +1,16 @@
 
 OPERATORS IN BASH THAT PRINT ERROR MESSAGE
 
-echo Hello | >
-bash: syntax error near unexpected token `newline'
+echo Hello | >						
+bash: syntax error near unexpected token `newline'	
 
-echo Hello | <
-bash: syntax error near unexpected token `newline'
+echo Hello | <						
+bash: syntax error near unexpected token `newline'	
+						
+bash: syntax error near unexpected token `>'		
 
-echo Hello | > >
-bash: syntax error near unexpected token `>'
-
-echo Hello | > |>
-bash: syntax error near unexpected token `|'
+echo Hello | > |>					
+bash: syntax error near unexpected token `|'		
 
 echo Hello | > ||
 bash: syntax error near unexpected token `||'
@@ -19,8 +18,8 @@ bash: syntax error near unexpected token `||'
 echo Hello | > |||||
 bash: syntax error near unexpected token `||'
 
-echo Hello | > <
-bash: syntax error near unexpected token `<'
+echo Hello | > <					
+bash: syntax error near unexpected token `<'		
 
 echo Hello | > <<<<
 bash: syntax error near unexpected token `<<<'
@@ -40,8 +39,8 @@ bash: /: Is a directory
 //echo Hello | > *
 //bash: *: ambiguous redirect
 
-echo Hello | > #					DONE
-bash: syntax error near unexpected token `newline'	DONE
+echo Hello | > #					
+bash: syntax error near unexpected token `newline'	
 
 echo Hello | > (
 bash: syntax error near unexpected token `('
@@ -59,6 +58,10 @@ SPECIAL CASES
 echo Hello | > \
 > "
 > "
+
+cat file.txt | grep "text" > output.txt
+
+
 
 
 
