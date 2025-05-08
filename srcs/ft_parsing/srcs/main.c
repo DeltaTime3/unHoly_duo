@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 11:39:22 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/05/08 14:54:23 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/05/08 15:12:22 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ static const char *get_token_type(t_cat type)
         return "COMMENT";
     else if (type == PIPE)
         return "PIPE";
+    else if (type == HERE_DOC)
+        return "HERE_DOC";
     else
         return "UNKNOWN";
 }

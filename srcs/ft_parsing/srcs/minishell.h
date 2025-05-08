@@ -19,7 +19,9 @@ typedef enum s_cat
 	COMMAND, // ls, echo, etc.
 	ARGUMENT, // -l, file.txt, etc.
 	PIPE,
-	OPERATOR, // <, >, >>
+	REDIRECT, // <, >, >>
+	OPERATOR, // other operators
+	HERE_DOC,
 	DELIMETER, // spaces
 	QUOTE, // ''' and '"'
 	COMMENT // #

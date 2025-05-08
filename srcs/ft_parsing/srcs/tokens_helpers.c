@@ -30,20 +30,31 @@ int	quote_handling(const char *input, size_t *i, t_list **tokens)
 int	op_handling(const char *input, size_t *i, t_list **tokens)
 {
 	size_t	start;
-	char	*value;
+    char	*value;
+    t_cat	type;
 
-	start = *i;
-	if (input[*i] == '>' && input[*i + 1] == '>')
-		(*i)++;
-	// else if (input[*i] == '<' && input[*i + 1] == '<')
-		// here doc handling
-	value = ft_substr(input, start, *i - start + 1);
-	if (!value)
-		return (1);
-	ft_lstadd_back(tokens, ft_lstnew(create_token(OPERATOR, value)));
-	printf("Added operator token: '%s'\n",value);
-	(*i)++;
-	return (0);
+    start = *i;
+    if (input[*i] == '<' && input[*i + 1] == '<')
+    {
+        type = REDIRECT;
+        (*i)++; // Move past the first '>'
+    }
+    else if (input[*i] == '>' && input[*i + 1] == '>')
+    {
+        type = HERE_DOC;
+		(*i)++; // Move past the first '<'
+    }
+    else if (input[*i] == '>' || input[*i] == '<')
+        type = REDIRECT;
+    else
+        return (1); // Not a valid operator
+    value = ft_substr(input, start, *i - start + 1); // Extract the operator
+    if (!value)
+        return (1);
+    ft_lstadd_back(tokens, ft_lstnew(create_token(type, value))); // Add token
+    printf("Added redirect token: '%s'\n", value);
+    (*i)++; // Move past the operator
+    return (0);
 }
 
 // words
@@ -110,7 +121,7 @@ int	token_handling(const char *input, size_t *i, t_list **tokens,
 			return (1);
 		*expect_command = 1;
 	}
-	else
+	else if (ft_isalnum(input[*i]))
 	{
 		if (word_handling(input, i, tokens, expect_command))
 			return (1);
