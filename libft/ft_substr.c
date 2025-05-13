@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:46:39 by ppaula-d          #+#    #+#             */
-/*   Updated: 2024/10/23 10:46:42 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/05/13 10:19:39 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 
 	if (!s || !len || (start > (unsigned int)ft_strlen(s)))
 		return (ft_strdup(""));
+	if (len > ft_strlen(s) - start)
+		len = ft_strlen(s) - start;
 	if (len > (unsigned int)ft_strlen(s) - start)
 		len = ft_strlen(s) - start;
 	str = (char *)malloc(sizeof(char) * (len + 1));
