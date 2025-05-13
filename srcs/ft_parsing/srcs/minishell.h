@@ -49,6 +49,7 @@ int		token_handling(const char *input, size_t *i, t_list **tokens,
         	int *expect_command);
 
 // tokens_helpers2.c
+int process_tokens(const char *input, int *i, t_token **tokens, int *expect_command);
 void    input_handling(char *input, t_list *tokens);
 void 	exit_handling(char *input);
 int		syntax_err_handling(char *value, t_list **tokens);

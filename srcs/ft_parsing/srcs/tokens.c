@@ -45,7 +45,7 @@ t_list	*tokenize_input(const char *input)
             return (NULL);
         }
         else if (result == 2)
-            break;
+            break ;
     }
     final_tokens = *tokens;
     free(tokens);

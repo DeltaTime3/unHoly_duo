@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 13:38:52 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/05/13 13:30:47 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/05/13 14:00:00 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,15 +45,17 @@ static void print_tokens(t_list *tokens)
     }
 }
 
+
+
 void    input_handling(char *input, t_list *tokens)
 {
     input = readline("minishell> ");
-        if (!input)
-            exit_handling(input);
-        if (ft_strlen(input) == 0)
-            free(input);
-        if (ft_strcmp(input, "exit") == 0)
-            exit_handling(input);
+    if (!input)
+        exit_handling(input);
+    else if (ft_strlen(input) == 0)
+        free(input);
+    else if (ft_strcmp(input, "exit") == 0)
+        exit_handling(input);
     else
     {
         if (*input)
