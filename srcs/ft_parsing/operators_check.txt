@@ -51,7 +51,8 @@ bash: syntax error near unexpected token `)'
 echo Hello | > ()
 bash: syntax error near unexpected token `('
 
-
+echo Hello | |						DONE
+bash: syntax error near unexpected token `|'		DONE
 
 SPECIAL CASES
 

@@ -6,15 +6,85 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 13:38:52 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/05/08 14:03:54 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/05/13 13:30:47 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int syntax_err_handling(void)
+static const char *get_token_type(t_cat type)
 {
-    printf("minishell: syntax error near unexpected token\n");
-    return(1);
+    if (type == COMMAND)
+        return "COMMAND";
+    else if (type == ARGUMENT)
+        return "ARGUMENT";
+    else if (type == OPERATOR)
+        return "OPERATOR";
+    else if (type == QUOTE)
+        return "QUOTE";
+    else if (type == COMMENT)
+        return "COMMENT";
+    else if (type == PIPE)
+        return "PIPE";
+    else if (type == REDIRECT)
+        return "REDIRECT";
+    else if (type == HERE_DOC)
+        return "HERE_DOC";
+    else
+        return "UNKNOWN";
+}
+
+static void print_tokens(t_list *tokens)
+{
+    t_list *current = tokens;
+    while (current)
+    {
+        t_token *token = (t_token *)current->content;
+        printf("Type: %s, Value: '%s'\n", get_token_type(token->type), token->content);
+        current = current->next;
+    }
+}
+
+void    input_handling(char *input, t_list *tokens)
+{
+    input = readline("minishell> ");
+        if (!input)
+            exit_handling(input);
+        if (ft_strlen(input) == 0)
+            free(input);
+        if (ft_strcmp(input, "exit") == 0)
+            exit_handling(input);
+    else
+    {
+        if (*input)
+            add_history(input);
+        tokens = tokenize_input(input);
+        free(input);
+        if (tokens)
+        {
+            print_tokens(tokens);
+            free_tokens(tokens);
+        }
+    }   
+}
+
+void exit_handling(char *input)
+{
+    printf("exit\n");
+    free(input);
+    rl_clear_history();
+    exit(0);
+}
+
+int syntax_err_handling(char *value, t_list **tokens)
+{
+    printf("minishell: syntax error near unexpected token `%s'\n", value);
+    if (tokens)
+    {
+        free_tokens(*tokens);
+        free(value);
+        *tokens = NULL;
+    }
+    return (1);
 }
 

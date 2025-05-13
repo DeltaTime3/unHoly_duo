@@ -33,27 +33,29 @@ int	op_handling(const char *input, size_t *i, t_list **tokens)
     char	*value;
     t_cat	type;
 
+    if (!input || !input[*i])
+        return (1);
+
     start = *i;
     if (input[*i] == '<' && input[*i + 1] == '<')
     {
-        type = REDIRECT;
-        (*i)++; // Move past the first '>'
+        type = HERE_DOC;
+        (*i)++;
     }
     else if (input[*i] == '>' && input[*i + 1] == '>')
     {
-        type = HERE_DOC;
-		(*i)++; // Move past the first '<'
-    }
-    else if (input[*i] == '>' || input[*i] == '<')
         type = REDIRECT;
+        (*i)++;
+    }
+    else if (input[*i] == '<' || input[*i] == '>')
+    	type = REDIRECT;
     else
-        return (1); // Not a valid operator
-    value = ft_substr(input, start, *i - start + 1); // Extract the operator
+        return (1);
+    value = ft_substr(input, start, *i - start + 1);
     if (!value)
         return (1);
-    ft_lstadd_back(tokens, ft_lstnew(create_token(type, value))); // Add token
-    printf("Added redirect token: '%s'\n", value);
-    (*i)++; // Move past the operator
+    ft_lstadd_back(tokens, ft_lstnew(create_token(type, value)));
+    (*i)++;
     return (0);
 }
 
@@ -86,23 +88,29 @@ int	word_handling(const char *input, size_t *i, t_list **tokens,
 // pipes
 int	pipe_handling(const char *input, size_t *i, t_list **tokens)
 {
-	size_t	start;
-	char	*value;
+	size_t start;
+    char *value;
 
-	start = *i;
-	value = ft_substr(input, start, *i - start + 1);
-	if (!value)
-		return (1);
-	ft_lstadd_back(tokens, ft_lstnew(create_token(PIPE, value)));
-	printf("Added operator token: '%s'\n",value);
-	(*i)++;
-	return (0);
+    start = *i;
+    (*i)++;
+    value = ft_substr(input, start, *i - start);
+    if (!value)
+        return (1);
+    if (input[*i] && input[*i + 1] == '|')
+    {
+        syntax_err_handling(value, tokens);
+        return (1);
+    }
+    ft_lstadd_back(tokens, ft_lstnew(create_token(PIPE, value)));
+    return (0);
 }
 
 // token handling
 int	token_handling(const char *input, size_t *i, t_list **tokens,
 		int *expect_command)
 {
+	if (!input || !input[*i])
+		return (1);
 	if (input[*i] == '\'' || input[*i] == '"')
 	{
 		if (quote_handling(input, i, tokens))
@@ -114,6 +122,7 @@ int	token_handling(const char *input, size_t *i, t_list **tokens,
 	{
 		if (pipe_handling(input, i, tokens))
 			return (1);
+		*expect_command = 1;
 	}
 	else if (input[*i] == '<' || input[*i] == '>')
 	{

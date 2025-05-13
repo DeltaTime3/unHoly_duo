@@ -23,7 +23,7 @@ typedef enum s_cat
 	OPERATOR, // other operators
 	HERE_DOC,
 	DELIMETER, // spaces
-	QUOTE, // ''' and '"'
+	QUOTE, // ''' and '"'z
 	COMMENT // #
 }   t_cat;
 
@@ -49,7 +49,9 @@ int		token_handling(const char *input, size_t *i, t_list **tokens,
         	int *expect_command);
 
 // tokens_helpers2.c
-int		syntax_err_handling(void);
+void    input_handling(char *input, t_list *tokens);
+void 	exit_handling(char *input);
+int		syntax_err_handling(char *value, t_list **tokens);
 
 // utils.c
 int		handle_op_syntax(t_token *next);
