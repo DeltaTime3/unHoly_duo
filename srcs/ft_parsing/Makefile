@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/05/14 09:41:12 by ppaula-d          #+#    #+#              #
+#    Updated: 2025/05/14 09:41:26 by ppaula-d         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 
 NAME		= minishell
 
@@ -5,7 +17,8 @@ SRC 		= srcs/tokens.c \
 				srcs/tokens_helpers.c \
 				srcs/tokens_helpers2.c \
 				srcs/main.c \
-				srcs/utils.c
+				srcs/utils.c \
+				srcs/refractors.c
 				
 OBJS		= $(SRCS:.c=.o)
 
