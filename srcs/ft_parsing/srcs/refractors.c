@@ -29,7 +29,7 @@ int	special_tokens_handling(const char *input, int *i, t_list **tokens,
 {
 	if (input[*i] == '\'' || input[*i] == '"')
 	{
-		if (quote_handling(input, i, tokens))
+		if (quote_handling(input, i, tokens, expect_command))
 			return (1);
 	}
 	if (input[*i] == '|')

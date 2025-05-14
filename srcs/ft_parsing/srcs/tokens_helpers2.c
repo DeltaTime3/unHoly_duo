@@ -19,6 +19,8 @@ static const char	*get_token_type(t_cat type)
 		return ("REDIRECT");
 	else if (type == HERE_DOC)
 		return ("HERE_DOC");
+	else if (type == FILES)
+		return ("FILES");
 	else
 		return ("UNKNOWN");
 }

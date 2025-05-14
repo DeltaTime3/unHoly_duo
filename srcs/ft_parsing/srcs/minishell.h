@@ -24,6 +24,7 @@ typedef enum s_cat
 	HERE_DOC,
 	DELIMETER,
 	QUOTE,
+	FILES,
 	COMMENT
 }	t_cat;
 
@@ -47,8 +48,9 @@ t_token	*create_token(t_cat type, char *content);
 t_list	*tokenize_input(const char *input);
 
 // tokens_helpers.c
+int		file_handling(const char *input, int *i, t_list **tokens);
 int		op_handling(const char *input, int *i, t_list **tokens);
-int		quote_handling(const char *input, int *i, t_list **tokens);
+int		quote_handling(const char *input, int *i, t_list **tokens, int *expect_command);
 int		word_handling(const char *input, int *i, t_list **tokens,
 			int *expect_command);
 int		pipe_handling(const char *input, int *i, t_list **tokens);
