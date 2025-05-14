@@ -101,7 +101,7 @@ int	word_handling(const char *input, int *i, t_list **tokens,
 	if (*expect_command == 1)
     {
         type = COMMAND;
-        *expect_command = 2;
+		*expect_command = 2;
     }
     else if (*expect_command == 2 )
         type = ARGUMENT;

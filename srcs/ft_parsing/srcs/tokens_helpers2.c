@@ -81,3 +81,15 @@ int	syntax_err_handling(char *value, t_list **tokens)
 	}
 	return (1);
 }
+
+int	command_err_handling(char *value, t_list **tokens)
+{
+	printf("minishell: Command `%s' not found\n", value);
+	if (tokens)
+	{
+		free_tokens(*tokens);
+		free(value);
+		*tokens = NULL;
+	}
+	return (1);
+}

@@ -61,6 +61,7 @@ int		token_handling(const char *input, int *i, t_list **tokens,
 void	input_handling(char *input, t_list *tokens);
 void	exit_handling(char *input);
 int		syntax_err_handling(char *value, t_list **tokens);
+int		command_err_handling(char *value, t_list **tokens);
 
 // utils.c
 void	free_tokens(t_list *tokens);
