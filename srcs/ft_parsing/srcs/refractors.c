@@ -15,7 +15,7 @@ int	operator_type(const char *input, int *i, t_cat *type)
 		*type = REDIRECT;
 		(*i)++;
 	}
-	else if (input[*i] == '<' || input[*i] == '>')
+	else if ((input[*i] == '<' || input[*i] == '>'))
 		*type = REDIRECT;
 	else
 	{

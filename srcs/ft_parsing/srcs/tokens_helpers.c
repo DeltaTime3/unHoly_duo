@@ -53,7 +53,6 @@ int	word_handling(const char *input, int *i, t_list **tokens,
 	t_cat	type;
 
 	start = *i;
-	*expect_command = 1;
 	while (input[*i] && !ft_isspace(input[*i]) && input[*i] != '\''
 		&& input[*i] != '"' && input[*i] != '#' && input[*i] != '<'
 		&& input[*i] != '>')
@@ -62,10 +61,12 @@ int	word_handling(const char *input, int *i, t_list **tokens,
 	if (!value)
 		return (1);
 	if (*expect_command)
+	{
 		type = COMMAND;
+		*expect_command = 0;
+	}
 	else
 		type = ARGUMENT;
-	*expect_command = 0;
 	ft_lstadd_back(tokens, ft_lstnew(create_token(type, value)));
 	return (0);
 }
