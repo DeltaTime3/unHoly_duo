@@ -6,7 +6,8 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:43 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/04/15 11:51:44 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/14 10:38:24 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../include/minishell.h"

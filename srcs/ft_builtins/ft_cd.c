@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 14:29:58 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/13 15:04:27 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/14 10:43:36 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@ void	ft_cd(t_token *token, t_shell *type)
 {
 	char	*new_dir;
 	int		is_cd_minus;
-	
+
 	is_cd_minus = 0;
 	if (ct_nodes(token) > 2)
 	{
 		print_error(E_TARG);
 		type->r_code = 1;
-		return;
+		return ;
 	}
 	if (token->next)
 		expander(&token->next, type);
@@ -98,12 +98,13 @@ void	ft_cd_2(t_shell *type, char *new_dir)
  * stes new_path. 
  */
 
- char	*get_cd_target(t_token *token, t_shell *type, int *is_cd_minus)
+char	*get_cd_target(t_token *token, t_shell *type, int *is_cd_minus)
 {
 	char	*temp;
-	
+
 	*is_cd_minus = 0;
-	if (!token->next || !token->next->value || ft_strcmp(token->next->value, "~") == 0)
+	if (!token->next || !token->next->value || ft_strcmp(token->next->value,
+			"~") == 0)
 	{
 		temp = get_env_value(type, "HOME");
 		if (temp)
@@ -120,8 +121,8 @@ void	ft_cd_2(t_shell *type, char *new_dir)
 		return (NULL);
 	}
 	else if (ft_strcmp(token->next->value, ".") == 0)
-		return(ft_strdup(type->curr_dir));
-	return(ft_strdup(token->next->value));
+		return (ft_strdup(type->curr_dir));
+	return (ft_strdup(token->next->value));
 }
 
 /**
@@ -132,11 +133,11 @@ void	ft_cd_2(t_shell *type, char *new_dir)
 
 int	dir_val(t_token *token, t_shell *type, char **new_dir)
 {
-	char *home;
-	
+	char	*home;
+
 	if (!token->next)
 	{
-		home =get_env_value(type, "HOME");
+		home = get_env_value(type, "HOME");
 		if (home)
 			*new_dir = ft_strdup(home);
 		else

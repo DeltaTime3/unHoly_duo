@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/13 16:32:38 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/14 15:45:53 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@
 # define	E_CD	"Failed to change directory.\n"
 # define	E_HOME "Directory path can not be NULL.\n"
 # define	E_PERMIT "User does not have permition to access this directory.\n"
-
+# define	E_ARGS "Too may arguments.\n"
+# define	E_NOTNBR "The argument is not a number.\n"
 
 typedef enum e_token_type
 {
@@ -45,6 +46,7 @@ typedef struct s_shell
 	char			*curr_dir;
 	char			*value;
 	int				return_code;
+	int				exit_code;
 	struct s_shell	*next;
 	int	r_code;
 }	t_shell;
@@ -59,5 +61,9 @@ typedef struct s_token
 
 int	print_error(char *msg);
 void	ft_putstr_fd(char *str, int fd);
+
+//utils
+
+int	ft_atoll(char *str, int *error);
 
 #endif
