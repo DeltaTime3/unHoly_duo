@@ -1,12 +1,12 @@
 LEXING CHECKLIST
 
-Understand the Input Format
+X Understand the Input Format
 
 	Familiarize yourself with the shell command syntax.
 	Identify the types of tokens you need to recognize (e.g., commands, arguments, operators, 
 	quotes).
 	
-Define Token Types
+X Define Token Types
 
 	Create an enumeration or a set of constants for different token types (e.g., TOKEN_COMMAND, 
 	TOKEN_ARGUMENT, TOKEN_PIPE, TOKEN_REDIRECT, etc.).
@@ -20,12 +20,12 @@ Implement the Lexer
 		Operators: Handle pipes (|), redirection (>, <), and other shell operators.
 		Quotes: Manage single (') and double (") quotes for strings.
 		Handle whitespace appropriately (ignore or tokenize as needed).
-Tokenization
+X Tokenization
 
 	Create a data structure (e.g., a linked list or array) to store the tokens.
 	Ensure that each token is stored with its type and value.
 
-Error Handling
+X Error Handling
 
 	Implement error handling for invalid tokens or malformed input.
 	Provide meaningful error messages.
