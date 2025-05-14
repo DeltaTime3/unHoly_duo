@@ -25,6 +25,7 @@ typedef enum s_cat
 	DELIMETER,
 	QUOTE,
 	FILES,
+	OTHER,
 	COMMENT
 }	t_cat;
 
