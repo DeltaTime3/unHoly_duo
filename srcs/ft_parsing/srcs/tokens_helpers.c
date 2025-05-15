@@ -39,15 +39,6 @@ int	quote_handling(const char *input, int *i, t_list **tokens, int *expect_comma
 		return (1);
 	if (*expect_command == 1)
     {
-		while (value[j])
-		{
-			if (ft_isspace(value[j]))
-			{
-				command_err_handling(value, tokens);
-				return (1);
-			}
-			j++;
-		}
         type = COMMAND;
         *expect_command = 2;
     }
@@ -154,7 +145,7 @@ int	token_handling(const char *input, int *i, t_list **tokens,
 		return (1);
 	if (input[*i] == '#')
 		return (2);
-	if (ft_isalpha(input[*i]) || input[*i] == '\'' || input[*i] == '"')
+	if (ft_isalpha(input[*i]) || input[*i] == '\'' || input[*i] == '"' || input[*i] == '-')
 	{
 		if (*expect_command)
 		{

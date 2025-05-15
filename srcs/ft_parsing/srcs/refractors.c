@@ -70,5 +70,3 @@ int	token_helper(const char *input, int *i, t_list **tokens,
 	}
 	return (0);
 }
-
-
