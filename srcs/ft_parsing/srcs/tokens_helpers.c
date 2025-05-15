@@ -33,7 +33,10 @@ int	quote_handling(const char *input, int *i, t_list **tokens, int *expect_comma
 	while (input[*i] && input[*i] != quote)
 		(*i)++;
 	if (input[*i] != quote)
+	{
+		printf("minishell: syntax error: unmatched %c\n", quote);
 		return (1);
+	}
 	value = ft_substr(input, start, *i - start);
 	if (!value)
 		return (1);
@@ -42,9 +45,9 @@ int	quote_handling(const char *input, int *i, t_list **tokens, int *expect_comma
         type = COMMAND;
         *expect_command = 2;
     }
-    else if (*expect_command == 2 )
+    else if (*expect_command == 2 && value[0] == '-')
     {
-        type = ARGUMENT;
+        type = FLAG;
         *expect_command = 3;
     }
     else
@@ -89,30 +92,30 @@ int	word_handling(const char *input, int *i, t_list **tokens,
 	int *expect_command)
 {
 	size_t	start;
-	char	*value;
-	t_cat	type;
+    char	*value;
+    t_cat	type;
 
-	start = *i;
-	while (input[*i] && !ft_isspace(input[*i]) && input[*i] != '\''
-		&& input[*i] != '"' && input[*i] != '#' && input[*i] != '<'
-		&& input[*i] != '>' && input[*i] != '|')
-		(*i)++;
-	value = ft_substr(input, start, *i - start);
-	if (!value)
-		return (1);
-	if (*expect_command == 1)
+    start = *i;
+    while (input[*i] && !ft_isspace(input[*i]) && input[*i] != '\''
+        && input[*i] != '"' && input[*i] != '#' && input[*i] != '<'
+        && input[*i] != '>' && input[*i] != '|')
+        (*i)++;
+    value = ft_substr(input, start, *i - start);
+    if (!value)
+        return (1);
+    if (*expect_command == 1)
     {
         type = COMMAND;
-		*expect_command = 2;
+        *expect_command = 2;
     }
-    else if (*expect_command == 2 )
-        type = ARGUMENT;
+    else if (value[0] == '-')
+        type = FLAG;
     else
     {
         type = ARGUMENT;
     }
-	ft_lstadd_back(tokens, ft_lstnew(create_token(type, value)));
-	return (0);
+    ft_lstadd_back(tokens, ft_lstnew(create_token(type, value)));
+    return (0);
 }
 
 // pipes

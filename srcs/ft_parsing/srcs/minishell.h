@@ -24,6 +24,7 @@ typedef enum s_cat
 	HERE_DOC,
 	DELIMETER,
 	QUOTE,
+	FLAG,
 	FILES,
 	OTHER,
 	COMMENT

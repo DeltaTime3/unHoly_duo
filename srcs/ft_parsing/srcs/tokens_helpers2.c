@@ -11,6 +11,8 @@ static const char	*get_token_type(t_cat type)
 		return ("OPERATOR");
 	else if (type == QUOTE)
 		return ("QUOTE");
+	else if (type == FLAG)
+		return ("FLAG");
 	else if (type == COMMENT)
 		return ("COMMENT");
 	else if (type == PIPE)
