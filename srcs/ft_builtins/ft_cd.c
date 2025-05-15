@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 14:29:58 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/14 10:43:36 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/15 12:09:49 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,19 @@ void	change_dir(t_token *token, char *new_dir, t_shell *type)
 
 void	ft_cd_2(t_shell *type, char *new_dir)
 {
+	char	cwd[MAX_PATH];
+	
 	free(type->prev_dir);
 	type->prev_dir = ft_strdup(type->curr_dir);
+	free(type->curr_dir);
+	type->curr_dir = ft_strdup(new_dir);
+	if (getcwd(cwd, sizeof(cwd)))
+	{
+		free(type->pwd);
+		type->pwd = ft_strdup(cwd);
+	}
+	else
+		print_error("error retrieving current directory.\n");
 	cd_env(type);
 	if (new_dir != type->curr_dir && ft_strcmp(new_dir, "") != 0)
 		free(new_dir);

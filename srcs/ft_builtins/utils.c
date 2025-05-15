@@ -6,13 +6,13 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 14:56:24 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/14 15:51:39 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/15 09:52:36 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int	ft_atoll(char *str, int *error)
+long long	ft_atoll(char *str, int *error)
 {
 	int					i;
 	int					sign;
@@ -31,30 +31,30 @@ int	ft_atoll(char *str, int *error)
 		i++;
 	}
 	if (!ft_isdigit(str[i]))
-	{
-		*error = 1;
+		return (*error = 1, 0);
+	if (!handle_digits(&str[i], &res, sign, error))
 		return (0);
-	}
 	while (ft_isdigit(str[i]))
-		handle_long(i, sign, res, error, str);
-	if (str[i] != '\0')
-	{
-		*error = 1;
-		return (0);
-	}
+		i++;
+	if(str[i] != '\0')
+		return(*error = 1, 0);	
 	return (sign * (long long)res);
 }
 
-int	handle_long(int i, int sign, unsigned long long res, int *error, char *str)
+int handle_digits(char *str, unsigned long long *res, int sign,
+	int *error)
 {
-	res = res * 10 + (str[i] - '0');
-		if((sign == 1 && res > LLONG_MAX) || sign == -1 && res
-		> (unsigned long long)LLONG_MAX + 1)
+	*res = 0;
+	while (ft_isdigit(*str))
+	{
+		*res = *res * 10 + (*str - '0');
+		if((sign == 1 && *res > LLONG_MAX) || sign == -1 && *res
+			> (unsigned long long)LLONG_MAX + 1)
 		{
 			*error = 1;
 			return (0);
 		}
-		i++;
-		return(i);
-		return(res);
+		str++;
+	}
+	return(1);
 }

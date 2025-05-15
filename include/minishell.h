@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/14 15:45:53 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/15 12:09:39 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <sys/stat.h>
 # include <limits.h>
 
+# define	MAX_PATH 4096
+
 # define	STDERR 2
 # define	E_TARG "Too may arguments for cd command.\n"
 # define	E_CD	"Failed to change directory.\n"
@@ -27,6 +29,7 @@
 # define	E_PERMIT "User does not have permition to access this directory.\n"
 # define	E_ARGS "Too may arguments.\n"
 # define	E_NOTNBR "The argument is not a number.\n"
+# define	E_MSH "Invadid option.\n"
 
 typedef enum e_token_type
 {
@@ -45,6 +48,7 @@ typedef struct s_shell
 	char			*prev_dir;
 	char			*curr_dir;
 	char			*value;
+	char			*pwd;
 	int				return_code;
 	int				exit_code;
 	struct s_shell	*next;
@@ -55,6 +59,7 @@ typedef struct s_shell
 typedef struct s_token
 {
 	char			*value;
+	char			*token;
 	struct s_token	*next;
 } t_token;
  
