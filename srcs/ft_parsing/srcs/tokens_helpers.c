@@ -23,11 +23,13 @@ int	quote_handling(const char *input, int *i, t_list **tokens, int *expect_comma
 {
 	char	quote;
 	size_t	start;
+	size_t	j;
 	char	*value;
 	t_cat	type;
 
 	quote = input[(*i)++];
 	start = *i;
+	j = 0;
 	while (input[*i] && input[*i] != quote)
 		(*i)++;
 	if (input[*i] != quote)
@@ -37,6 +39,15 @@ int	quote_handling(const char *input, int *i, t_list **tokens, int *expect_comma
 		return (1);
 	if (*expect_command == 1)
     {
+		while (value[j])
+		{
+			if (ft_isspace(value[j]))
+			{
+				command_err_handling(value, tokens);
+				return (1);
+			}
+			j++;
+		}
         type = COMMAND;
         *expect_command = 2;
     }
