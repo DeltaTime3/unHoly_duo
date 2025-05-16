@@ -54,6 +54,11 @@ void	input_handling(char *input, t_list *tokens)
 	{
 		if (*input)
 			add_history(input);
+		if (validate_input(input))
+		{
+			free(input);
+			return ;
+		}
 		tokens = tokenize_input(input);
 		free(input);
 		if (tokens)

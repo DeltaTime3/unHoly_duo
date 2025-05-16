@@ -1,6 +1,59 @@
 
 #include "minishell.h"
 
+int validate_input(const char *input)
+{
+    int     i;
+    char    quote;
+
+    i = 0;
+    quote = '\0';
+    if (*input)
+			add_history(input);
+    while (input[i] && ft_isspace(input[i]))
+        i++;
+    if (input[i] == '\n' || ft_isspace(input[i]))
+        printf("\n");
+    i = 0;
+    while (input[i])
+    {
+        if (input[i] == '\'' || input[i] == '"')
+        {
+            if (quote == '\0')
+                quote = input[i];
+            else if (quote == input[i])
+                quote = '\0';
+        }
+        i++;
+    }
+    if (quote != '\0')
+    {
+        printf("minishell: syntax error, unmatched quotes\n");
+        return (1);
+    }
+    i = 0;
+    while (input[i])
+    {
+        if ((input[i] == '&' && input[i + 1] == '&') ||
+            (input[i] == '|' && input[i + 1] == '|') ||
+            (input[i] == '!'))
+        {
+            printf("minishell: syntax error, logical operators not supported\n");
+            return (1);
+        }
+        i++;
+    }
+    i = ft_strlen(input) - 1;
+    while (i >= 0 && ft_isspace(input[i]))
+        i--;
+    if (input[i] == '<' || input[i] == '>' || input[i] == '&')
+    {
+        printf("minishell: syntax error near unexpected token\n");
+        return (1);
+    }
+    return (0);
+}
+
 void    free_tokens(t_list *tokens)
 {
     t_list  *current;

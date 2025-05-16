@@ -66,6 +66,7 @@ int		syntax_err_handling(char *value, t_list **tokens);
 int		command_err_handling(char *value, t_list **tokens);
 
 // utils.c
+int		validate_input(const char *input);
 void	free_tokens(t_list *tokens);
 
 #endif
