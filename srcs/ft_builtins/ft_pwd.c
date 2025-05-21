@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:47 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/15 12:13:03 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/16 10:17:53 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 int	ft_pwd(t_shell *type)
 {
 	char	cwd[MAX_PATH];
-	
+
 	if (!type)
-		return(1);
+		return (1);
 	if (type->pwd)
 	{
 		printf("%s\n", type->pwd);

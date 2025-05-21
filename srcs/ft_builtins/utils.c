@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 14:56:24 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/15 09:52:36 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/16 10:21:22 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,19 +36,19 @@ long long	ft_atoll(char *str, int *error)
 		return (0);
 	while (ft_isdigit(str[i]))
 		i++;
-	if(str[i] != '\0')
-		return(*error = 1, 0);	
+	if (str[i] != '\0')
+		return (*error = 1, 0);
 	return (sign * (long long)res);
 }
 
-int handle_digits(char *str, unsigned long long *res, int sign,
+int	handle_digits(char *str, unsigned long long *res, int sign,
 	int *error)
 {
 	*res = 0;
 	while (ft_isdigit(*str))
 	{
 		*res = *res * 10 + (*str - '0');
-		if((sign == 1 && *res > LLONG_MAX) || sign == -1 && *res
+		if ((sign == 1 && *res > LLONG_MAX) || sign == -1 && *res
 			> (unsigned long long)LLONG_MAX + 1)
 		{
 			*error = 1;
@@ -56,5 +56,5 @@ int handle_digits(char *str, unsigned long long *res, int sign,
 		}
 		str++;
 	}
-	return(1);
+	return (1);
 }

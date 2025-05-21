@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 14:29:58 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/15 12:09:49 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/16 10:19:32 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void	change_dir(t_token *token, char *new_dir, t_shell *type)
 void	ft_cd_2(t_shell *type, char *new_dir)
 {
 	char	cwd[MAX_PATH];
-	
+
 	free(type->prev_dir);
 	type->prev_dir = ft_strdup(type->curr_dir);
 	free(type->curr_dir);

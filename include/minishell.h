@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/15 12:09:39 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/21 12:42:23 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@
 # define	E_ARGS "Too may arguments.\n"
 # define	E_NOTNBR "The argument is not a number.\n"
 # define	E_MSH "Invadid option.\n"
+# define	E_ENV "Environment error.\n"
+# define	E_IMPUT "Invalid input.\n"
 
 typedef enum e_token_type
 {
@@ -60,9 +62,17 @@ typedef struct s_token
 {
 	char			*value;
 	char			*token;
+	char			**args;
 	struct s_token	*next;
 } t_token;
  
+typedef struct s_env
+{
+	char			*key;
+	char			*value;
+	int				flag;
+	struct s_env	*next;
+}	t_env;
 
 int	print_error(char *msg);
 void	ft_putstr_fd(char *str, int fd);
