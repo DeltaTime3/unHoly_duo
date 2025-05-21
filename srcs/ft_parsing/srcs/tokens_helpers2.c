@@ -46,6 +46,12 @@ void	input_handling(char *input, t_list *tokens)
 	input = readline("minishell> ");
 	if (!input)
 		exit_handling(input);
+	if (ft_strlen(input) == 0 || ft_isspace(input[0]))
+	{
+		printf(COMMAND_NOT_FOUND);
+		free(input);
+		return ;
+	}
 	else if (ft_strlen(input) == 0)
 		free(input);
 	else if (ft_strcmp(input, "exit") == 0)
@@ -79,7 +85,7 @@ void	exit_handling(char *input)
 
 int	syntax_err_handling(char *value, t_list **tokens)
 {
-	printf("minishell: syntax error near unexpected token `%s'\n", value);
+	printf(UNEXPECTED_TOKEN);
 	if (tokens)
 	{
 		free_tokens(*tokens);
@@ -91,7 +97,7 @@ int	syntax_err_handling(char *value, t_list **tokens)
 
 int	command_err_handling(char *value, t_list **tokens)
 {
-	printf("minishell: Command `%s' not found\n", value);
+	printf(COMMAND_NOT_FOUND);
 	if (tokens)
 	{
 		free_tokens(*tokens);

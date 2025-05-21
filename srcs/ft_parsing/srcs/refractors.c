@@ -18,19 +18,26 @@ int	operator_type(const char *input, int *i, t_cat *type)
 	else if ((input[*i] == '<' || input[*i] == '>'))
 		*type = REDIRECT;
 	else
-	{
 		return (1);
-	}
 	return (0);
 }
 
 int	special_tokens_handling(const char *input, int *i, t_list **tokens,
 		int *expect_command)
 {
+	if (!input || !input[*i])
+		return (1);
+	while (input[*i] && ft_isspace(input[*i]))
+		(*i)++;
+	if (!input[*i])
+		return (1);
 	if (input[*i] == '\'' || input[*i] == '"')
 	{
 		if (quote_handling(input, i, tokens, expect_command))
+		{
+			free_tokens(*tokens);
 			return (1);
+		}
 	}
 	if (input[*i] == '|')
 	{

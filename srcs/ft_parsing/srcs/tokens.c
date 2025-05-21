@@ -26,7 +26,8 @@ t_list	*tokenize_input(const char *input)
 	*tokens = NULL;
 	i = 0;
 	expect_command = 1;
-	if (!input)
+	if (!input || ft_strlen(input) == 0 || ft_isspace(input[0]))
+		return (NULL);
 	{
 		free(tokens);
 		return (NULL);

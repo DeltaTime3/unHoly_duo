@@ -30,13 +30,6 @@ int	quote_handling(const char *input, int *i, t_list **tokens, int *expect_comma
 	quote = input[(*i)++];
 	start = *i;
 	j = 0;
-	while (input[*i] && input[*i] != quote)
-		(*i)++;
-	if (input[*i] != quote)
-	{
-		printf("minishell: syntax error: unmatched %c\n", quote);
-		return (1);
-	}
 	value = ft_substr(input, start, *i - start);
 	if (!value)
 		return (1);
@@ -73,11 +66,6 @@ int	op_handling(const char *input, int *i, t_list **tokens)
 	value = ft_substr(input, start, *i - start + 1);
 	if (!value)
 		return (1);
-	if (input[*i + 1] == '>' || input[*i + 1] == '<')
-	{
-		syntax_err_handling(value, tokens);
-		return (1);
-	}
 	ft_lstadd_back(tokens, ft_lstnew(create_token(type, value)));
 	(*i)++;
 	while (input[*i] && ft_isspace(input[*i]))
@@ -129,11 +117,6 @@ int	pipe_handling(const char *input, int *i, t_list **tokens)
 	value = ft_substr(input, start, *i - start);
 	if (!value)
 		return (1);
-	if (input[*i] && input[*i + 1] == '|')
-	{
-		syntax_err_handling(value, tokens);
-		return (1);
-	}
 	ft_lstadd_back(tokens, ft_lstnew(create_token(PIPE, value)));
 	return (0);
 }

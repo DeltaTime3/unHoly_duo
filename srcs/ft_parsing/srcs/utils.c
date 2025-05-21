@@ -28,7 +28,7 @@ int validate_input(const char *input)
     }
     if (quote != '\0')
     {
-        printf("minishell: syntax error, unmatched quotes\n");
+        printf(UNMATCHED_QUOTES);
         return (1);
     }
     i = 0;
@@ -38,17 +38,23 @@ int validate_input(const char *input)
             (input[i] == '|' && input[i + 1] == '|') ||
             (input[i] == '!'))
         {
-            printf("minishell: syntax error, logical operators not supported\n");
+            printf(LOGICAL_OPERATORS);
             return (1);
         }
         i++;
     }
-    i = ft_strlen(input) - 1;
+    i = ft_strlen(input);
+    if (i == 0)
+        return (0);
+    i--;
     while (i >= 0 && ft_isspace(input[i]))
+    {
         i--;
+        return (0);
+    }
     if (input[i] == '<' || input[i] == '>' || input[i] == '&')
     {
-        printf("minishell: syntax error near unexpected token\n");
+        printf(UNEXPECTED_TOKEN);
         return (1);
     }
     return (0);
