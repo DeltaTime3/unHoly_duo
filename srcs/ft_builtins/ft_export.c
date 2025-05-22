@@ -6,11 +6,11 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:25 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/21 12:16:44 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/22 15:53:01 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "../../include/minishell.h"
 
 int	ft_export(t_shell *type, char **args)
 {
@@ -28,7 +28,7 @@ int	ft_export(t_shell *type, char **args)
 	{
 		if (validate_args(args[i++]))
 		{
-			print_error;
+			ft_fprintf();
 			status = 1;
 		}
 		else

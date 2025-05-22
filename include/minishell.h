@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/21 12:42:23 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/22 16:08:29 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define MINISHELL_H
 
 # include <unistd.h>
-# include "./libft/libft.h"
+# include "../libft/libft.h"
 # include <stdlib.h>
 # include <string.h>
 # include <sys/stat.h>
@@ -80,5 +80,35 @@ void	ft_putstr_fd(char *str, int fd);
 //utils
 
 int	ft_atoll(char *str, int *error);
+
+//env funtions
+
+t_env	*init_env(char **envp);
+void	free_env_node(t_env *node);
+void	free_env(t_env *head);
+t_env	*create_env_node(char *str);
+void	env_remove(t_env **head, char *key);
+void	update_env(t_env **head, char *key, char *value, int append);
+t_env *create_node_from_key(char *key, char *value);
+char	*appen_env_value(char *old_val, char *add_val);
+void	add_new_node(t_env **head, t_env *tail, char *key, char *value);
+void	update_env_value(t_env *node, char *value, int append);
+
+//cd
+
+void	ft_cd(t_token *token, t_shell *type);
+void	change_dir(t_token *token, char *new_dir, t_shell *type);
+void	ft_cd_2(t_shell *type, char *new_dir);
+char	*get_cd_target(t_token *token, t_shell *type, int *is_cd_minus);
+int		dir_val(t_token *token, t_shell *type, char **new_dir);
+int		check_dir(char *new_dir);
+void	cd_env_pwd(t_shell *type);
+void	cd_env(t_shell *type);
+//test
+t_token *make_token_list(const char *cmd, const char *arg);
+void free_token_list(t_token *token);
+t_shell *make_shell(void);
+void free_shell(t_shell *sh);
+int main(void);
 
 #endif

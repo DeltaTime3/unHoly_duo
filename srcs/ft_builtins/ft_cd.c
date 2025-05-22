@@ -6,11 +6,11 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 14:29:58 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/16 10:19:32 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/22 15:56:40 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "../../include/minishell.h"
 
 /**
  * Handle the 'cd command.

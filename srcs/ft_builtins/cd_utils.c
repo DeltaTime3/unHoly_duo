@@ -6,11 +6,11 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 11:14:00 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/14 10:40:50 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/22 15:52:54 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "../../include/minishell.h"
 
 /**
  * vadidates if path is a valid directory;
