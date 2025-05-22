@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:21:20 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/05/21 14:16:54 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/05/22 09:58:21 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void		*ft_memmove(void *dest, const void *src, size_t n);
 void		*ft_memset(void *s, int c, size_t n);
 int			ft_printc(int c);
 int			ft_printf(const char *format, ...);
-int ft_printf_fd(int fd, const char *format, ...);
+void 		ft_printf_fd(int fd, const char *format, ...);
 int			ft_printnbr(int nb);
 int			ft_print_pointer(unsigned long pointer);
 int			ft_printstr(char *str);
