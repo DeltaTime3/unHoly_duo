@@ -46,12 +46,6 @@ void	input_handling(char *input, t_list *tokens)
 	input = readline("minishell> ");
 	if (!input)
 		exit_handling(input);
-	if (ft_strlen(input) == 0 || ft_isspace(input[0]))
-	{
-		ft_printf_fd(2, COMMAND_NOT_FOUND);
-		free(input);
-		return ;
-	}
 	else if (ft_strlen(input) == 0)
 		free(input);
 	else if (ft_strcmp(input, "exit") == 0)
@@ -66,6 +60,11 @@ void	input_handling(char *input, t_list *tokens)
 			return ;
 		}
 		tokens = tokenize_input(input);
+		if (!tokens)
+		{
+            free(input);
+            return;
+        }
 		free(input);
 		if (tokens)
 		{
