@@ -48,7 +48,7 @@ void	input_handling(char *input, t_list *tokens)
 		exit_handling(input);
 	if (ft_strlen(input) == 0 || ft_isspace(input[0]))
 	{
-		ft_printf_fd(COMMAND_NOT_FOUND, 2);
+		ft_printf_fd(2, COMMAND_NOT_FOUND);
 		free(input);
 		return ;
 	}
@@ -83,26 +83,26 @@ void	exit_handling(char *input)
 	exit(0);
 }
 
-int	syntax_err_handling(char *value, t_list **tokens)
-{
-	ft_printf_fd(UNEXPECTED_TOKEN, 2);
-	if (tokens)
-	{
-		free_tokens(*tokens);
-		free(value);
-		*tokens = NULL;
-	}
-	return (1);
-}
+// int	syntax_err_handling(char *value, t_list **tokens)
+// {
+// 	ft_printf_fd(UNEXPECTED_TOKEN, 2);
+// 	if (tokens)
+// 	{
+// 		free_tokens(*tokens);
+// 		free(value);
+// 		*tokens = NULL;
+// 	}
+// 	return (1);
+// }
 
-int	command_err_handling(char *value, t_list **tokens)
-{
-	ft_printf_fd(COMMAND_NOT_FOUND, 2);
-	if (tokens)
-	{
-		free_tokens(*tokens);
-		free(value);
-		*tokens = NULL;
-	}
-	return (1);
-}
+// int	command_err_handling(char *value, t_list **tokens)
+// {
+// 	ft_printf_fd(COMMAND_NOT_FOUND, 2);
+// 	if (tokens)
+// 	{
+// 		free_tokens(*tokens);
+// 		free(value);
+// 		*tokens = NULL;
+// 	}
+// 	return (1);
+// }
