@@ -22,27 +22,26 @@ int	file_handling(const char *input, int *i, t_list **tokens)
 int	quote_handling(const char *input, int *i, t_list **tokens, int *expect_command)
 {
 	char	quote;
-	size_t	start;
-	size_t	j;
-	char	*value;
-	t_cat	type;
+    size_t	start;
+    char	*value;
+    t_cat	type;
 
-	quote = input[(*i)++];
-	start = *i;
-	j = 0;
-	value = ft_substr(input, start, *i - start);
-	if (!value)
-		return (1);
-	if (*expect_command == 1)
-    {
+    quote = input[(*i)++];
+    start = *i;
+    while (input[*i] && input[*i] != quote)
+        (*i)++;
+    if (input[*i] != quote)
+        return (1);
+    value = ft_substr(input, start, *i - start);
+    if (!value)
+        return (1);
+    if (*expect_command == 1)
+	{
         type = COMMAND;
-        *expect_command = 2;
-    }
-    else if (*expect_command == 2 && value[0] == '-')
-    {
+		*expect_command = 2;
+	}
+    else if (value[0] == '-' && *expect_command == 2)
         type = FLAG;
-        *expect_command = 3;
-    }
     else
     {
         type = ARGUMENT;
@@ -92,11 +91,11 @@ int	word_handling(const char *input, int *i, t_list **tokens,
     if (!value)
         return (1);
     if (*expect_command == 1)
-    {
+	{
         type = COMMAND;
-        *expect_command = 2;
-    }
-    else if (value[0] == '-')
+		*expect_command = 2;
+	}
+    else if (value[0] == '-' && *expect_command == 2)
         type = FLAG;
     else
     {
@@ -112,12 +111,21 @@ int	pipe_handling(const char *input, int *i, t_list **tokens)
 	size_t	start;
 	char	*value;
 
+	while (input[*i] && ft_isspace(input[*i]))
+        (*i)++;
+	if (!input[*i] || (input[*i] == '|' && (input[*i + 1] == '\0' || input[*i + 2] == ' ')))
+	{
+		ft_printf_fd(2, "minishell: error, open pipes not supported\n");
+		return (1);
+	}
 	start = *i;
 	(*i)++;
 	value = ft_substr(input, start, *i - start);
 	if (!value)
 		return (1);
 	ft_lstadd_back(tokens, ft_lstnew(create_token(PIPE, value)));
+	while (input[*i] && ft_isspace(input[*i]))
+        (*i)++;
 	return (0);
 }
 
@@ -133,17 +141,23 @@ int	token_handling(const char *input, int *i, t_list **tokens,
 		return (2);
 	if (ft_isalpha(input[*i]) || input[*i] == '\'' || input[*i] == '"' || input[*i] == '-')
 	{
-		if (*expect_command)
+		if (*expect_command && !ft_isdigit(input[*i]))
 		{
 			if (word_handling(input, i, tokens, expect_command))
 				return (1);
-			*expect_command = 0;
+			// *expect_command = 0;
 		}
 		else
 		{
 			if (word_handling(input, i, tokens, expect_command))
 				return (1);
 		}
+		return (0);
+	}
+	else
+	{	
+		ft_printf_fd(2, "command not found\n");
+		return (1);
 	}
 	return (0);
 }

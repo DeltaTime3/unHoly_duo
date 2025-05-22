@@ -60,9 +60,36 @@ int validate_input(const char *input)
     return (0);
 }
 
-int handle_quote_error(char ***tokens)
+// int is_builtin(const char *cmd)
+// {
+//     if (!cmd)
+//         return (0);
+//     if (ft_strcmp(cmd, "echo") == 0 || ft_strcmp(cmd, "cd") == 0 ||
+//         ft_strcmp(cmd, "pwd") == 0 || ft_strcmp(cmd, "export") == 0 ||
+//         ft_strcmp(cmd, "unset") == 0 || ft_strcmp(cmd, "env") == 0)
+//         return (1);
+//     return (0);
+// }
+
+// int execute_command(t_token *command_token)
+// {
+//     if (ft_isdigit(command_token->content[0]))
+//     {
+//         ft_printf_fd(2, "minishell: %s: command not found\n", command_token->content);
+//         return (127);
+//     }
+//     if (!is_builtin(command_token->content))
+//     {
+//         ft_printf_fd(2, "minishell: %s: command not found\n", command_token->content);
+//         return (127);
+//     }
+//     return (0);
+// }
+
+int handle_quote_error(t_list **tokens)
 {
     free_tokens(*tokens);
+    *tokens = NULL;
     return (1);
 }
 
