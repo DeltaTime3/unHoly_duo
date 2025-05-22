@@ -60,6 +60,12 @@ int validate_input(const char *input)
     return (0);
 }
 
+int handle_quote_error(char ***tokens)
+{
+    free_tokens(*tokens);
+    return (1);
+}
+
 void    free_tokens(t_list *tokens)
 {
     t_list  *current;

@@ -72,6 +72,7 @@ int		command_err_handling(char *value, t_list **tokens);
 
 // utils.c
 int		validate_input(const char *input);
+int		handle_quote_error(char ***tokens);
 void	free_tokens(t_list *tokens);
 
 #endif
