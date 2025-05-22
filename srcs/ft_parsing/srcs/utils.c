@@ -28,7 +28,7 @@ int validate_input(const char *input)
     }
     if (quote != '\0')
     {
-        printf(UNMATCHED_QUOTES);
+        ft_printf_fd(UNMATCHED_QUOTES, 2);
         return (1);
     }
     i = 0;
@@ -38,7 +38,7 @@ int validate_input(const char *input)
             (input[i] == '|' && input[i + 1] == '|') ||
             (input[i] == '!'))
         {
-            printf(LOGICAL_OPERATORS);
+            ft_printf_fd(LOGICAL_OPERATORS, 2);
             return (1);
         }
         i++;
@@ -54,7 +54,7 @@ int validate_input(const char *input)
     }
     if (input[i] == '<' || input[i] == '>' || input[i] == '&')
     {
-        printf(UNEXPECTED_TOKEN);
+        ft_printf_fd(UNEXPECTED_TOKEN, 2);
         return (1);
     }
     return (0);
