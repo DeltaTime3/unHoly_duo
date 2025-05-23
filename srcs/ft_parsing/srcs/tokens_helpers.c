@@ -105,6 +105,19 @@ int	word_handling(const char *input, int *i, t_list **tokens,
     return (0);
 }
 
+bool	open_pipe(const char *input, int i)
+{
+	if (input[i] == '|')
+	{
+		i++;
+		while (input[i] == ' ')
+			i++;
+		if (input[i] == '\0')
+			return (true);
+	}
+	return (false);
+}
+
 // pipes
 int	pipe_handling(const char *input, int *i, t_list **tokens)
 {
@@ -115,7 +128,7 @@ int	pipe_handling(const char *input, int *i, t_list **tokens)
         (*i)++;
 	if (!input[*i] || (input[*i] == '|' && (input[*i + 1] == '\0' || input[*i + 2] == ' ')))
 	{
-		ft_printf_fd(2, "minishell: error, open pipes not supported\n");
+		ft_printf_fd(2, OPEN_PIPE);
 		return (1);
 	}
 	start = *i;
@@ -156,7 +169,7 @@ int	token_handling(const char *input, int *i, t_list **tokens,
 	}
 	else
 	{	
-		ft_printf_fd(2, "command not found\n");
+		ft_printf_fd(2, COMMAND_NOT_FOUND);
 		return (1);
 	}
 	return (0);

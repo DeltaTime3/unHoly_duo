@@ -17,6 +17,8 @@
 # define LOGICAL_OPERATORS "minishell: syntax error, logical operators not supported according to project's subject\n"
 # define UNEXPECTED_TOKEN "minishell: syntax error near unexpected token\n"
 # define COMMAND_NOT_FOUND "minishell: Command not found\n"
+# define OPEN_PIPE "minishell: error, open pipes not supported\n"
+
 // STRUCTS
 
 typedef enum s_cat
