@@ -9,6 +9,8 @@
 # include <fcntl.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <ctype.h>
+# include <stdbool.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -17,6 +19,7 @@
 # define LOGICAL_OPERATORS "minishell: syntax error, logical operators not supported according to project's subject\n"
 # define UNEXPECTED_TOKEN "minishell: syntax error near unexpected token\n"
 # define COMMAND_NOT_FOUND "minishell: Command not found\n"
+
 // STRUCTS
 
 typedef enum s_cat
@@ -60,6 +63,7 @@ int		op_handling(const char *input, int *i, t_list **tokens);
 int		quote_handling(const char *input, int *i, t_list **tokens, int *expect_command);
 int		word_handling(const char *input, int *i, t_list **tokens,
 			int *expect_command);
+bool	open_pipe(const char *input, int i);
 int		pipe_handling(const char *input, int *i, t_list **tokens);
 int		token_handling(const char *input, int *i, t_list **tokens,
 			int *expect_command);
