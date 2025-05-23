@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 11:14:00 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/22 15:52:54 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/23 15:51:59 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	cd_env_pwd(t_shell *type)
 	int		i;
 	char	cwd[4096];
 
-	pwd = get_env_key(type, "PWD");
+	pwd = get_env_value(type, "PWD");
 	if (!pwd)
 		return ;
 	new_pwd = ft_strjoin("PWD=", getcwd(cwd, sizeof(cwd)));
@@ -94,29 +94,91 @@ void	cd_env_pwd(t_shell *type)
 
 void	cd_env(t_shell *type)
 {
-	char	*old_pwd;
 	char	*temp;
 	int		i;
 
 	i = 0;
-	old_pwd = get_env_key(type, "OLDPWD");
-	if (!old_pwd)
-	{
-		free(old_pwd);
-		return ;
-	}
 	while (type->env_var[i])
 	{
 		if (ft_strncmp(type->env_var[i], "OLDPWD=", 7) == 0)
 		{
 			free(type->env_var[i]);
 			temp = ft_strjoin("OLDPWD=", type->prev_dir);
-			type->env_var[i] = ft_strdup(temp);
-			free(temp);
-			break ;
+			type->env_var[i] = temp;
+			cd_env_pwd(type);
+			return ;
 		}
 		i++;
 	}
+	add_old_pwd_to_env(type);
 	cd_env_pwd(type);
-	free(old_pwd);
+}
+
+
+void add_old_pwd_to_env(t_shell *type)
+{
+	char	*temp;
+	char	**new;
+	int		i;
+	int		j;
+
+	i = 0;
+	while (type->env_var[i])
+		i++;
+	new = malloc(sizeof(char *) * (i + 2));
+	if (!new)
+	{
+		print_error("Memory allocation failed");
+		return ;
+	}
+	j = 0;
+	while (j < i)
+	{
+		new[j] = type->env_var[j];
+		j++;
+	}
+	temp = ft_strjoin("OLDPWD=", type->prev_dir);
+	new[j] = temp;
+	new[j + 1] = NULL;
+	free(type->env_var[j]);
+	type->env_var = new;
+}
+
+int	ct_nodes(t_token *token)
+{
+	if (!token)
+    {
+        printf("Error: token is NULL in ct_nodes\n");
+        return 0;
+    }
+
+    int i = 0;
+    while (token)
+    {
+        printf("Token value: %s\n", token->value);
+        i++;
+        token = token->next;
+    }
+    return i;
+}
+
+char	*get_env_value(t_shell *type, const char *key)
+{
+	int		i;
+	size_t	key_len;
+
+	if(!type || !type->env_var || !key)
+		return (NULL);
+	key_len = ft_strlen(key);
+	i = 0;
+	while (type->env_var[i])
+	{
+		if (ft_strncmp(type->env_var[i], key, key_len) == 0 
+			&& type->env_var[i][key_len] == '=')
+			{
+				return (type->env_var[i] + key_len + 1);
+			}
+			i++;
+	}
+	return (NULL);
 }

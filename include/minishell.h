@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/22 16:08:29 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/23 15:52:11 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,18 +97,17 @@ void	update_env_value(t_env *node, char *value, int append);
 //cd
 
 void	ft_cd(t_token *token, t_shell *type);
-void	change_dir(t_token *token, char *new_dir, t_shell *type);
+void	change_dir(char *new_dir, t_shell *type);
 void	ft_cd_2(t_shell *type, char *new_dir);
 char	*get_cd_target(t_token *token, t_shell *type, int *is_cd_minus);
 int		dir_val(t_token *token, t_shell *type, char **new_dir);
 int		check_dir(char *new_dir);
 void	cd_env_pwd(t_shell *type);
 void	cd_env(t_shell *type);
+int		ct_nodes(t_token *token);
+char	*get_env_value(t_shell *type, const char *key);
+void add_old_pwd_to_env(t_shell *type);
 //test
-t_token *make_token_list(const char *cmd, const char *arg);
-void free_token_list(t_token *token);
-t_shell *make_shell(void);
-void free_shell(t_shell *sh);
-int main(void);
+void expander(t_token **token, t_shell *type);
 
 #endif

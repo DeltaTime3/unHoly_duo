@@ -6,11 +6,11 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:47 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/16 10:17:53 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/23 09:26:16 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "../../include/minishell.h"
 
 int	ft_pwd(t_shell *type)
 {
@@ -40,11 +40,3 @@ int	ft_pwd(t_shell *type)
 		}
 	}
 }
-
-/**
- * char cwd[PATH_MAX];
-if (getcwd(cwd, sizeof(cwd)))
-    shell->pwd = ft_strdup(cwd);
-else
-    shell->pwd = ft_strdup(""); // or handle error
- */

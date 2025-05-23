@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 14:29:58 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/22 15:56:40 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/23 13:10:43 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,28 @@
  * printed and return code is set to 1. 
  */
 
-void	ft_cd(t_token *token, t_shell *type)
+/*void	ft_cd(t_token *token, t_shell *type)
 {
 	char	*new_dir;
 	int		is_cd_minus;
 
 	is_cd_minus = 0;
+	printf("Entering ft_cd\n");
+    if (!token)
+    {
+        printf("Error: token is NULL\n");
+        return;
+    }
+    printf("Token value: %s\n", token->value);
+
+    if (ct_nodes(token) > 2)
+    {
+        print_error(E_TARG);
+        type->r_code = 1;
+        return;
+    }
+    if (token->next)
+        printf("Next token value: %s\n", token->next->value);
 	if (ct_nodes(token) > 2)
 	{
 		print_error(E_TARG);
@@ -39,7 +55,7 @@ void	ft_cd(t_token *token, t_shell *type)
 	new_dir = get_cd_target(token, type, &is_cd_minus);
 	if (check_dir(new_dir))
 	{
-		change_dir(token, new_dir, type);
+		change_dir(new_dir, type);
 		if (is_cd_minus)
 			printf("%s\n", type->curr_dir);
 	}
@@ -48,6 +64,60 @@ void	ft_cd(t_token *token, t_shell *type)
 		type->r_code = 1;
 		free(new_dir);
 	}
+}
+*/
+void	ft_cd(t_token *token, t_shell *type)
+{
+    char	*new_dir;
+    int		is_cd_minus;
+
+    is_cd_minus = 0;
+    printf("Entering ft_cd\n");
+    if (!token)
+    {
+        printf("Error: token is NULL\n");
+        return;
+    }
+    printf("Token value: %s\n", token->value);
+
+    if (ct_nodes(token) > 2)
+    {
+        print_error(E_TARG);
+        type->r_code = 1;
+        return;
+    }
+
+    if (token->next)
+    {
+        printf("Next token value: %s\n", token->next->value);
+    }
+
+    if (ct_nodes(token) > 2) // This block is redundant and can be removed
+    {
+        print_error(E_TARG);
+        type->r_code = 1;
+        return;
+    }
+
+    if (token->next)
+    {
+        expander(&token->next, type);
+    }
+
+    new_dir = get_cd_target(token, type, &is_cd_minus);
+    if (check_dir(new_dir))
+    {
+        change_dir(new_dir, type);
+        if (is_cd_minus)
+        {
+            printf("%s\n", type->curr_dir);
+        }
+    }
+    else
+    {
+        type->r_code = 1;
+        free(new_dir);
+    }
 }
 /**
  * attempts to change the working directory.
@@ -59,11 +129,12 @@ void	ft_cd(t_token *token, t_shell *type)
  * On success, calls ft_cd_2 for cleanup and env update. 
  */
 
-void	change_dir(t_token *token, char *new_dir, t_shell *type)
+void	change_dir(char *new_dir, t_shell *type)
 {
 	if (chdir(new_dir) != 0)
 	{
 		free(new_dir);
+		new_dir = NULL;
 		print_error(E_CD);
 		type->r_code = 1;
 	}
@@ -95,8 +166,11 @@ void	ft_cd_2(t_shell *type, char *new_dir)
 	else
 		print_error("error retrieving current directory.\n");
 	cd_env(type);
-	if (new_dir != type->curr_dir && ft_strcmp(new_dir, "") != 0)
+	if (new_dir && new_dir != type->curr_dir)
+	{
 		free(new_dir);
+		new_dir = NULL;
+	}
 }
 
 /**

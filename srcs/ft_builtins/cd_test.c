@@ -1,94 +1,77 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   cd_test.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/22 15:47:58 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/22 15:52:42 by afilipe-         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
+#include "../../include/minishell.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include "../../include/minishell.h"
 
-// Mock implementations for required functions
-// You need to provide real ones or adapt as needed
-
-// Helper to create a t_token linked list for arguments
-t_token *make_token_list(const char *cmd, const char *arg) {
-    t_token *head = malloc(sizeof(t_token));
-    head->value = strdup(cmd);
-    head->next = NULL;
-    if (arg) {
-        head->next = malloc(sizeof(t_token));
-        head->next->value = strdup(arg);
-        head->next->next = NULL;
-    }
-    return head;
+// Mock function to simulate print_error
+int print_error(char *msg)
+{
+    fprintf(stderr, "%s", msg);
+    return 1;
 }
 
-void free_token_list(t_token *token) {
-    t_token *tmp;
-    while (token) {
-        tmp = token;
-        token = token->next;
-        free(tmp->value);
-        free(tmp);
-    }
+// Mock function to simulate expander (if not implemented yet)
+void expander(t_token **token, t_shell *type)
+{
+    (void)token; // Mark token as unused
+    (void)type;  // Mark type as unused
 }
 
-// Minimal t_shell mock
-t_shell *make_shell(void) {
-    t_shell *sh = malloc(sizeof(t_shell));
-    sh->curr_dir = getcwd(NULL, 0);
-    sh->prev_dir = strdup(sh->curr_dir);
-    sh->pwd = strdup(sh->curr_dir);
-    // Set up env_var as needed for your code
-    // ...
-    sh->r_code = 0;
-    return sh;
-}
+// Main test function
+int main(void)
+{
+    t_shell shell;
+    t_token token;
+    t_token next_token;
 
-void free_shell(t_shell *sh) {
-    free(sh->curr_dir);
-    free(sh->prev_dir);
-    free(sh->pwd);
-    // free env_var if needed
-    free(sh);
-}
+    // Initialize shell state
+    shell.env_var = malloc(sizeof(char *) * 3);
+    shell.env_var[0] = strdup("HOME=/home/testuser");
+    shell.env_var[1] = strdup("OLDPWD=/home/testuser/old");
+    shell.env_var[2] = NULL;
+    shell.curr_dir = strdup("/home/testuser");
+    shell.prev_dir = strdup("/home/testuser/old");
+    shell.pwd = strdup("/home/testuser");
+    shell.r_code = 0;
 
-int main(void) {
-    t_shell *sh = make_shell();
-    t_token *token;
+    // Initialize token
+    token.value = NULL; // No arguments for the first test case
+    token.next = NULL;
 
-    // Test 1: cd with no arguments (should go to HOME)
-    token = make_token_list("cd", NULL);
-    ft_cd(token, sh);
-    printf("After 'cd': curr_dir=%s, r_code=%d\n", sh->curr_dir, sh->r_code);
-    free_token_list(token);
+    // Test case 1: No arguments (should go to HOME)
+    ft_cd(&token, &shell);
+    printf("Current Directory: %s\n", shell.curr_dir);
 
-    // Test 2: cd to a valid directory
-    token = make_token_list("cd", "/tmp");
-    ft_cd(token, sh);
-    printf("After 'cd /tmp': curr_dir=%s, r_code=%d\n", sh->curr_dir, sh->r_code);
-    free_token_list(token);
+    // Test case 2: Change to a valid directory
+    next_token.value = strdup("/tmp"); // Properly initialize the value
+    next_token.next = NULL;            // Ensure the next pointer is NULL
+    token.next = &next_token;
+    ft_cd(&token, &shell);
+    printf("Current Directory: %s\n", shell.curr_dir);
+    free(next_token.value); // Free memory after use
 
-    // Test 3: cd to invalid directory
-    token = make_token_list("cd", "/not_a_real_dir");
-    ft_cd(token, sh);
-    printf("After 'cd /not_a_real_dir': curr_dir=%s, r_code=%d\n", sh->curr_dir, sh->r_code);
-    free_token_list(token);
+    // Test case 3: Change to previous directory ("-")
+    next_token.value = strdup("-"); // Properly initialize the value
+    next_token.next = NULL;         // Ensure the next pointer is NULL
+    token.next = &next_token;
+    ft_cd(&token, &shell);
+    printf("Current Directory: %s\n", shell.curr_dir);
+    free(next_token.value); // Free memory after use
 
-    // Test 4: cd -
-    token = make_token_list("cd", "-");
-    ft_cd(token, sh);
-    printf("After 'cd -': curr_dir=%s, r_code=%d\n", sh->curr_dir, sh->r_code);
-    free_token_list(token);
+    // Test case 4: Invalid directory
+    next_token.value = strdup("/invalid/path"); // Properly initialize the value
+    next_token.next = NULL;                     // Ensure the next pointer is NULL
+    token.next = &next_token;
+    ft_cd(&token, &shell);
+    printf("Return Code: %d\n", shell.r_code);
+    free(next_token.value); // Free memory after use
 
-    free_shell(sh);
+    // Cleanup
+    free(shell.env_var[0]);
+    free(shell.env_var[1]);
+    free(shell.env_var);
+    free(shell.curr_dir);
+    free(shell.prev_dir);
+    free(shell.pwd);
+
     return 0;
 }
