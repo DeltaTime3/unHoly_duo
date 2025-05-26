@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 11:07:44 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/26 16:24:57 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/26 16:57:14 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,11 @@ int	process_export(t_shell *type, char *args)
 	{
 		add_env_node(&type->head, key, value, flag);
 	}
+	if (key)
+		free(key);
+	if (value)
+		free(value);
+	return (0);
 }
 	
 void	add_env_node(t_env **head, const char *key, char *value, int flag)

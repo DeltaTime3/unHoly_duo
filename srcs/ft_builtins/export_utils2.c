@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 16:08:35 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/26 16:28:37 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/26 16:55:31 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,21 +37,25 @@ void update_env_value(t_env *env, char *value, int flag)
 
 void	print_env(t_shell *type)
 {
+	t_env	*temp;
+	
+
 	sort_env(type->head);
-	while (type->head)
+	temp = type->head;
+	while (temp)
 	{
-		if (type->head->value)
+		if (temp->value)
 		{
-			if (type->head->flag)
-				ft_printf("declare -x %s=\"%s\"\n", type->head->key, type->head->value);
+			if (temp->flag)
+				ft_printf("declare -x %s=\"%s\"\n", temp->key, temp->value);
 			else
-				ft_printf("declare -x %s\n", type->head->key);
+				ft_printf("declare -x %s\n", temp->key);
 		}
 		else
 		{
-			ft_printf("declare -x %s\n", type->head->key);
+			ft_printf("declare -x %s\n", temp->key);
 		}
-		type->head = type->head->next;
+		temp = temp->next;
 	}
 }
 /**
@@ -59,7 +63,5 @@ void	print_env(t_shell *type)
     Memory management: Free key and value in process_export after use.
     Return values: Make sure all functions that should return a value do so.
     VAR+=value support: Not implemented (optional for full Bash mimic).
-    Printing: Your print function should use the linked list and print in Bash’s declare -x style.
-    Sorting: Call sort_env(type->env_head) before printing.
     Error output: Your ft_fprintf() should print the correct error message.
  */
