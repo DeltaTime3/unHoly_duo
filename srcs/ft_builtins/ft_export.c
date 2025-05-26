@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:25 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/22 15:53:01 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/26 16:26:54 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,12 @@ int	ft_export(t_shell *type, char **args)
 	status = 0;
 	if (!args[i])
 	{
-		print_sort_env(type->env_var);
+		print_env(type->head);
 		return (status);
 	}	
-	while (args)
+	while (args[i])
 	{
-		if (validate_args(args[i++]))
+		if (validate_args(args[i]))
 		{
 			ft_fprintf();
 			status = 1;

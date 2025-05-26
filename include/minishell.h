@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/23 15:52:11 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/26 16:24:42 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ typedef enum e_token_type
 typedef struct s_shell
 {
 	t_token_type	*type;
+	t_env			*head;
 	char			**env_var;
 	char			*prev_dir;
 	char			*curr_dir;
@@ -102,12 +103,28 @@ void	ft_cd_2(t_shell *type, char *new_dir);
 char	*get_cd_target(t_token *token, t_shell *type, int *is_cd_minus);
 int		dir_val(t_token *token, t_shell *type, char **new_dir);
 int		check_dir(char *new_dir);
-void	cd_env_pwd(t_shell *type);
+void	cd_env_pwd(t_shell *type);	
 void	cd_env(t_shell *type);
 int		ct_nodes(t_token *token);
 char	*get_env_value(t_shell *type, const char *key);
-void add_old_pwd_to_env(t_shell *type);
+void 	add_old_pwd_to_env(t_shell *type);
+void	cd_change_dir(char *new, t_shell *type, int is_cd_minus);
 //test
 void expander(t_token **token, t_shell *type);
+
+//export
+int	ft_export(t_shell *type, char **args);
+int	validate_args(char **args);
+int	val_fst_char(const char *args);
+int	val_var_name(const char *args);
+int	val_empt_operat(const char *args);
+void	sort_env(t_env *head);
+static void swap_env(t_env *arg1, t_env *arg2);
+int	process_export(t_shell *type, char *args);
+void	add_env_node(t_env **head, const char *key, char *value, int flag);
+void parse_exp_args(const char *args, char **key, char **value, int *flag);
+t_env *find_env_node(t_env *head, char *key);
+void update_env_value(t_env *env, char *value, int flag);
+void	print_env(t_shell *type);
 
 #endif

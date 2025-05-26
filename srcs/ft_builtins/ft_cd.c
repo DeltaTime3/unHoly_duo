@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 14:29:58 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/23 13:10:43 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/26 09:55:57 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,50 +22,6 @@
  * printed and return code is set to 1. 
  */
 
-/*void	ft_cd(t_token *token, t_shell *type)
-{
-	char	*new_dir;
-	int		is_cd_minus;
-
-	is_cd_minus = 0;
-	printf("Entering ft_cd\n");
-    if (!token)
-    {
-        printf("Error: token is NULL\n");
-        return;
-    }
-    printf("Token value: %s\n", token->value);
-
-    if (ct_nodes(token) > 2)
-    {
-        print_error(E_TARG);
-        type->r_code = 1;
-        return;
-    }
-    if (token->next)
-        printf("Next token value: %s\n", token->next->value);
-	if (ct_nodes(token) > 2)
-	{
-		print_error(E_TARG);
-		type->r_code = 1;
-		return ;
-	}
-	if (token->next)
-		expander(&token->next, type);
-	new_dir = get_cd_target(token, type, &is_cd_minus);
-	if (check_dir(new_dir))
-	{
-		change_dir(new_dir, type);
-		if (is_cd_minus)
-			printf("%s\n", type->curr_dir);
-	}
-	else
-	{
-		type->r_code = 1;
-		free(new_dir);
-	}
-}
-*/
 void	ft_cd(t_token *token, t_shell *type)
 {
     char	*new_dir;
@@ -79,69 +35,34 @@ void	ft_cd(t_token *token, t_shell *type)
         return;
     }
     printf("Token value: %s\n", token->value);
-
     if (ct_nodes(token) > 2)
     {
         print_error(E_TARG);
         type->r_code = 1;
         return;
     }
-
     if (token->next)
-    {
         printf("Next token value: %s\n", token->next->value);
-    }
-
-    if (ct_nodes(token) > 2) // This block is redundant and can be removed
-    {
-        print_error(E_TARG);
-        type->r_code = 1;
-        return;
-    }
-
     if (token->next)
-    {
         expander(&token->next, type);
-    }
-
     new_dir = get_cd_target(token, type, &is_cd_minus);
-    if (check_dir(new_dir))
-    {
-        change_dir(new_dir, type);
-        if (is_cd_minus)
-        {
-            printf("%s\n", type->curr_dir);
-        }
-    }
-    else
-    {
-        type->r_code = 1;
-        free(new_dir);
-    }
+    cd_change_dir(new_dir, type, is_cd_minus);
 }
-/**
- * attempts to change the working directory.
- * @ token: command tokens.
- * @ new_dir: targuet directory to change to.
- * @ type: shell state.
- * calls chdir to switch to a new directory.
- * On error prints error message and sets return code.
- * On success, calls ft_cd_2 for cleanup and env update. 
- */
 
-void	change_dir(char *new_dir, t_shell *type)
+void	cd_change_dir(char *new, t_shell *type, int is_cd_minus)
 {
-	if (chdir(new_dir) != 0)
+	if (check_dir(new))
 	{
-		free(new_dir);
-		new_dir = NULL;
-		print_error(E_CD);
-		type->r_code = 1;
+		change_dir(new, type);
+		if (is_cd_minus)
+			printf("%s\n", type->curr_dir);
 	}
 	else
-		ft_cd_2(type, new_dir);
+	{
+		type->r_code = 1;
+		free(new);
+	}
 }
-
 /**
  * Updates shell state after successfully changing directory;
  * frees prev working directory, updates both past and current 

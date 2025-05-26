@@ -9,7 +9,7 @@ SRC_DIR = .
 OBJ_DIR = ./obj
 
 # Source files
-SRC_FILES = cd_test.c cd_utils.c ft_cd.c
+SRC_FILES = cd_test.c cd_utils.c ft_cd.c cd_utils2.c 
 OBJ_FILES = $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.c=.o))
 
 # Output binary

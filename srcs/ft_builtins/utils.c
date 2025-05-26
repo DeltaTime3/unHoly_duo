@@ -6,11 +6,11 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 14:56:24 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/16 10:21:22 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/26 14:45:23 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "../../include/minishell.h"
 
 long long	ft_atoll(char *str, int *error)
 {

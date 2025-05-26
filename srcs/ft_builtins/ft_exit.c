@@ -6,11 +6,11 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/16 10:17:35 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/26 11:21:11 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "../../include/minishell.h"
 
 int	ft_exit(t_token **token, t_shell *type)
 {

@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 11:14:00 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/23 15:51:59 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/26 11:02:55 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,11 @@ void	cd_env(t_shell *type)
 	cd_env_pwd(type);
 }
 
-
+/**
+ * adds OLDPWD to the env variables if it does not exist
+ * allocates a new env array, copies existing variables,
+ * updates shell' env pointer. Print error if allocation fails.
+ */
 void add_old_pwd_to_env(t_shell *type)
 {
 	char	*temp;
@@ -144,6 +148,12 @@ void add_old_pwd_to_env(t_shell *type)
 	type->env_var = new;
 }
 
+/**
+ * counts the nbr of nodes in a token list
+ * iterates through the linked list of tokens, printing each
+ * token's value and returns the total count,
+ * returns 0 if token is NULL.
+ */
 int	ct_nodes(t_token *token)
 {
 	if (!token)
@@ -160,25 +170,4 @@ int	ct_nodes(t_token *token)
         token = token->next;
     }
     return i;
-}
-
-char	*get_env_value(t_shell *type, const char *key)
-{
-	int		i;
-	size_t	key_len;
-
-	if(!type || !type->env_var || !key)
-		return (NULL);
-	key_len = ft_strlen(key);
-	i = 0;
-	while (type->env_var[i])
-	{
-		if (ft_strncmp(type->env_var[i], key, key_len) == 0 
-			&& type->env_var[i][key_len] == '=')
-			{
-				return (type->env_var[i] + key_len + 1);
-			}
-			i++;
-	}
-	return (NULL);
 }
