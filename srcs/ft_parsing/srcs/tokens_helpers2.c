@@ -43,6 +43,7 @@ static void	print_tokens(t_list *tokens)
 
 void	input_handling(char *input, t_list *tokens)
 {
+	(void)tokens;
 	input = readline("minishell> ");
 	if (!input)
 		exit_handling(input);
@@ -51,26 +52,31 @@ void	input_handling(char *input, t_list *tokens)
 	else if (ft_strcmp(input, "exit") == 0)
 		exit_handling(input);
 	else
+		process_input(input);
+}
+
+void	process_input(char *input)
+{
+	t_list	*tokens;
+
+	if (*input)
+		add_history(input);
+	if (validate_input(input))
 	{
-		if (*input)
-			add_history(input);
-		if (validate_input(input))
-		{
-			free(input);
-			return ;
-		}
-		tokens = tokenize_input(input);
-		if (!tokens)
-		{
-            free(input);
-            return;
-        }
 		free(input);
-		if (tokens)
-		{
-			print_tokens(tokens);
-			free_tokens(tokens);
-		}
+		return ;
+	}
+	tokens = tokenize_input(input);
+	if (!tokens)
+	{
+		free(input);
+		return ;
+	}
+	free(input);
+	if (tokens)
+	{
+		print_tokens(tokens);
+		free_tokens(tokens);
 	}
 }
 

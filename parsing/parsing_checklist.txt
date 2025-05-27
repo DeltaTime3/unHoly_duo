@@ -30,7 +30,7 @@ X Error Handling
 	Implement error handling for invalid tokens or malformed input.
 	Provide meaningful error messages.
 
-Testing the Lexer
+X Testing the Lexer
 
 	Write unit tests for the lexer to ensure it correctly identifies and tokenizes various command 	
 	inputs.
@@ -38,12 +38,12 @@ Testing the Lexer
 
 PARSING CHECKLIST
 
-Understand the Grammar
+X Understand the Grammar
 
 	Define the grammar rules for your shell commands (e.g., command structure, argument handling, 
 	operator precedence).
 	
-Define the Abstract Syntax Tree (AST) Structure
+- Define the Abstract Syntax Tree (AST) Structure
 
 	Create data structures to represent the AST nodes (e.g., command nodes, argument nodes, 
 	operator nodes).
