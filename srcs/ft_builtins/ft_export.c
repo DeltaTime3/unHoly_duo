@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:25 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/26 16:57:32 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/27 15:14:02 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,19 +28,17 @@ int	ft_export(t_shell *type, char **args)
 	{
 		if (validate_args(args[i]))
 		{
-			ft_fprintf();
+			ft_fprintf(2, "minishell: export: `%s': %s\n", args[i], E_INVALID_ID);
 			status = 1;
 		}
 		else
-		{
 			process_export(type, args[i]);
-		}
 		i++;
 	}
 	return (status);
 }
 
-int	validate_args(char **args)
+int	validate_args(char *args)
 {
 	int	status;
 	int	i;
@@ -49,11 +47,11 @@ int	validate_args(char **args)
 	i = 1;
 	while (args[i])
 	{
-		if(val_empt_operat(args[i]) || val_fst_char(args[i]) ||
-			val_var_name(args[i]))
+		if(val_empt_operat(args) || val_fst_char(args) ||
+			val_var_name(args))
 			{
 				status = 1;
-				print_error(E_IMPUT);
+				print_error(E_INPUT);
 			}
 			i++;
 	}
@@ -88,7 +86,6 @@ int	val_empt_operat(const char *args)
 		return (1);
 	return (0);
 }
-
 
 /**
  * ERRORS

@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 11:07:44 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/26 16:57:14 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/27 15:38:10 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	sort_env(t_env *head)
 	}
 }
 
-static void swap_env(t_env *arg1, t_env *arg2)
+void swap_env(t_env *arg1, t_env *arg2)
 {
 	char	*temp_key;
 	char	*temp_value;
@@ -114,26 +114,27 @@ void	add_env_node(t_env **head, const char *key, char *value, int flag)
 void parse_exp_args(const char *args, char **key, char **value, int *flag)
 {
 	int	i;
-	int j;
 	
 	i = 0;
 	*flag = 0;
 	*value = NULL;
-	while (args[i] && args[i] != '=')
+	while (args[i] && args[i] != '=' && !(args[i] == '+' && args[i + 1] == '='))
 		i++;
-	if (args[i] == '=')
+	if (args[i] == '+' && args[i+1] == '=')
+	{
+		*flag = 2;
+		*key = extract_key(args, i);
+		*value = ft_strdup(args + i + 2);
+	}
+	else if (args[i] == '=')
 	{
 		*flag = 1;
-		*key = malloc(i + 1);
-		j = 0;
-		while (j < i)
-		{
-			(*key)[j] = args[j];
-			j++;
-		}
-		(*key)[j] = '\0';
+		*key = extract_key(args, i);
 		*value = ft_strdup(args + i + 1);
 	}
 	else
-	*key = ft_strdup(args);
+	{
+		*key = ft_strdup(args);
+		*flag = 0;
+	}
 }

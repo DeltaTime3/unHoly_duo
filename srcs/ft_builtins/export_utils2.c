@@ -6,12 +6,11 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 16:08:35 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/26 16:55:31 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/27 15:32:17 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
 
 t_env *find_env_node(t_env *head, char *key)
 {
@@ -26,13 +25,21 @@ t_env *find_env_node(t_env *head, char *key)
 
 void update_env_value(t_env *env, char *value, int flag)
 {
-	if (env->value)
-		free(env->value);
-	if (value)
-		env->value = ft_strdup(value);
+	char *temp;
+	
+	if (flag == 2)
+	{
+		appen_env_value(env, value);
+	}
 	else
-		env->value = NULL;
-	env->flag = flag;
+	{
+		if(env->value)
+			free(env->value);
+		if (value)
+			env->value = ft_strdup(value);
+		else
+			env->value = NULL;
+	}
 }
 
 void	print_env(t_shell *type)
@@ -44,18 +51,46 @@ void	print_env(t_shell *type)
 	temp = type->head;
 	while (temp)
 	{
-		if (temp->value)
+		if (temp->flag)
 		{
-			if (temp->flag)
+			if (temp->value)
 				ft_printf("declare -x %s=\"%s\"\n", temp->key, temp->value);
 			else
-				ft_printf("declare -x %s\n", temp->key);
+				ft_printf("declare -x %s=\"\"\n", temp->key);
 		}
 		else
-		{
 			ft_printf("declare -x %s\n", temp->key);
-		}
 		temp = temp->next;
+	}
+}
+
+char	*extract_key(const char *args, int len)
+{
+	char *key;
+	
+	key = malloc(len + 1);
+	if (!key)
+		return NULL;
+	ft_strlcpy(key, args, len + 1);
+	return key;
+}
+
+void append_env_value(t_env *env, char *value)
+{
+	char	*temp;
+	
+	if (env->value && value)
+	{
+		temp = ft_strjoin(env->value, value);
+		if (!temp)
+			return;
+		free(env->value);
+		env->value = temp;
+	}
+	else if (value)
+	{
+		free(env->value);
+		env->value = ft_strdup(value);
 	}
 }
 /**
