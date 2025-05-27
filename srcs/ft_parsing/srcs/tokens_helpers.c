@@ -167,10 +167,10 @@ int	token_handling(const char *input, int *i, t_list **tokens,
 		}
 		return (0);
 	}
-	else
-	{	
-		ft_printf_fd(2, COMMAND_NOT_FOUND);
-		return (1);
-	}
+	// else
+	// {	
+	// 	ft_printf_fd(2, COMMAND_NOT_FOUND);
+	// 	return (1);
+	// }
 	return (0);
 }
