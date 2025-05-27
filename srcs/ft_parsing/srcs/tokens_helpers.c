@@ -41,7 +41,10 @@ int	quote_handling(const char *input, int *i, t_list **tokens, int *expect_comma
 		*expect_command = 2;
 	}
     else if (value[0] == '-' && *expect_command == 2)
+	{
         type = FLAG;
+		*expect_command = 0;
+	}
     else
     {
         type = ARGUMENT;
@@ -96,7 +99,10 @@ int	word_handling(const char *input, int *i, t_list **tokens,
 		*expect_command = 2;
 	}
     else if (value[0] == '-' && *expect_command == 2)
+    {
         type = FLAG;
+		*expect_command = 0;
+	}
     else
     {
         type = ARGUMENT;

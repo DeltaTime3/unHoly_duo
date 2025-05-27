@@ -50,7 +50,6 @@ int	special_tokens_handling(const char *input, int *i, t_list **tokens,
             return (1);
         return (0);
     }
-	printf("special_tokens_handling: Current char: %c\n", input[*i]);
  	return (0);
 }
 
