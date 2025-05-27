@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 16:08:35 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/27 15:32:17 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/05/27 15:42:40 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void update_env_value(t_env *env, char *value, int flag)
 	
 	if (flag == 2)
 	{
-		appen_env_value(env, value);
+		append_env_value(env, value);
 	}
 	else
 	{
