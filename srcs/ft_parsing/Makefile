@@ -6,7 +6,7 @@
 #    By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/14 09:41:12 by ppaula-d          #+#    #+#              #
-#    Updated: 2025/05/14 09:41:26 by ppaula-d         ###   ########.fr        #
+#    Updated: 2025/05/27 10:48:41 by ppaula-d         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,8 @@ SRC 		= srcs/tokens.c \
 				srcs/tokens_helpers2.c \
 				srcs/main.c \
 				srcs/utils.c \
-				srcs/refractors.c
+				srcs/refractors.c \
+				srcs/utils2.c
 				
 OBJS		= $(SRCS:.c=.o)
 
