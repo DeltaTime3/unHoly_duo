@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/27 15:37:41 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/02 14:24:21 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 
 # define	MAX_PATH 4096
 
+
 # define	STDERR 2
 # define	E_TARG "Too may arguments for cd command.\n"
 # define	E_CD	"Failed to change directory.\n"
@@ -33,6 +34,10 @@
 # define	E_ENV "Environment error.\n"
 # define	E_INPUT "Invalid input.\n"
 # define    E_INVALID_ID "Invalid identifier.\n"
+
+typedef struct s_env t_env;
+typedef struct s_token t_token;
+typedef struct s_shell t_shell;
 
 typedef enum e_token_type
 {
@@ -92,7 +97,7 @@ t_env	*create_env_node(char *str);
 void	env_remove(t_env **head, char *key);
 void	update_env(t_env **head, char *key, char *value, int append);
 t_env *create_node_from_key(char *key, char *value);
-char	*appen_env_value(char *old_val, char *add_val);
+char	*append_env_value_man(char *old_val, char *add_val);
 void	add_new_node(t_env **head, t_env *tail, char *key, char *value);
 void	update_env_value(t_env *node, char *value, int append);
 
@@ -115,7 +120,7 @@ void expander(t_token **token, t_shell *type);
 
 //export
 int		ft_export(t_shell *type, char **args);
-int		validate_args(char **args);
+int		validate_args(char *args);
 int		val_fst_char(const char *args);
 int		val_var_name(const char *args);
 int		val_empt_operat(const char *args);
@@ -125,9 +130,13 @@ int		process_export(t_shell *type, char *args);
 void	add_env_node(t_env **head, const char *key, char *value, int flag);
 void 	parse_exp_args(const char *args, char **key, char **value, int *flag);
 t_env 	*find_env_node(t_env *head, char *key);
-void 	update_env_value(t_env *env, char *value, int flag);
+void 	update_env_value_bi(t_env *env, char *value, int flag);
 void	print_env(t_shell *type);
 char 	*extract_key(const char *agrs, int len);
 void 	append_env_value(t_env *env, char *value);
+
+//unset
+int ft_unset(t_shell *shell, t_token *args);
+int validate_unset_args(char *args);
 
 #endif

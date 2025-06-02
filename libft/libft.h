@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:21:20 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/05/22 09:58:21 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/06/02 15:10:23 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,5 +83,6 @@ char		*ft_strtrim(char *s1, char *set);
 char		*ft_substr(char const *s, unsigned int start, size_t len);
 int			ft_tolower(int p);
 int			ft_toupper(int p);
-
+int			ft_put_hex(unsigned int nb, const char form);
+char		*ft_uitoa(unsigned int n);
 #endif

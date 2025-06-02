@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:42:39 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/22 15:40:12 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/02 13:17:26 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	update_env_value(t_env *node, char *value, int append)
 
 	if (append)
 	{
-		new_val = append_env_value(node->value, value);
+		new_val = append_env_value_man(node->value, value);
 		if (!new_val)
 			return ;
 		free(node->value);

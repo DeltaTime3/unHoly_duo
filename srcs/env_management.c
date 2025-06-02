@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 12:44:12 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/22 15:40:54 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/02 13:17:32 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ t_env *create_node_from_key(char *key, char *value)
 	return (node);
 }
 
-char	*append_env_value(char *old_val, char *add_val)
+char	*append_env_value_man(char *old_val, char *add_val)
 {
 	size_t	len_old;
 	size_t	len_add;

@@ -1,32 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_print_unsigned.c                                :+:      :+:    :+:   */
+/*   ft_put_hex.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/14 13:11:03 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/06/02 15:02:21 by afilipe-         ###   ########.fr       */
+/*   Created: 2025/06/02 14:59:05 by afilipe-          #+#    #+#             */
+/*   Updated: 2025/06/02 15:00:15 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_print_unsigned(unsigned int n)
+int	ft_put_hex(unsigned int nb, const char form)
 {
-	char	*nb;
-	int		lenght;
+	int		length;
+	char	*hex_digits;
 
-	lenght = 0;
-	if (n < 0)
-	{
-		lenght = ft_printc(n + 48);
-	}
+	length = 0;
+	if (form == 'x')
+		hex_digits = "0123456789abcdef";
+	else if (form == 'X')
+		hex_digits = "0123456789ABCDEF";
 	else
-	{
-		nb = ft_uitoa(n);
-		lenght = ft_printstr(nb);
-		free(nb);
-	}
-	return (lenght);
+		return 0;
+	if (nb >= 16)
+		length += ft_put_hex(nb / 16, form);
+	length += ft_printc(hex_digits[nb % 16]);
+	return length;
 }

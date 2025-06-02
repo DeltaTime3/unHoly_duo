@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+         #
+#    By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/16 12:39:09 by ppaula-d          #+#    #+#              #
-#    Updated: 2025/05/21 14:16:42 by ppaula-d         ###   ########.fr        #
+#    Updated: 2025/06/02 15:11:01 by afilipe-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,10 @@ SRCS    = ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c ft_isprint.c \
         ft_putchar_fd.c ft_putstr_fd.c ft_putendl_fd.c ft_putnbr_fd.c \
         ft_free.c ft_isdigitplussign.c ft_isnumeric.c ft_error.c ft_atol.c \
         ft_free_str.c ft_arraylen.c ft_free_gnl.c ft_strcmp.c ft_atoi_base.c \
-        ft_ishex.c ft_isspace.c ft_lstadd_back.c ft_lstnew.c ft_printf_fd.c
+        ft_ishex.c ft_isspace.c ft_lstadd_back.c ft_lstnew.c ft_printf_fd.c \
+		ft_print_hex.c ft_printf_fd.c ft_print_pointer.c ft_print_unsigned.c \
+		ft_printc.c ft_printnbr.c ft_printf.c ft_printstr.c ft_put_hex.c \
+		ft_uitoa.c
         
 OBJS    = $(SRCS:.c=.o)
 AR      = ar rcs

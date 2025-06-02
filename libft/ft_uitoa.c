@@ -1,32 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_print_unsigned.c                                :+:      :+:    :+:   */
+/*   ft_uitoa.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/14 13:11:03 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/06/02 15:02:21 by afilipe-         ###   ########.fr       */
+/*   Created: 2025/06/02 15:03:01 by afilipe-          #+#    #+#             */
+/*   Updated: 2025/06/02 15:10:03 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_print_unsigned(unsigned int n)
+char *ft_uitoa(unsigned int n)
 {
-	char	*nb;
-	int		lenght;
+	unsigned int    len;
+	unsigned int    temp;
+	char            *str;
 
-	lenght = 0;
-	if (n < 0)
+	len = 1;
+	temp = n;
+	while (temp >= 10)
 	{
-		lenght = ft_printc(n + 48);
+		temp /= 10;
+		len++;
 	}
-	else
+	str = malloc(len + 1);
+	if (!str)
+		return (NULL);
+	str[len] = '\0';
+	while (len > 0)
 	{
-		nb = ft_uitoa(n);
-		lenght = ft_printstr(nb);
-		free(nb);
+		str[--len] = (n % 10) + '0';
+		n /= 10;
 	}
-	return (lenght);
+	return (str);
 }
