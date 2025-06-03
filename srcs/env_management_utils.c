@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:42:39 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/02 13:17:26 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/03 11:14:50 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,19 @@ void	add_new_node(t_env **head, t_env *tail, char *key, char *value)
 	if(!new_node)
 		return ;
 	if (!*head)
+	{
 		*head = new_node;
+		if (tail)
+			tail = new_node;
+	}
 	else
-		tail->next = new_node;
+	{
+		if (tail && tail)
+		{
+			tail->next = new_node;
+			tail = new_node;
+		}
+	}
 }
 
 void	free_env_node(t_env *node)

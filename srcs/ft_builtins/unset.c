@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 10:24:06 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/26 14:45:16 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/03 11:59:36 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,22 @@ void	free_unset(t_token *token, t_shell *type)
 	int		i;
 
 	i = 0;
-	if (!token->value || !type->env_var)
+	if (!token || !token->args || !type || !type->env_var)
 	{
-		return(1);
+		return;
 	}
-	if(token->args[1][0] = '-' && token->args[1][1] != '\0')
+	if(token->args[1] && token->args[1][0] == '-' && token->args[1][1] != '\0')
 	{
-		return(print_error);
+		print_error(E_MSH);
+		type->return_code = 2;
+		return;
 	}
 	while (token->args[i])
-		{
-			str = token->args[i];
-			if (ft_strchr(str, '=') == NULL)
-				if()
-		}
+	{
+		str = token->args[i];
+		if (str)
+			free(str);
+		i++;
+	}
+	free(token->args);	
 }

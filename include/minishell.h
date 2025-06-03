@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/02 14:24:21 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/03 11:10:18 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ typedef struct s_shell
 {
 	t_token_type	*type;
 	t_env			*head;
+	t_env			*tail;
 	char			**env_var;
 	char			*prev_dir;
 	char			*curr_dir;

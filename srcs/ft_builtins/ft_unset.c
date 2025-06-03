@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 16:04:50 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/02 13:25:29 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/03 11:29:40 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,20 +55,14 @@ int validate_unset_args(char *args)
 	int	i;
 	
 	if (!args || !*args)
-	{
 		return (0);
-	}
-	if (!ft_isalpha(args[0]) || args[0] != '_')
-	{
+	if (!ft_isalpha(args[0]) && args[0] != '_')
 		return (0);
-	}
 	i = 1;
 	while (args[i])
 	{
-		if(!(ft_isalnum(args[i])) || !(args[i] == '_'))
-		{
+		if(!ft_isalnum(args[i]) && args[i] != '_')
 			return (0);
-		}
 		i++;
 	}
 	return (1);

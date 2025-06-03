@@ -9,7 +9,7 @@ SRC_DIR = .
 OBJ_DIR = ./obj
 
 # Source files
-SRC_FILES = cd_test.c cd_utils.c ft_cd.c cd_utils2.c 
+SRC_FILES = cd_test.c cd_utils.c ft_cd.c cd_utils2.c  
 OBJ_FILES = $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.c=.o))
 
 # Tester files
@@ -18,6 +18,7 @@ TESTER_SRC = tester_unset.c \
 	export_utils2.c \
 	../env_management_utils.c \
 	../env_management.c \
+	export_utils.c
 
 
 TESTER_OBJ = $(addprefix $(OBJ_DIR)/, $(notdir $(TESTER_SRC:.c=.o)))
