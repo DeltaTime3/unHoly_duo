@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/03 11:10:18 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/05 16:33:21 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@
 # include <string.h>
 # include <sys/stat.h>
 # include <limits.h>
+# include <sys/types.h>
+# include <unistd.h>
+# include <sys/wait.h>
 
 # define	MAX_PATH 4096
 
@@ -70,6 +73,7 @@ typedef struct s_token
 {
 	char			*value;
 	char			*token;
+	char			*command;
 	char			**args;
 	struct s_token	*next;
 } t_token;
@@ -85,11 +89,8 @@ typedef struct s_env
 int	print_error(char *msg);
 void	ft_putstr_fd(char *str, int fd);
 
-//utils
 
-int	ft_atoll(char *str, int *error);
-
-//env funtions
+//enviroment funtions
 
 t_env	*init_env(char **envp);
 void	free_env_node(t_env *node);
@@ -140,4 +141,23 @@ void 	append_env_value(t_env *env, char *value);
 int ft_unset(t_shell *shell, t_token *args);
 int validate_unset_args(char *args);
 
+//exit
+int	ft_exit(t_token **token, t_shell *type);
+int	ft_exit2(t_shell *type, int nbr_args, char *arg);
+int	ft_is_nbr(char *str);
+void	ft_kill(t_shell *type, int e_code);
+
+//pwd
+int	ft_pwd(t_shell *type);
+
+//echo
+int	ft_echo(t_token *token, t_shell *shell);
+
+//utils
+long long	ft_atoll(char *str, int *error);
+int	handle_digits(char *str, unsigned long long *res, int sign, int *error);
+
+//env
+void ft_env(t_shell *type, t_token *command);
+int ft_env_extra_args(t_token *command);
 #endif
