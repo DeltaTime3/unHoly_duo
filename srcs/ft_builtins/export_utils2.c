@@ -6,89 +6,136 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 16:08:35 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/02 14:23:12 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/09 15:04:19 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-t_env *find_env_node(t_env *head, char *key)
+/**
+ * sorts the shell env in ascii order using bublle sort.
+ */
+void	sort_env(t_env *head)
 {
-	while (head)
+	t_env	*curr;
+	int		i;
+	
+	if (!head)
+		return ;
+	i = 1;
+	while (i)
 	{
-		if (ft_strcmp(head->key, key) == 0)
-			return head;
-		head = head->next;
+		i = 0;
+		curr = head;
+		while (curr->next)
+		{
+			if (ft_strcmp(curr->key, curr->next->key) > 0)
+			{
+				swap_env(curr, curr->next);
+				i = 1;
+			}
+			curr = curr->next;
+		}
 	}
-	return NULL;
 }
 
-void update_env_value_bi(t_env *env, char *value, int flag)
+void swap_env(t_env *arg1, t_env *arg2)
 {
-	if (flag == 2)
+	char	*temp_key;
+	char	*temp_value;
+	int		temp_flag;
+
+	temp_key = arg1->key;
+	temp_value = arg1->value;
+	temp_flag = arg1->flag;
+	arg1->key = arg2->key;
+	arg1->value = arg2->value;
+	arg1->flag = arg2->flag;
+	arg2->key = temp_key;
+	arg2->value = temp_value;
+	arg2->flag = temp_flag;
+}
+
+int	process_export(t_shell *type, char *args)
+{
+	char	*key;
+	char	*value;
+	int		flag;
+	t_env	*env;
+
+	key = NULL;
+	value = NULL;
+	flag = 0;
+	parse_exp_args(args, &key, &value, &flag);
+	env = find_env_node(type->head, key);
+	if (env)
 	{
-		append_env_value(env, value);
+		if (flag)
+			update_env_value_bi(env, value, flag);
 	}
 	else
 	{
-		if(env->value)
-			free(env->value);
-		if (value)
-			env->value = ft_strdup(value);
-		else
-			env->value = NULL;
+		add_env_node(&type->head, key, value, flag);
+	}
+	if (key)
+		free(key);
+	if (value)
+		free(value);
+	return (0);
+}
+	
+void	add_env_node(t_env **head, const char *key, char *value, int flag)
+{
+	t_env *new;
+	t_env *curr;
+	
+	new = malloc(sizeof(t_env));
+	new->key = ft_strdup(key);
+	if(value)
+		new->value = ft_strdup(value);
+	else
+		new->value = NULL;
+	new->flag = flag;
+	new->next = NULL;
+
+	if (!*head)
+	{
+		*head = new;
+	}
+	else
+	{
+		curr = *head;
+		while (curr->next)
+			curr = curr->next;
+		curr->next = new;
 	}
 }
 
-void	print_env(t_shell *type)
+void parse_exp_args(const char *args, char **key, char **value, int *flag)
 {
-	t_env	*temp;
+	int	i;
 	
-
-	sort_env(type->head);
-	temp = type->head;
-	while (temp)
+	i = 0;
+	*flag = 0;
+	*value = NULL;
+	while (args[i] && args[i] != '=' && !(args[i] == '+' && args[i + 1] == '='))
+		i++;
+	if (args[i] == '+' && args[i+1] == '=')
 	{
-		if (temp->flag)
-		{
-			if (temp->value)
-				ft_printf("declare -x %s=\"%s\"\n", temp->key, temp->value);
-			else
-				ft_printf("declare -x %s=\"\"\n", temp->key);
-		}
-		else
-			ft_printf("declare -x %s\n", temp->key);
-		temp = temp->next;
+		*flag = 2;
+		*key = extract_key(args, i);
+		*value = ft_strdup(args + i + 2);
 	}
-}
-
-char	*extract_key(const char *args, int len)
-{
-	char *key;
-	
-	key = malloc(len + 1);
-	if (!key)
-		return NULL;
-	ft_strlcpy(key, args, len + 1);
-	return key;
-}
-
-void append_env_value(t_env *env, char *value)
-{
-	char	*temp;
-	
-	if (env->value && value)
+	else if (args[i] == '=')
 	{
-		temp = ft_strjoin(env->value, value);
-		if (!temp)
-			return;
-		free(env->value);
-		env->value = temp;
+		*flag = 1;
+		*key = extract_key(args, i);
+		*value = ft_strdup(args + i + 1);
 	}
-	else if (value)
+	else
 	{
-		free(env->value);
-		env->value = ft_strdup(value);
+		*key = ft_strdup(args);
+		*flag = 0;
 	}
 }
 /**

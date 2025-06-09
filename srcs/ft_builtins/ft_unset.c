@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 16:04:50 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/03 11:29:40 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/09 12:03:19 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ int ft_unset(t_shell *shell, t_token *args)
 	{
 		if (!validate_unset_args(curr->value))
 		{
+			ft__fprintf(2, "minishell: unset: '%s' : is not a valid \
+				identifier\n", curr->value);
 			error_code = 1;
 		}
 		else

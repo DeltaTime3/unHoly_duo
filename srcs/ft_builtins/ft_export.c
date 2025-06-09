@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:25 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/27 15:14:02 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/09 14:55:42 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,13 @@
 
 int	ft_export(t_shell *type, char **args)
 {
-	int	i;
-	int	status;
+	int		status;
+	int		i;
 	
 	i = 1;
 	status = 0;
-	if (!args[i])
-	{
-		print_env(type->head);
-		return (status);
-	}	
+	if (!args[1])
+		return(print_export_list(type->head), 0);
 	while (args[i])
 	{
 		if (validate_args(args[i]))
@@ -40,22 +37,13 @@ int	ft_export(t_shell *type, char **args)
 
 int	validate_args(char *args)
 {
-	int	status;
-	int	i;
-	
-	status = 0;
-	i = 1;
-	while (args[i])
-	{
-		if(val_empt_operat(args) || val_fst_char(args) ||
-			val_var_name(args))
-			{
-				status = 1;
-				print_error(E_INPUT);
-			}
-			i++;
-	}
-	return (status);
+	if(val_empt_operat(args) || val_fst_char(args) ||
+		val_var_name(args))
+		{
+			print_error(E_INPUT);
+			return (1);
+		}
+	return (0);
 }
 
 int	val_fst_char(const char *args)
