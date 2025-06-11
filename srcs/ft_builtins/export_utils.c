@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 11:07:44 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/02 14:23:51 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/11 09:52:08 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,3 +138,11 @@ void parse_exp_args(const char *args, char **key, char **value, int *flag)
 		*flag = 0;
 	}
 }
+
+/**
+ * 
+    Memory management: Free key and value in process_export after use.
+    Return values: Make sure all functions that should return a value do so.
+    VAR+=value support: Not implemented (optional for full Bash mimic).
+    Error output: Your ft_fprintf() should print the correct error message.
+ */

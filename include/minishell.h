@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/05 16:33:21 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/11 12:25:00 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ typedef struct s_shell
 	t_token_type	*type;
 	t_env			*head;
 	t_env			*tail;
-	char			**env_var;
 	char			*prev_dir;
 	char			*curr_dir;
 	char			*value;
@@ -98,7 +97,7 @@ void	free_env(t_env *head);
 t_env	*create_env_node(char *str);
 void	env_remove(t_env **head, char *key);
 void	update_env(t_env **head, char *key, char *value, int append);
-t_env *create_node_from_key(char *key, char *value);
+t_env 	*create_node_from_key(char *key, char *value);
 char	*append_env_value_man(char *old_val, char *add_val);
 void	add_new_node(t_env **head, t_env *tail, char *key, char *value);
 void	update_env_value(t_env *node, char *value, int append);
@@ -118,7 +117,7 @@ char	*get_env_value(t_shell *type, const char *key);
 void 	add_old_pwd_to_env(t_shell *type);
 void	cd_change_dir(char *new, t_shell *type, int is_cd_minus);
 //test
-void expander(t_token **token, t_shell *type);
+
 
 //export
 int		ft_export(t_shell *type, char **args);
@@ -138,26 +137,26 @@ char 	*extract_key(const char *agrs, int len);
 void 	append_env_value(t_env *env, char *value);
 
 //unset
-int ft_unset(t_shell *shell, t_token *args);
-int validate_unset_args(char *args);
+int 	ft_unset(t_shell *shell, t_token *args);
+int 	validate_unset_args(char *args);
 
 //exit
-int	ft_exit(t_token **token, t_shell *type);
-int	ft_exit2(t_shell *type, int nbr_args, char *arg);
-int	ft_is_nbr(char *str);
+int		ft_exit(t_token **token, t_shell *type);
+int		ft_exit2(t_shell *type, int nbr_args, char *arg);
+int		ft_is_nbr(char *str);
 void	ft_kill(t_shell *type, int e_code);
 
 //pwd
-int	ft_pwd(t_shell *type);
+int		ft_pwd(t_shell *type);
 
 //echo
-int	ft_echo(t_token *token, t_shell *shell);
+int		ft_echo(t_token *token, t_shell *shell);
 
 //utils
 long long	ft_atoll(char *str, int *error);
-int	handle_digits(char *str, unsigned long long *res, int sign, int *error);
+int			handle_digits(char *str, unsigned long long *res, int sign, int *error);
 
 //env
-void ft_env(t_shell *type, t_token *command);
-int ft_env_extra_args(t_token *command);
+void 	ft_env(t_shell *type, t_token *command);
+int 	ft_env_extra_args(t_token *command);
 #endif

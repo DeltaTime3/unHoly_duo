@@ -6,142 +6,77 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 16:08:35 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/09 15:04:19 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/11 11:27:50 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-/**
- * sorts the shell env in ascii order using bublle sort.
- */
-void	sort_env(t_env *head)
+t_env	*find_env_node(t_env *head, char *key)
 {
-	t_env	*curr;
-	int		i;
-	
-	if (!head)
+	t_env *node;
+
+	node = head;
+	while (node)
+	{
+		if (ft_strcmp(node->key, key) == 0)
+			return (node);
+		node = node->next;
+	}
+	return (NULL);
+}
+
+void 	update_env_value_bi(t_env *env, char *value, int flag)
+{
+	if (!env)
 		return ;
-	i = 1;
-	while (i)
-	{
-		i = 0;
-		curr = head;
-		while (curr->next)
-		{
-			if (ft_strcmp(curr->key, curr->next->key) > 0)
-			{
-				swap_env(curr, curr->next);
-				i = 1;
-			}
-			curr = curr->next;
-		}
-	}
+	free(env->value);
+	env->value = ft_strdup(value);
+	if (flag)
+		env->flag = 1;
 }
 
-void swap_env(t_env *arg1, t_env *arg2)
+void	print_env(t_shell *type)
 {
-	char	*temp_key;
-	char	*temp_value;
-	int		temp_flag;
-
-	temp_key = arg1->key;
-	temp_value = arg1->value;
-	temp_flag = arg1->flag;
-	arg1->key = arg2->key;
-	arg1->value = arg2->value;
-	arg1->flag = arg2->flag;
-	arg2->key = temp_key;
-	arg2->value = temp_value;
-	arg2->flag = temp_flag;
-}
-
-int	process_export(t_shell *type, char *args)
-{
-	char	*key;
-	char	*value;
-	int		flag;
-	t_env	*env;
-
-	key = NULL;
-	value = NULL;
-	flag = 0;
-	parse_exp_args(args, &key, &value, &flag);
-	env = find_env_node(type->head, key);
-	if (env)
-	{
-		if (flag)
-			update_env_value_bi(env, value, flag);
-	}
-	else
-	{
-		add_env_node(&type->head, key, value, flag);
-	}
-	if (key)
-		free(key);
-	if (value)
-		free(value);
-	return (0);
-}
+	t_env *node;
 	
-void	add_env_node(t_env **head, const char *key, char *value, int flag)
-{
-	t_env *new;
-	t_env *curr;
-	
-	new = malloc(sizeof(t_env));
-	new->key = ft_strdup(key);
-	if(value)
-		new->value = ft_strdup(value);
-	else
-		new->value = NULL;
-	new->flag = flag;
-	new->next = NULL;
-
-	if (!*head)
+	node = type->head;
+	while (node)
 	{
-		*head = new;
-	}
-	else
-	{
-		curr = *head;
-		while (curr->next)
-			curr = curr->next;
-		curr->next = new;
+		printf("%s=%s\n", node->key, node->value);
+		node = node->next;
 	}
 }
 
-void parse_exp_args(const char *args, char **key, char **value, int *flag)
+char 	*extract_key(const char *args, int len)
 {
-	int	i;
+	char *key;
+
+	key = malloc(len + 1);
+	if (!key)
+		return (NULL);
+	ft_strlcpy(key, args, len);
+	key[len] = '\0';
+	return (key);
+}
+void 	append_env_value(t_env *env, char *value)
+{
+	char	*new_val;
 	
-	i = 0;
-	*flag = 0;
-	*value = NULL;
-	while (args[i] && args[i] != '=' && !(args[i] == '+' && args[i + 1] == '='))
-		i++;
-	if (args[i] == '+' && args[i+1] == '=')
+	if (!env)
+		return;
+	if (env->value && *env->value)
 	{
-		*flag = 2;
-		*key = extract_key(args, i);
-		*value = ft_strdup(args + i + 2);
-	}
-	else if (args[i] == '=')
-	{
-		*flag = 1;
-		*key = extract_key(args, i);
-		*value = ft_strdup(args + i + 1);
+		new_val = malloc(ft_strlen(env->value) + ft_strlen(value) + 1);
+		if (!new_val)
+			return ;
+		ft_strlcpy(new_val, env->value, ft_strlen(env->value));
+		ft_strlcat(new_val, env->value, ft_strlen(env->value));
 	}
 	else
 	{
-		*key = ft_strdup(args);
-		*flag = 0;
+		new_val = ft_strdup(value);
 	}
+	free(env->value);
+	env->value = new_val;
 }
-/**
- * 
-    Memory management: Free key and value in process_export after use.
-    Return values: Make sure all functions that should return a value do so.
-    VAR+=value support: Not implemented (optional for full Bash mimic).
-    Error output: Your ft_fprintf() should print the correct error message.
- */

@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:42:39 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/03 11:14:50 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/11 14:52:24 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,33 @@ void	free_env(t_env *head)
 		head = head->next;
 		free_env_node(temp);
 	}
+}
+
+char	**env_list_to_array(t_env *head)
+{
+	char 	**array;
+	char	*temp;
+	int		i;
+	t_env	*curr;
+
+	i = 0;
+	curr = head;
+	while (curr)
+	{
+		i++;
+		curr = curr->next;
+	}
+	array = malloc(sizeof(char *) * (i + 1));
+	curr = head;
+	i = 0;
+	while (curr)
+	{
+		temp = ft_strjoin(curr->key, "=");
+		array[i] = ft_strjoin(temp, curr->value);
+		free(temp);
+		curr = curr->next;
+		i++;
+	}
+	array[i] = NULL;
+	return(array);
 }

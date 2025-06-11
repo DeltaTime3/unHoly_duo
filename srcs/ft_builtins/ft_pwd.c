@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:47 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/23 09:26:16 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/11 12:32:40 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	ft_pwd(t_shell *type)
 		}
 		else
 		{
-			print_error("pwd error: directory not set.\n");
+			perror("pwd error: directory not set.\n");
 			type->exit_code = 1;
 			return (1);
 		}

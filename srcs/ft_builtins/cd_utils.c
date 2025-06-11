@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 11:14:00 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/26 11:02:55 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/11 12:23:11 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,27 +63,26 @@ int	check_dir(char *new_dir)
 
 void	cd_env_pwd(t_shell *type)
 {
-	char	*new_pwd;
-	char	*pwd;
-	int		i;
-	char	cwd[4096];
+	t_env	*new_pwd;
+	char	cwd[MAX_PATH];
 
-	pwd = get_env_value(type, "PWD");
-	if (!pwd)
-		return ;
-	new_pwd = ft_strjoin("PWD=", getcwd(cwd, sizeof(cwd)));
-	getcwd(type->curr_dir, sizeof(type->curr_dir));
-	i = 0;
-	while (type->env_var[i])
+	if (!getcwd(cwd, sizeof(cwd)))
 	{
-		if (ft_strncmp(type->env_var[i], "PWD=", 4) == 0)
-		{
-			free(type->env_var[i]);
-			type->env_var[i] = new_pwd;
-		}
-		i++;
+		print_error("cd: error retriving current directory\n");
+		return ;
 	}
-	free(pwd);
+	new_pwd = find_env_node(type->head, "PWD");
+	if (new_pwd)
+	{
+		free(new_pwd->value);
+		new_pwd->value = ft_strdup(cwd);
+	}
+	else
+	{
+		add_env_node(&type->head, "PWD", cwd, 1);
+	}
+	free(type->pwd);
+	type->pwd = ft_strdup(cwd);
 }
 /**
  * Replaces OLDPWD with previous directory
@@ -94,21 +93,19 @@ void	cd_env_pwd(t_shell *type)
 
 void	cd_env(t_shell *type)
 {
-	char	*temp;
-	int		i;
+	t_env	*curr;
 
-	i = 0;
-	while (type->env_var[i])
+	curr = type->head;
+	while (curr)
 	{
-		if (ft_strncmp(type->env_var[i], "OLDPWD=", 7) == 0)
+		if (ft_strcmp(curr->key, "OLDPWD=") == 0)
 		{
-			free(type->env_var[i]);
-			temp = ft_strjoin("OLDPWD=", type->prev_dir);
-			type->env_var[i] = temp;
+			free(curr->value);
+			curr->value = ft_strdup(type->prev_dir);
 			cd_env_pwd(type);
 			return ;
 		}
-		i++;
+		curr = curr->next;
 	}
 	add_old_pwd_to_env(type);
 	cd_env_pwd(type);
@@ -121,31 +118,18 @@ void	cd_env(t_shell *type)
  */
 void add_old_pwd_to_env(t_shell *type)
 {
-	char	*temp;
-	char	**new;
-	int		i;
-	int		j;
+	t_env	*node;
 
-	i = 0;
-	while (type->env_var[i])
-		i++;
-	new = malloc(sizeof(char *) * (i + 2));
-	if (!new)
+	node = find_env_node(type->head, "OLDPWD");
+	if (node)
 	{
-		print_error("Memory allocation failed");
-		return ;
+		free(node->value);
+		node->value = ft_strdup(type->prev_dir);
 	}
-	j = 0;
-	while (j < i)
+	else
 	{
-		new[j] = type->env_var[j];
-		j++;
+		add_env_node(&type->head, "OLDPWD", type->prev_dir, 1);
 	}
-	temp = ft_strjoin("OLDPWD=", type->prev_dir);
-	new[j] = temp;
-	new[j + 1] = NULL;
-	free(type->env_var[j]);
-	type->env_var = new;
 }
 
 /**

@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 09:43:03 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/26 11:07:13 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/11 12:18:24 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,21 +20,18 @@
  */
 char	*get_env_value(t_shell *type, const char *key)
 {
-	int		i;
-	size_t	key_len;
+	t_env	*curr;
 
-	if(!type || !type->env_var || !key)
+	if(!type || !type->head || !key)
 		return (NULL);
-	key_len = ft_strlen(key);
-	i = 0;
-	while (type->env_var[i])
+	curr = type->head;
+	while (curr)
 	{
-		if (ft_strncmp(type->env_var[i], key, key_len) == 0 
-			&& type->env_var[i][key_len] == '=')
+		if (ft_strcmp(curr, key) == 0)
 			{
-				return (type->env_var[i] + key_len + 1);
+				return (curr->value);
 			}
-			i++;
+			curr = curr->next;
 	}
 	return (NULL);
 }
