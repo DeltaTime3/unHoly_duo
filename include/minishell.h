@@ -3,29 +3,39 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/11 12:25:00 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/12 13:39:24 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include <unistd.h>
 # include "../libft/libft.h"
+# include <fcntl.h>
+# include <limits.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+# include <signal.h>
 # include <stdlib.h>
+# include <stdio.h>
 # include <string.h>
 # include <sys/stat.h>
-# include <limits.h>
 # include <sys/types.h>
-# include <unistd.h>
 # include <sys/wait.h>
+# include <unistd.h>
 
 # define	MAX_PATH 4096
 
-
+// ERROR MESSAGES
+# define 	UNMATCHED_QUOTES "minishell: syntax error, unmatched quotes\n"
+# define 	LOGICAL_OPERATORS "minishell: syntax error, logical operators \
+not supported according to project's subject\n"
+# define 	UNEXPECTED_TOKEN "minishell: syntax error near unexpected token\n"
+# define 	COMMAND_NOT_FOUND "minishell: Command not found\n"
+# define 	OPEN_PIPE "minishell: error, open pipes not supported\n"
 # define	STDERR 2
 # define	E_TARG "Too may arguments for cd command.\n"
 # define	E_CD	"Failed to change directory.\n"
@@ -37,6 +47,25 @@
 # define	E_ENV "Environment error.\n"
 # define	E_INPUT "Invalid input.\n"
 # define    E_INVALID_ID "Invalid identifier.\n"
+
+// STRUCTS
+
+typedef enum s_cat
+{
+	COMMAND,
+	ARGUMENT,
+	PIPE,
+	REDIRECT,
+	OPERATOR,
+	HERE_DOC,
+	DELIMETER,
+	QUOTE,
+	FLAG,
+	FILES,
+	OTHER,
+	COMMENT
+}	t_cat;
+
 
 typedef struct s_env t_env;
 typedef struct s_token t_token;
@@ -75,6 +104,8 @@ typedef struct s_token
 	char			*command;
 	char			**args;
 	struct s_token	*next;
+	t_cat			type;
+	char			*content;
 } t_token;
  
 typedef struct s_env
@@ -85,6 +116,57 @@ typedef struct s_env
 	struct s_env	*next;
 }	t_env;
 
+// PARSING PROTOTYPES
+
+// expansions.c
+char 	*expand_env_var(const char *input, t_shell *shell);
+char	*expand_exit_status(const char *input, t_shell *shell);
+
+// refractors.c
+int		operator_type(const char *input, int *i, t_cat *type);
+int		special_tokens_handling(const char *input, int *i, t_list **tokens,
+			int *expect_command);
+int		token_helper(const char *input, int *i, t_list **tokens,
+			int *expect_command);
+void	skip_special_chars(const char *input, int *i);
+t_cat	determine_token_type(const char *value, int *expect_command);
+
+// tokens.c
+t_token	*create_token(t_cat type, char *content);
+t_list	*tokenize_input(const char *input);
+
+// tokens_helpers.c
+int		file_handling(const char *input, int *i, t_list **tokens);
+int		op_handling(const char *input, int *i, t_list **tokens);
+int		word_handling(const char *input, int *i, t_list **tokens,
+			int *expect_command);
+int		pipe_handling(const char *input, int *i, t_list **tokens);
+int		token_handling(const char *input, int *i, t_list **tokens,
+			int *expect_command);
+
+// tokens_helpers2.c
+void	input_handling(char *input, t_list *tokens);
+void	process_input(char *input);
+void	exit_handling(char *input);
+
+// utils.c
+int		check_unmatched_quotes(const char *input);
+int		check_logical_operators(const char *input);
+int		check_unexpected_tokens(const char *input);
+int		validate_input(const char *input);
+int		handle_quote_error(t_list **tokens);
+
+// int 	execute_command(t_token *command_token);
+
+// utils2.c
+int		quote_handling(const char *input, int *i, t_list **tokens,
+			int *expect_command);
+bool	open_pipe(const char *input, int i);
+void	free_tokens(t_list *tokens);
+int		check_token_sequence(const char *input);
+
+
+// BUILT-INS PROTOTYPES
 int	print_error(char *msg);
 void	ft_putstr_fd(char *str, int fd);
 
