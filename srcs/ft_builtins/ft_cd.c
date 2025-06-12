@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 14:29:58 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/12 14:38:12 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/12 15:14:41 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ void	ft_cd(t_token *token, t_shell *type)
     }
     if (token->next)
         printf("Next token value: %s\n", token->next->value);
-    if (token->next)
-        expander(&token->next, type);
+//if (token->next)
+//		expander(&token->next, type);
     new_dir = get_cd_target(token, type, &is_cd_minus);
     cd_change_dir(new_dir, type, is_cd_minus);
 }

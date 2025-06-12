@@ -6,13 +6,13 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:55 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/03 15:18:12 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/12 15:15:34 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	ft_echo(t_token *token, t_shell *shell)
+int	ft_echo(t_token *token)
 {
 	int		flag;
 	int		first_arg;

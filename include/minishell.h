@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/12 14:40:46 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/12 15:59:06 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ typedef struct s_shell
 	char			*curr_dir;
 	char			*value;
 	char			*pwd;
+	t_token			*token;
 	int				return_code;
 	int				exit_code;
 	struct s_shell	*next;
@@ -162,7 +163,8 @@ int		handle_quote_error(t_list **tokens);
 int		quote_handling(const char *input, int *i, t_list **tokens,
 			int *expect_command);
 bool	open_pipe(const char *input, int i);
-void	free_tokens(t_list *tokens);
+void	free_tokens(t_token *tokens);
+void	free_args(char **args);
 int		check_token_sequence(const char *input);
 
 
@@ -227,12 +229,14 @@ int		ft_exit(t_token **token, t_shell *type);
 int		ft_exit2(t_shell *type, int nbr_args, char *arg);
 int		ft_is_nbr(char *str);
 void	ft_kill(t_shell *type, int e_code);
+int		token_counter(t_token *token);
+void	ft_free_shell(t_shell *shell);
 
 //pwd
 int		ft_pwd(t_shell *type);
 
 //echo
-int		ft_echo(t_token *token, t_shell *shell);
+int		ft_echo(t_token *token);
 
 //utils
 long long	ft_atoll(char *str, int *error);

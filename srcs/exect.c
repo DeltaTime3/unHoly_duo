@@ -12,7 +12,7 @@ void	choose_b_in(t_token *token, t_shell *shell)
 	else if (ft_strcmp(token->value, "env") == 0)
 		ft_env(shell, token);
 	else if (ft_strcmp(token->value, "echo") == 0)
-		ft_echo(token, shell);
+		ft_echo(token);
 	else if (ft_strcmp(token->value, "pwd") == 0)
 		ft_pwd(shell);
 	else if (ft_strcmp(token->value, "unset") == 0)
