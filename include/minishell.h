@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/12 13:39:24 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/06/12 14:40:46 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,7 +195,7 @@ int		check_dir(char *new_dir);
 void	cd_env_pwd(t_shell *type);	
 void	cd_env(t_shell *type);
 int		ct_nodes(t_token *token);
-char	*get_env_value(t_shell *type, const char *key);
+char	*get_env_value(t_env *head, const char *key);
 void 	add_old_pwd_to_env(t_shell *type);
 void	cd_change_dir(char *new, t_shell *type, int is_cd_minus);
 //test
@@ -241,4 +241,29 @@ int			handle_digits(char *str, unsigned long long *res, int sign, int *error);
 //env
 void 	ft_env(t_shell *type, t_token *command);
 int 	ft_env_extra_args(t_token *command);
+void 	env_back(t_env **lst, t_env *new);
+t_env	*env_lstnew(char *key, char *value, int flag);
+t_env 	*init_shell_env(char **enviroment);
+char	**env_list_to_array(t_env *head);
+void	free_env(t_env *head);
+void	free_env_node(t_env *node);
+void	add_new_node(t_env **head, t_env *tail, char *key, char *value);
+void	update_env_value(t_env *node, char *value, int append);
+t_env	*init_env(char **envp);
+t_env	*create_env_node(char *str);
+void	env_remove(t_env **head, char *key);
+void	update_env(t_env **head, char *key, char *value, int append);
+t_env	 *create_node_from_key(char *key, char *value);
+char	*append_env_value_man(char *old_val, char *add_val);
+
+//executer
+void	choose_b_in(t_token *token, t_shell *shell);
+int		is_builtin(t_token *token);
+int		ft_execute(t_shell *shell, t_token *value);
+int		execute2(t_shell *shell, t_token *token);
+char	*get_cmd_path(char *cmd, t_env *env);
+char	*check_path_dir(char *pth_cpy, char *cmd);
+char	*get_next_path(char **path_temp);
+char	*build_cmb_path(char *dir, char *cmd);
+
 #endif
