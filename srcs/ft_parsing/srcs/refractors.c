@@ -104,3 +104,5 @@ t_cat	determine_token_type(const char *value, int *expect_command)
 	}
 	return (type);
 }
+
+

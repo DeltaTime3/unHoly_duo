@@ -81,6 +81,7 @@ int		check_logical_operators(const char *input);
 int		check_unexpected_tokens(const char *input);
 int		validate_input(const char *input);
 int		handle_quote_error(t_list **tokens);
+
 // int 	execute_command(t_token *command_token);
 
 // utils2.c
@@ -88,5 +89,6 @@ int		quote_handling(const char *input, int *i, t_list **tokens,
 			int *expect_command);
 bool	open_pipe(const char *input, int i);
 void	free_tokens(t_list *tokens);
+int		check_token_sequence(const char *input);
 
 #endif

@@ -57,3 +57,41 @@ bool	open_pipe(const char *input, int i)
 	}
 	return (false);
 }
+
+static int	is_invalid_sequence(const char *input, int i)
+{
+	if (input[i + 1] && input[i + 2])
+    {
+        if ((input[i] == '|' && input[i + 2] == '|') ||
+            (input[i] == '>' && input[i + 2] == '>') ||
+            (input[i] == '<' && input[i + 2] == '<') ||
+            (input[i] == '&' && input[i + 2] == '&'))
+	            return (1);
+    }
+    return (0);
+}
+
+int	check_token_sequence(const char *input)
+{
+	int	i;
+
+	i = 0;
+	while (input[i])
+	{
+		while (input[i] && ft_isspace(input[i]))
+			i++;
+		if (is_invalid_sequence(input, i))
+        {
+            ft_printf_fd(2, UNEXPECTED_TOKEN);
+            return (1);
+        }
+		if ((input[i] == '|' || input[i] == '<' || input[i] == '>') &&
+            (i == 0 || input[i + 1] == '\0'))
+        {
+            ft_printf_fd(2, UNEXPECTED_TOKEN);
+            return (1);
+        }
+		i++;
+	}
+	return (0);
+}

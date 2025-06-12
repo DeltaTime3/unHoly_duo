@@ -81,6 +81,8 @@ int	validate_input(const char *input)
 		return (1);
 	if (check_unexpected_tokens(input))
 		return (1);
+	if (check_token_sequence(input))
+		return (1);
 	return (0);
 }
 
@@ -90,6 +92,7 @@ int	handle_quote_error(t_list **tokens)
 	*tokens = NULL;
 	return (1);
 }
+
 
 // int is_builtin(const char *cmd)
 // {
