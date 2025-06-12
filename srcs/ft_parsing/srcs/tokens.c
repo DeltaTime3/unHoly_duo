@@ -30,12 +30,19 @@ t_list	*tokenize_input(const char *input)
 	i = 0;
 	expect_command = 1;
 	if (!input || ft_strlen(input) == 0 || ft_isspace(input[0]))
+	{
+		free(tokens);
 		return (NULL);
+	}
 	while (input[i])
 	{
 		result = token_helper(input, &i, tokens, &expect_command);
 		if (result == 1)
+		{
+			free_tokens(*tokens);
+			free(tokens);
 			return (NULL);
+		}
 	}
 	final_tokens = *tokens;
 	free(tokens);

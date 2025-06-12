@@ -50,18 +50,18 @@ int	check_unexpected_tokens(const char *input)
 {
 	int	i;
 
-	i = ft_strlen(input);
-	if (i == 0)
-		return (0);
-	i--;
-	while (i >= 0 && ft_isspace(input[i]))
-		i--;
-	if (input[i] == '<' || input[i] == '>' || input[i] == '&')
-	{
-		ft_printf_fd(2, UNEXPECTED_TOKEN);
-		return (1);
-	}
-	return (0);
+    i = ft_strlen(input);
+    if (i == 0)
+        return (0);
+    i--;
+    while (i >= 0 && ft_isspace(input[i]))
+        i--;
+    if (i >= 0 && (input[i] == '<' || input[i] == '>' || input[i] == '&'))
+    {
+        ft_printf_fd(2, UNEXPECTED_TOKEN);
+        return (1);
+    }
+    return (0);
 }
 
 int	validate_input(const char *input)
