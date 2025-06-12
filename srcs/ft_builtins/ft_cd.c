@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 14:29:58 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/05/26 09:55:57 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/12 14:38:12 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ char	*get_cd_target(t_token *token, t_shell *type, int *is_cd_minus)
 	if (!token->next || !token->next->value || ft_strcmp(token->next->value,
 			"~") == 0)
 	{
-		temp = get_env_value(type, "HOME");
+		temp = get_env_value(type->head, "HOME");
 		if (temp)
 			return (ft_strdup(temp));
 		else
@@ -121,7 +121,7 @@ char	*get_cd_target(t_token *token, t_shell *type, int *is_cd_minus)
 	else if (ft_strcmp(token->next->value, "-") == 0)
 	{
 		*is_cd_minus = 1;
-		temp = get_env_value(type, "OLDPWD");
+		temp = get_env_value(type->head, "OLDPWD");
 		if (temp)
 			return (ft_strdup(temp));
 		return (NULL);
@@ -143,7 +143,7 @@ int	dir_val(t_token *token, t_shell *type, char **new_dir)
 
 	if (!token->next)
 	{
-		home = get_env_value(type, "HOME");
+		home = get_env_value(type->head, "HOME");
 		if (home)
 			*new_dir = ft_strdup(home);
 		else

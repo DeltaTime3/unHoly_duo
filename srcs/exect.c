@@ -24,16 +24,14 @@ int	is_builtin(t_token *token)
 	char	*builtin[8]; 
 	int		i;
 
-	*builtin = (char *[]){
-		"cd",
-		"exit",
-		"export",
-		"env",
-		"echo",
-		"pwd",
-		"unset",
-		NULL
-	};
+	builtin[0] = "cd";
+	builtin[1] = "exit";
+	builtin[2] = "export";
+	builtin[3] = "env";
+	builtin[4] = "echo";
+	builtin[5] = "pwd";
+	builtin[6] = "unset";
+	builtin[7] = NULL;
 	i = 0;
 	while (builtin[i])
 	{
@@ -53,7 +51,8 @@ int	ft_execute(t_shell *shell, t_token *value)
 	}
 	else
 	{
-		return (execute2(shell, value));
+		execute2(shell, value);
+		return (0);
 	}
 }
 //here I have to use child processes;
@@ -114,7 +113,6 @@ char	*get_cmd_path(char *cmd, t_env *env)
 	char		*path;
 	char		*pth_cpy;
 	char		*res;
-	char		*full_path;
 
 	if (!cmd || !*cmd)
 		return (NULL);
@@ -125,6 +123,7 @@ char	*get_cmd_path(char *cmd, t_env *env)
 		return (NULL);
 	}
 	path = get_env_value(env, "PATH");
+	pth_cpy = path;
 	if (!path || path[0] == '\0')
 	{
 		if (pth_cpy)
@@ -134,18 +133,18 @@ char	*get_cmd_path(char *cmd, t_env *env)
 	pth_cpy = ft_strdup(path);
 	if (!pth_cpy)
 		return (NULL);
-	res = check_dir(pth_cpy, cmd);
+	res = check_path_dir(pth_cpy, cmd);
 	return(free(pth_cpy), res);	
 }
 
-char	*check_dir(char *pth_cpy, char *cmd)
+char	*check_path_dir(char *pth_cpy, char *cmd)
 {
 	char	*dir;
 	char	*full_path;
 	char	*res;
 	
 	res = NULL;
-	while (dir = get_next_path(&pth_cpy))
+	while ((dir = get_next_path(&pth_cpy)))
 	{
 		full_path = build_cmb_path(dir, cmd);
 		free(dir);

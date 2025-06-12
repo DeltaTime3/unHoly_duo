@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 09:43:03 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/11 12:18:24 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/12 14:40:10 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,14 @@
  * if found, returns a pointer to the value part of the env variable.
  * returns pointer to 
  */
-char	*get_env_value(t_shell *type, const char *key)
+char	*get_env_value(t_env *head, const char *key)
 {
 	t_env	*curr;
 
-	if(!type || !type->head || !key)
-		return (NULL);
-	curr = type->head;
+	curr = head;
 	while (curr)
 	{
-		if (ft_strcmp(curr, key) == 0)
+		if (ft_strcmp(curr->key, key) == 0)
 			{
 				return (curr->value);
 			}

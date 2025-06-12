@@ -6,13 +6,13 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 10:28:42 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/09 10:58:53 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/12 13:56:01 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void init_shell_env(char **enviroment)
+t_env *init_shell_env(char **enviroment)
 {
 	t_env *head;
 	char *equal;
@@ -56,7 +56,7 @@ void env_back(t_env **lst, t_env *new)
 	}
 	t_env	*curr;
 
-	curr = lst;
+	curr = *lst;
 	while (curr->next)
 		curr = curr->next;
 	curr->next = new;
