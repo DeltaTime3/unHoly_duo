@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/13 11:54:41 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/06/13 13:19:33 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,25 +105,27 @@ int	token_counter(t_token *token)
 void	ft_free_shell(t_shell *shell)
 {
 	if (!shell)
-		return ;
-	if (shell->head)
-		free_env(shell->head);
-	if (shell->token)
-	{
-		free(shell->token->value);
-    	free(shell->token->args);
-    	free(shell->token);
-    	shell->token = NULL;
-	}
-	if (shell->prev_dir)
-		free(shell->prev_dir);
-	if (shell->curr_dir)
-		free(shell->curr_dir);
-	if (shell->pwd)
-		free(shell->pwd);
-	shell->head = NULL;
-	shell->token = NULL;
-	shell->prev_dir = NULL;
-	shell->curr_dir = NULL;
-	shell->pwd = NULL;
+        return;
+    if (shell->head)
+        free_env(shell->head);
+    if (shell->token)
+    {
+        if (shell->token->value)
+            free(shell->token->value);
+        if (shell->token->args)
+            free_args(shell->token->args);
+        free(shell->token);
+        shell->token = NULL;
+    }
+    if (shell->prev_dir)
+        free(shell->prev_dir);
+    if (shell->curr_dir)
+        free(shell->curr_dir);
+    if (shell->pwd)
+        free(shell->pwd);
+    shell->head = NULL;
+    shell->token = NULL;
+    shell->prev_dir = NULL;
+    shell->curr_dir = NULL;
+    shell->pwd = NULL;
 }

@@ -3,6 +3,8 @@
 
 void	choose_b_in(t_token *token, t_shell *shell)
 {
+	if (!token || !token->value)
+        return;
 	if (ft_strcmp(token->value, "cd") == 0)
 		ft_cd(token, shell);
 	else if (ft_strcmp(token->value, "exit") == 0)
@@ -22,24 +24,26 @@ void	choose_b_in(t_token *token, t_shell *shell)
 int	is_builtin(t_token *token)
 {
 	char	*builtin[8]; 
-	int		i;
+    int		i;
 
-	builtin[0] = "cd";
-	builtin[1] = "exit";
-	builtin[2] = "export";
-	builtin[3] = "env";
-	builtin[4] = "echo";
-	builtin[5] = "pwd";
-	builtin[6] = "unset";
-	builtin[7] = NULL;
-	i = 0;
-	while (builtin[i])
-	{
-		if (ft_strcmp(token->value, builtin[i]) == 0)
-			return (1);
-		i++;
-	}
-	return (0);
+    if (!token || !token->value)
+        return (0);
+    builtin[0] = "cd";
+    builtin[1] = "exit";
+    builtin[2] = "export";
+    builtin[3] = "env";
+    builtin[4] = "echo";
+    builtin[5] = "pwd";
+    builtin[6] = "unset";
+    builtin[7] = NULL;
+    i = 0;
+    while (builtin[i])
+    {
+        if (ft_strcmp(token->value, builtin[i]) == 0)
+            return (1);
+        i++;
+    }
+    return (0);
 }
 
 int	ft_execute(t_shell *shell, t_token *value)

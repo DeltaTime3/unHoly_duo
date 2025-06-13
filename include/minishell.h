@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/13 11:53:36 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/06/13 13:29:23 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,7 @@ int		token_handling(const char *input, int *i, t_list **tokens,
 			int *expect_command);
 
 // tokens_helpers2.c
+void 	print_tokens(t_list *tokens);
 void	input_handling(char *input, t_list *tokens);
 void	process_input(char *input);
 void	exit_handling(char *input);

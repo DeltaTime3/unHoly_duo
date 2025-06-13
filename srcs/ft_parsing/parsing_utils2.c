@@ -15,6 +15,8 @@ void	free_tokens(t_list *tokens)
 		{
 			if (token->content)
 				free(token->content);
+			if (token->value)
+				free(token->value);
 			if (token->args)
 				free_args(token->args);
 			free(token);

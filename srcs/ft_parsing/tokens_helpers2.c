@@ -27,7 +27,7 @@ static const char	*get_token_type(t_cat type)
 		return ("UNKNOWN");
 }
 
-static void	print_tokens(t_list *tokens)
+void	print_tokens(t_list *tokens)
 {
 	t_list		*current;
 	t_token	*token;

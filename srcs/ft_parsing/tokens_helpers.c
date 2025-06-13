@@ -30,8 +30,11 @@ int	op_handling(const char *input, int *i, t_list **tokens)
 	if (operator_type(input, i, &type))
 		return (1);
 	value = ft_substr(input, start, *i - start + 1);
-	if (!value)
-		return (1);
+	if (!value || ft_strlen(value) == 0) // Check for empty or NULL value
+    {
+        free(value);
+        return (1);
+    }
 	ft_lstadd_back(tokens, ft_lstnew(create_token(type, value)));
 	(*i)++;
 	while (input[*i] && ft_isspace(input[*i]))
@@ -52,8 +55,12 @@ int	word_handling(const char *input, int *i, t_list **tokens,
 	start = *i;
 	skip_special_chars(input, i);
 	value = ft_substr(input, start, *i - start);
-	if (!value)
-		return (1);
+	if (!value || ft_strlen(value) == 0)
+    {
+        free(value);
+        return (1);
+    }
+	printf("Extracted word: %s\n", value);
 	type = determine_token_type(value, expect_command);
 	ft_lstadd_back(tokens, ft_lstnew(create_token(type, value)));
 	return (0);
