@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	free_tokens(t_token *tokens)
+void	free_tokens(t_list *tokens)
 {
 	t_list	*current;
 	t_list	*next;
@@ -13,12 +13,10 @@ void	free_tokens(t_token *tokens)
 		token = (t_token *)current->content;
 		if (token)
 		{
-			if (token->value)
-				free(token->value);
+			if (token->content)
+				free(token->content);
 			if (token->args)
-			{
 				free_args(token->args);
-			}
 			free(token);
 		}
 		free(current);

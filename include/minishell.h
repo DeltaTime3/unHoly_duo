@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/12 15:59:06 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/13 11:53:36 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ int		handle_quote_error(t_list **tokens);
 int		quote_handling(const char *input, int *i, t_list **tokens,
 			int *expect_command);
 bool	open_pipe(const char *input, int i);
-void	free_tokens(t_token *tokens);
+void	free_tokens(t_list *tokens);
 void	free_args(char **args);
 int		check_token_sequence(const char *input);
 
@@ -219,6 +219,7 @@ void 	update_env_value_bi(t_env *env, char *value, int flag);
 void	print_env(t_shell *type);
 char 	*extract_key(const char *agrs, int len);
 void 	append_env_value(t_env *env, char *value);
+void	print_export_list(t_env *head);
 
 //unset
 int 	ft_unset(t_shell *shell, t_token *args);

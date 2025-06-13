@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 10:24:06 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/03 11:59:36 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/13 11:51:44 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	free_unset(t_token *token, t_shell *type)
 	int		i;
 
 	i = 0;
-	if (!token || !token->args || !type || !type->env_var)
+	if (!token || !token->args || !type || !type->head)
 	{
 		return;
 	}

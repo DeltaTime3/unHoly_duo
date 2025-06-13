@@ -12,6 +12,9 @@ t_token	*create_token(t_cat type, char *content)
 	}
 	token->type = type;
 	token->content = content;
+	token->value = NULL;
+    token->args = NULL;
+    token->next = NULL;
 	return (token);
 }
 
