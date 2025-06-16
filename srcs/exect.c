@@ -46,6 +46,7 @@ int	is_builtin(t_token *token)
 
 int	ft_execute(t_shell *shell, t_token *value)
 {
+	expand_tokens(value, shell);
 	if (is_builtin(value))
 	{
 		choose_b_in(value, shell);

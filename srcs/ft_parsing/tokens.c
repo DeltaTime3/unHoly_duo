@@ -54,5 +54,55 @@ t_token	*tokenize_input(const char *input)
 	final_tokens = *tokens;
 	free(tokens);
 	print_tokens(final_tokens);
+	prep_cmd_args(final_tokens);
 	return (final_tokens);
+}
+
+void	prep_cmd_args(t_token *head)
+{
+	t_token	*command;
+	int		arg_count;
+	t_token	*arg;
+	int		i;
+
+	command = head;
+	while (command)
+	{
+		if (command->type == COMMAND)
+		{
+			arg_count = 1;
+            arg = command->next;
+            while (arg && arg->type != PIPE && arg->type != COMMAND)
+            {
+                if (arg->type == ARGUMENT || arg->type == FLAG)
+                    arg_count++;
+                arg = arg->next;
+            }
+            command->args = malloc(sizeof(char *) * (arg_count + 1));
+            if (!command->args)
+                return;
+            command->args[0] = ft_strdup(command->value);
+            i = 1;
+            arg = command->next;
+            while (arg && arg->type != PIPE && arg->type != COMMAND && i < arg_count)
+            {
+                if (arg->type == ARGUMENT || arg->type == FLAG)
+                {
+                    command->args[i] = ft_strdup(arg->value);
+                    i++;
+                }
+                arg = arg->next;
+            }
+            command->args[i] = NULL;
+			arg = command->next;
+            while (arg && arg->type != PIPE)
+                arg = arg->next;
+			if (arg && arg->type == PIPE)
+                command = arg->next;
+            else
+                command = NULL;
+        }
+        else
+            command = command->next;
+	}
 }
