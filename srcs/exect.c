@@ -84,30 +84,41 @@ int	execute2(t_shell *shell, t_token *token)
 	}
 	pid = fork();
 	if (pid == 0)
-	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
-		execve(full_path, token->args, env_array);
-		perror("execve");
-		free(full_path);
-		free(env_array);
-		exit(EXIT_FAILURE);
-	}
+		pid_zero(full_path, env_array, token);
 	else if (pid < 0)
-	{
-		perror("fork");
-		free(full_path);
-		free(env_array);
-		return (-1);
-	}
+		pid_neg(full_path, env_array);
 	else
 	{
-		waitpid(pid, &sts, 0);
-		shell->exit_code = WEXITSTATUS(sts);
-		free(full_path);
-		free(env_array);
-		return (0);
+		pid_else(full_path, env_array, shell, pid, sts);
 	}
+}
+
+void	pid_zero(char *full_path, char **env_array, t_token *token)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	execve(full_path, token->args, env_array);
+	perror("execve");
+	free(full_path);
+	free(env_array);
+	exit(EXIT_FAILURE);
+}
+
+int	pid_neg(char *full_path, char **env_array)
+{
+	perror("fork");
+	free(full_path);
+	free(env_array);
+	return (-1);
+}
+
+int	pid_else(char *full_path, char **env_array, t_shell *shell, pid_t pid, int sts)
+{
+	waitpid(pid, &sts, 0);
+	shell->exit_code = WEXITSTATUS(sts);
+	free(full_path);
+	free(env_array);
+	return (0);
 }
 
 char	*get_cmd_path(char *cmd, t_env *env)
