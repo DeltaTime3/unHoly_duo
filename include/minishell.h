@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/16 14:20:22 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/06/16 15:04:08 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,10 @@ typedef struct s_env
 // PARSING PROTOTYPES
 
 // expansions.c
-
+char 	*expand_env_var(const char *input, t_shell *shell);
+char	*expand_exit_status(const char *input, t_shell *shell);
+void 	expand_tokens(t_token *token, t_shell *shell);
+char 	*expand_token_value(char *value, t_shell *shell);
 
 // refractors.c
 int		operator_type(const char *input, int *i, t_cat *type);
@@ -134,6 +137,7 @@ t_cat	determine_token_type(const char *value, int *expect_command);
 // tokens.c
 t_token	*create_token(t_cat type, char *content);
 t_token	*tokenize_input(const char *input);
+void	prep_cmd_args(t_token *head);
 
 // tokens_helpers.c
 int		file_handling(const char *input, int *i, t_token **tokens);

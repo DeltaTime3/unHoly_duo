@@ -27,21 +27,68 @@ char *expand_exit_status(const char *input, t_shell *shell)
     return (ft_strdup(input));
 }
 
-// char    *expand_token_value(char *value, t_shell *shell)
-// {
-//     char    *result;
-//     char    *temp;
-//     char    *home;
+void expand_tokens(t_token *token, t_shell *shell)
+{
+    char *expanded;
+    int i;
+    
+    i = 0;
+    printf("Token value: '%s'\n", token->value);
+    printf("Token args: ");
+    if (token->args) {
+        i = 0;
+        while (token->args[i]) {
+            printf("'%s' ", token->args[i]);
+            i++;
+        }
+    } else {
+        printf("(null)");
+    }
+    printf("\n");
+    i = 0;
+    if (token->value)
+    {
+        expanded = expand_token_value(token->value, shell);
+        free(token->value);
+        token->value = expanded;
+    }
+    if (token->args)
+    {
+        while (token->args[i])
+        {
+            expanded = expand_token_value(token->args[i], shell);
+            free(token->args[i]);
+            token->args[i] = expanded;
+            i++;
+        }
+    }
+}
 
-//     if (value[0] == '~' && (value[1] == '\0' || value[1] == '/'))
-//     {
-//         home = get_env_value(shell->head, "HOME");
-//         if (home)
-//         {
-//             temp = ft_strjoin(home, value + 1);
-//             result = temp;
-//         }
-//     }
-//     else if (ft_strcmp(value, "$?") == 0)
-//         result = expand_exit_status()
-// }
+char    *expand_token_value(char *value, t_shell *shell)
+{
+    char *result;
+    char *temp;
+    char *home;
+
+    printf("Expanding: '%s'\n", value);
+    if (value[0] == '~' && (value[1] == '\0' || value[1] == '/'))
+    {
+        home = get_env_value(shell->head, "HOME");
+        printf("HOME value: '%s'\n", home ? home : "NULL");
+        if (home)
+        {
+            temp = ft_strjoin(home, value + 1);
+            printf("Expanded to: '%s'\n", temp);
+            result = temp;
+        }
+        else
+            return (ft_strdup(value));
+    }
+    else if (ft_strcmp(value, "$?") == 0)
+        result = expand_exit_status(value, shell);
+    else if (value[0] == '$' && value[1] != '\0')
+        result = expand_env_var(value, shell);
+    else
+        result = ft_strdup(value);
+    return (result);
+}
