@@ -9,7 +9,7 @@ int	main(int ac, char **av, char **envp)
 
     (void)ac;
     (void)av;
-    shell.head = init_env(envp); // Initialize environment variables
+    shell.head = init_env(envp);
 	shell.exit_code = 0;
 	shell.return_code = 0;
 	shell.prev_dir = NULL;
@@ -22,25 +22,25 @@ int	main(int ac, char **av, char **envp)
     {
         input = readline("minishell> ");
         if (!input)
-            break; // Handle EOF (Ctrl+D)
+            break;
         if (ft_strlen(input) == 0)
         {
             free(input);
         }
         else
         {
-            add_history(input); // Add input to history
+            add_history(input);
             tokens = tokenize_input(input);
             free(input);
             if (tokens)
             {
-                ft_execute(&shell, (t_token *)tokens->content); // Pass tokens to execution
+                ft_execute(&shell, tokens);
 				print_tokens(tokens);
-				free_tokens(tokens); // Free token list
+				free_tokens(tokens);
             }
         }
     }
     rl_clear_history();
-    free_env(shell.head); // Free environment variables
+    free_env(shell.head);
     return (shell.exit_code);
 }

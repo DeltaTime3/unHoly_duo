@@ -26,8 +26,6 @@ int	is_builtin(t_token *token)
 	char	*builtin[8]; 
     int		i;
 
-    if (!token || !token->value)
-        return (0);
     builtin[0] = "cd";
     builtin[1] = "exit";
     builtin[2] = "export";
