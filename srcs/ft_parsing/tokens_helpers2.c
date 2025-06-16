@@ -57,7 +57,7 @@ void	input_handling(char *input, t_token *tokens)
 
 void	process_input(char *input)
 {
-	t_token	*tokens;
+	t_list	*tokens;
 
 	if (*input)
 		add_history(input);
