@@ -19,7 +19,8 @@ int	ft_echo(t_token *token)
 	{
 		if (!first_arg)
 			printf(" ");
-		printf("%s", curr->value);
+		if (curr->type == ARGUMENT)
+			printf("%s", curr->value);
 		first_arg = 0;
 		curr = curr->next;
 	}
