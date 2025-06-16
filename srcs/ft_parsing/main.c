@@ -4,7 +4,7 @@
 int	main(int ac, char **av, char **envp)
 {
 	char	*input;
-    t_list	*tokens;
+    t_token	*tokens;
     t_shell	shell;
 
     (void)ac;

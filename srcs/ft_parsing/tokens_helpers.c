@@ -1,7 +1,7 @@
 #include "minishell.h"
 
 // files
-int	file_handling(const char *input, int *i, t_list **tokens)
+int	file_handling(const char *input, int *i, t_token **tokens)
 {
 	size_t	start;
 	char	*value;
@@ -14,12 +14,12 @@ int	file_handling(const char *input, int *i, t_list **tokens)
 	value = ft_substr(input, start, *i - start);
 	if (!value)
 		return (1);
-	ft_lstadd_back(tokens, ft_lstnew(create_token(FILES, value)));
+	add_token(tokens, create_token(FILES, value));
 	return (0);
 }
 
 // operators
-int	op_handling(const char *input, int *i, t_list **tokens)
+int	op_handling(const char *input, int *i, t_token **tokens)
 {
 	size_t	start;
 	char	*value;
@@ -35,7 +35,7 @@ int	op_handling(const char *input, int *i, t_list **tokens)
         free(value);
         return (1);
     }
-	ft_lstadd_back(tokens, ft_lstnew(create_token(type, value)));
+	add_token(tokens, create_token(type, value));
 	(*i)++;
 	while (input[*i] && ft_isspace(input[*i]))
 		(*i)++;
@@ -45,7 +45,7 @@ int	op_handling(const char *input, int *i, t_list **tokens)
 }
 
 // words
-int	word_handling(const char *input, int *i, t_list **tokens,
+int	word_handling(const char *input, int *i, t_token **tokens,
 	int *expect_command)
 {
 	size_t	start;
@@ -62,12 +62,12 @@ int	word_handling(const char *input, int *i, t_list **tokens,
     }
 	printf("Extracted word: %s\n", value);
 	type = determine_token_type(value, expect_command);
-	ft_lstadd_back(tokens, ft_lstnew(create_token(type, value)));
+	add_token(tokens, create_token(type, value));
 	return (0);
 }
 
 // pipes
-int	pipe_handling(const char *input, int *i, t_list **tokens)
+int	pipe_handling(const char *input, int *i, t_token **tokens)
 {
 	size_t	start;
 	char	*value;
@@ -84,14 +84,14 @@ int	pipe_handling(const char *input, int *i, t_list **tokens)
 	value = ft_substr(input, start, *i - start);
 	if (!value)
 		return (1);
-	ft_lstadd_back(tokens, ft_lstnew(create_token(PIPE, value)));
+	add_token(tokens, create_token(PIPE, value));
 	while (input[*i] && ft_isspace(input[*i]))
 		(*i)++;
 	return (0);
 }
 
 // token handling
-int	token_handling(const char *input, int *i, t_list **tokens,
+int	token_handling(const char *input, int *i, t_token **tokens,
 		int *expect_command)
 {
 	if (!input || !input[*i])

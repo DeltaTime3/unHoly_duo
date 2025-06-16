@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:55 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/16 11:09:00 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/16 12:21:35 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	ft_echo(t_token *token)
 
 	flag = 0;
 	first_arg = 1;
-	curr = token;
+	curr = token->next;
 	while (curr && curr->value && ft_strcmp(curr->value, "-n") == 0)
 		{
 			flag = 1;
@@ -31,7 +31,7 @@ int	ft_echo(t_token *token)
 		{
 			if (!first_arg)
 				printf(" ");
-			printf("%s", curr->content);
+			printf("%s", curr->value);
 			first_arg = 0;
 			curr = curr->next;
 		}

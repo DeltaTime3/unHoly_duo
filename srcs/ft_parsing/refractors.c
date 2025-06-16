@@ -22,7 +22,7 @@ int	operator_type(const char *input, int *i, t_cat *type)
 	return (0);
 }
 
-int	special_tokens_handling(const char *input, int *i, t_list **tokens,
+int	special_tokens_handling(const char *input, int *i, t_token **tokens,
 		int *expect_command)
 {
 	if (!input || !input[*i])
@@ -52,7 +52,7 @@ int	special_tokens_handling(const char *input, int *i, t_list **tokens,
 	return (0);
 }
 
-int	token_helper(const char *input, int *i, t_list **tokens,
+int	token_helper(const char *input, int *i, t_token **tokens,
 		int *expect_command)
 {
 	int	result;

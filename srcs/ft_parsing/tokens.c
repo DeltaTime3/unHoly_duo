@@ -21,15 +21,15 @@ t_token	*create_token(t_cat type, char *content)
     return (token);
 }
 
-t_list	*tokenize_input(const char *input)
+t_token	*tokenize_input(const char *input)
 {
-	t_list	**tokens;
-	t_list	*final_tokens;
+	t_token	**tokens;
+	t_token	*final_tokens;
 	int		i;
 	int		expect_command;
 	int		result;
 
-	tokens = malloc(sizeof(t_list *));
+	tokens = malloc(sizeof(t_token *));
 	if (!tokens)
 		return (NULL);
 	*tokens = NULL;
@@ -50,7 +50,7 @@ t_list	*tokenize_input(const char *input)
 			free(tokens);
 			return (NULL);
 		}
-		else if (result == 2) // Handle comments or special cases
+		else if (result == 2)
             break;
 	}
 	final_tokens = *tokens;

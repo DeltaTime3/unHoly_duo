@@ -1,29 +1,20 @@
 #include "minishell.h"
 
-void	free_tokens(t_list *tokens)
+void	free_tokens(t_token *tokens)
 {
-	t_list	*current;
-	t_list	*next;
-	t_token	*token;
+    t_token *current;
+    t_token *next;
 
-	current = tokens;
-	while (current)
-	{
-		next = current->next;
-		token = (t_token *)current->content;
-		if (token)
-		{
-			if (token->content)
-				free(token->content);
-			if (token->value)
-				free(token->value);
-			if (token->args)
-				free_args(token->args);
-			free(token);
-		}
-		free(current);
-		current = next;
-	}
+    current = tokens;
+    while (current)
+    {
+        next = current->next;
+        free(current->value);
+        free(current->content);
+        free(current->args);
+        free(current);
+        current = next;
+    }
 }
 
 void	free_args(char **args)
@@ -37,7 +28,7 @@ void	free_args(char **args)
 }
 
 // quotes 
-int	quote_handling(const char *input, int *i, t_list **tokens,
+int	quote_handling(const char *input, int *i, t_token **tokens,
 	int *expect_command)
 {
 	char	quote;
@@ -55,7 +46,7 @@ int	quote_handling(const char *input, int *i, t_list **tokens,
 	if (!value)
 		return (1);
 	type = determine_token_type(value, expect_command);
-	ft_lstadd_back(tokens, ft_lstnew(create_token(type, value)));
+	add_token(tokens, create_token(type, value));
 	(*i)++;
 	return (0);
 }
