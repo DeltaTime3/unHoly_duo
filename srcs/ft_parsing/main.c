@@ -35,7 +35,8 @@ int	main(int ac, char **av, char **envp)
             if (tokens)
             {
                 ft_execute(&shell, (t_token *)tokens->content); // Pass tokens to execution
-                free_tokens(tokens); // Free token list
+				print_tokens(tokens);
+				free_tokens(tokens); // Free token list
             }
         }
     }

@@ -41,7 +41,7 @@ void	print_tokens(t_list *tokens)
 	}
 }
 
-void	input_handling(char *input, t_list *tokens)
+void	input_handling(char *input, t_token *tokens)
 {
 	(void)tokens;
 	input = readline("minishell> ");
@@ -57,7 +57,7 @@ void	input_handling(char *input, t_list *tokens)
 
 void	process_input(char *input)
 {
-	t_list	*tokens;
+	t_token	*tokens;
 
 	if (*input)
 		add_history(input);
