@@ -60,7 +60,6 @@ int	word_handling(const char *input, int *i, t_token **tokens,
         free(value);
         return (1);
     }
-	printf("Extracted word: %s\n", value);
 	type = determine_token_type(value, expect_command);
 	add_token(tokens, create_token(type, value));
 	return (0);

@@ -4,14 +4,17 @@ void	free_tokens(t_token *tokens)
 {
     t_token *current;
     t_token *next;
-
+    
     current = tokens;
     while (current)
     {
         next = current->next;
-        free(current->value);
-        free(current->content);
-        free(current->args);
+        if (current->value)
+            free(current->value);
+        if (current->content)
+            free(current->content);
+        if (current->args)
+            free_args(current->args);
         free(current);
         current = next;
     }

@@ -6,6 +6,7 @@ int	main(int ac, char **av, char **envp)
 	char	*input;
     t_token	*tokens;
     t_shell	shell;
+    int     is_valid;
 
     (void)ac;
     (void)av;
@@ -24,20 +25,23 @@ int	main(int ac, char **av, char **envp)
         if (!input)
             break;
         if (ft_strlen(input) == 0)
-        {
             free(input);
-        }
         else
         {
+            is_valid = !validate_input(input);
             add_history(input);
-            tokens = tokenize_input(input);
-            free(input);
-            if (tokens)
-            {
-                ft_execute(&shell, tokens);
-				print_tokens(tokens);
-				free_tokens(tokens);
+            if (is_valid)
+            {    
+                tokens = tokenize_input(input);
+                free(input);
+                if (tokens)
+                {
+                    ft_execute(&shell, tokens);
+                    free_tokens(tokens);
+                }
             }
+            else
+                free (input);
         }
     }
     rl_clear_history();

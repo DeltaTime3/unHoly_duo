@@ -63,7 +63,6 @@ int	token_helper(const char *input, int *i, t_token **tokens,
 			(*i)++;
 		if (!input[*i])
 			break ;
-		printf("Processing character: %c\n", input[*i]);
 		result = token_handling(input, i, tokens, expect_command);
 		if (result == 1)
 		{

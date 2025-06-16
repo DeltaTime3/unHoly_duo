@@ -96,14 +96,12 @@ void	add_token(t_token **head, t_token *new_token)
 	if (*head == NULL)
 	{
 		*head = new_token;
-		printf("Added token: %s\n", new_token->content);
 		return ;
 	}
 	current = *head;
 	while (current->next)
 		current = current->next;
 	current->next = new_token;
-	printf("Added token: %s\n", new_token->content);
 }
 
 // int	syntax_err_handling(char *value, t_list **tokens)

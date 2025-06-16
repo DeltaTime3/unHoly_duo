@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/16 11:57:16 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/06/16 14:20:22 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,7 @@ typedef struct s_env
 // PARSING PROTOTYPES
 
 // expansions.c
-char 	*expand_env_var(const char *input, t_shell *shell);
-char	*expand_exit_status(const char *input, t_shell *shell);
+
 
 // refractors.c
 int		operator_type(const char *input, int *i, t_cat *type);

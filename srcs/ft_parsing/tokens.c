@@ -35,7 +35,6 @@ t_token	*tokenize_input(const char *input)
 	*tokens = NULL;
 	i = 0;
 	expect_command = 1;
-	printf("Tokenizing input: %s\n", input);
 	if (!input || ft_strlen(input) == 0 || ft_isspace(input[0]))
 	{
 		free(tokens);
@@ -46,7 +45,6 @@ t_token	*tokenize_input(const char *input)
 		result = token_helper(input, &i, tokens, &expect_command);
 		if (result == 1)
 		{
-			free_tokens(*tokens);
 			free(tokens);
 			return (NULL);
 		}
