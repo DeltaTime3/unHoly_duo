@@ -99,8 +99,7 @@ int	token_handling(const char *input, int *i, t_token **tokens,
 		return (1);
 	if (input[*i] == '#')
 		return (2);
-	if (ft_isalpha(input[*i]) || input[*i] == '\''
-		|| input[*i] == '"' || input[*i] == '-')
+	if (ft_isprint(input[*i]))
 	{
 		if (*expect_command && !ft_isdigit(input[*i]))
 		{
