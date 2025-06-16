@@ -86,7 +86,7 @@ int	validate_input(const char *input)
 	return (0);
 }
 
-int	handle_quote_error(t_list **tokens)
+int	handle_quote_error(t_token **tokens)
 {
 	free_tokens(*tokens);
 	*tokens = NULL;

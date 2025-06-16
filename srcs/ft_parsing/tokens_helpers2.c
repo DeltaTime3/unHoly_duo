@@ -27,15 +27,15 @@ static const char	*get_token_type(t_cat type)
 		return ("UNKNOWN");
 }
 
-void	print_tokens(t_list *tokens)
+void	print_tokens(t_token *tokens)
 {
-	t_list		*current;
+	t_token		*current;
 	t_token	*token;
 
 	current = tokens;
 	while (current)
 	{
-		token = (t_token *)current->content;
+		token = current;
 		printf("Type: %s, Value: '%s'\n", get_token_type(token->type), token->content);
 		current = current->next;
 	}
@@ -55,29 +55,28 @@ void	input_handling(char *input, t_token *tokens)
 		process_input(input);
 }
 
-void	process_input(char *input)
+void process_input(char *input)
 {
-	t_token	*tokens;
-
-	if (*input)
-		add_history(input);
-	if (validate_input(input))
-	{
-		free(input);
-		return ;
-	}
-	tokens = tokenize_input(input);
-	if (!tokens)
-	{
-		free(input);
-		return ;
-	}
-	free(input);
-	if (tokens)
-	{
-		print_tokens(tokens);
-		free_tokens(tokens);
-	}
+    t_token *tokens;
+    if (*input)
+        add_history(input);
+    if (validate_input(input))
+    {
+        free(input);
+        return;
+    }
+    tokens = tokenize_input(input);
+    if (!tokens)
+    {
+        free(input);
+        return;
+    }
+    free(input);
+    if (tokens)
+    {
+        print_tokens(tokens);
+        free_tokens(tokens);
+    }
 }
 
 void	exit_handling(char *input)
@@ -86,6 +85,25 @@ void	exit_handling(char *input)
 	free(input);
 	rl_clear_history();
 	exit(0);
+}
+
+void	add_token(t_token **head, t_token *new_token)
+{
+	t_token *current;
+	
+	if (!head || !new_token)
+		return ;
+	if (*head == NULL)
+	{
+		*head = new_token;
+		printf("Added token: %s\n", new_token->content);
+		return ;
+	}
+	current = *head;
+	while (current->next)
+		current = current->next;
+	current->next = new_token;
+	printf("Added token: %s\n", new_token->content);
 }
 
 // int	syntax_err_handling(char *value, t_list **tokens)
