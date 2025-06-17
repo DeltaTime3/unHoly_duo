@@ -269,5 +269,5 @@ void	pid_zero(char *full_path, char **env_array, t_token *token);
 int		pid_neg(char *full_path, char **env_array);
 int		pid_else(char *full_path, char **env_array, t_shell *shell, pid_t pid, int sts);
 void 	free_env_array(char **env);
-
+int		is_sp_expantion(t_token *token);
 #endif
