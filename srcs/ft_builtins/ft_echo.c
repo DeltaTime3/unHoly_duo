@@ -17,10 +17,13 @@ int	ft_echo(t_token *token)
     }
 	while (token->args && token->args[i])
     {
-        if (!first_arg)
-            printf(" ");
-        printf("%s", token->args[i]);
-        first_arg = 0;
+        if (token->args[i][0] != '\0')
+        {
+            if (!first_arg)
+                printf(" ");
+            printf("%s", token->args[i]);
+            first_arg = 0;
+        }
         i++;
     }
 	if (!flag)

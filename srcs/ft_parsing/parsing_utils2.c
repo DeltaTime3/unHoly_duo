@@ -48,9 +48,11 @@ int	quote_handling(const char *input, int *i, t_token **tokens,
 	value = ft_substr(input, start, *i - start);
 	if (!value)
 		return (1);
+	(*i)++;
+	while (input[*i] == quote)
+		(*i)++;
 	type = determine_token_type(value, expect_command);
 	add_token(tokens, create_token(type, value));
-	(*i)++;
 	return (0);
 }
 
