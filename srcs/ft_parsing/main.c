@@ -24,14 +24,12 @@ int	main(int ac, char **av, char **envp)
         input = readline("minishell> ");
         if (!input)
             break;
-        if (ft_strlen(input) == 0)
-            free(input);
-        else
+        if (ft_strlen(input) != 0)
         {
             is_valid = !validate_input(input);
             add_history(input);
             if (is_valid)
-            {    
+            {
                 tokens = tokenize_input(input);
                 free(input);
                 if (tokens)
@@ -41,8 +39,10 @@ int	main(int ac, char **av, char **envp)
                 }
             }
             else
-                free (input);
+                free(input);
         }
+        else
+            free(input);
     }
     rl_clear_history();
     free_env(shell.head);
