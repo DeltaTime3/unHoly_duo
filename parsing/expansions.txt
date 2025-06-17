@@ -117,22 +117,21 @@ void expand_tokens(t_list *tokens, t_shell *shell)
 Testing Expansions
 Test Cases
 Environment Variables
-
 Input: echo $USER
 Expected: echo user
-Exit Status
 
+Exit Status
 Input: echo $?
 Expected: echo 0
-Tilde Expansion
 
+Tilde Expansion
 Input: cd ~
 Expected: cd /home/user
-Quotes
 
+Quotes
 Input: echo "Hello $USER"
 Expected: echo Hello user
-Mixed Expansions
 
+Mixed Expansions
 Input: echo "$HOME/$USER"
 Expected: echo /home/user/user

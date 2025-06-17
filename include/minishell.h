@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/17 13:02:12 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/06/17 13:48:17 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,7 @@ int		word_handling(const char *input, int *i, t_token **tokens,
 int		pipe_handling(const char *input, int *i, t_token **tokens);
 int		token_handling(const char *input, int *i, t_token **tokens,
 			int *expect_command);
+int		redirect_handling(t_token *tokens);
 
 // tokens_helpers2.c
 void 	print_tokens(t_token *tokens);
