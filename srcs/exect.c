@@ -46,18 +46,37 @@ int	is_builtin(t_token *token)
 
 int	ft_execute(t_shell *shell, t_token *value)
 {
-	expand_tokens(value, shell);
-	if (is_builtin(value))
-	{
-		choose_b_in(value, shell);
-		return (shell->exit_code);
-	}
-	else
-	{
-		execute2(shell, value);
-		return (0);
-	}
+    int	saved_stdout;
+    int	saved_stdin;
+
+    expand_tokens(value, shell);
+    saved_stdout = dup(STDOUT_FILENO);
+    saved_stdin = dup(STDIN_FILENO);
+    if (saved_stdout == -1 || saved_stdin == -1)
+    {
+        shell->exit_code = 1;
+        return (1);
+    }
+    if (redirect_handling(value) == -1)
+    {
+        shell->exit_code = 1;
+        dup2(saved_stdout, STDOUT_FILENO);
+        dup2(saved_stdin, STDIN_FILENO);
+        close(saved_stdout);
+        close(saved_stdin);
+        return (1);
+    }
+    if (is_builtin(value))
+        choose_b_in(value, shell);
+    dup2(saved_stdout, STDOUT_FILENO);
+    dup2(saved_stdin, STDIN_FILENO);
+    close(saved_stdout);
+    close(saved_stdin);
+    if (!is_builtin(value))
+        execute2(shell, value);
+    return (shell->exit_code);
 }
+
 //here I have to use child processes;
 //not sure if i need to go get the full PATH here and perform a NULL check
 //if so it will somethimg like

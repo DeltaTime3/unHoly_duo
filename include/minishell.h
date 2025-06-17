@@ -137,6 +137,7 @@ int		word_handling(const char *input, int *i, t_token **tokens,
 int		pipe_handling(const char *input, int *i, t_token **tokens);
 int		token_handling(const char *input, int *i, t_token **tokens,
 			int *expect_command);
+int		redirect_handling(t_token *tokens);
 
 // tokens_helpers2.c
 void 	print_tokens(t_token *tokens);
