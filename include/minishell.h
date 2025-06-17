@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/16 15:04:08 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/06/17 09:22:35 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,5 +275,8 @@ char	*get_cmd_path(char *cmd, t_env *env);
 char	*check_path_dir(char *pth_cpy, char *cmd);
 char	*get_next_path(char **path_temp);
 char	*build_cmb_path(char *dir, char *cmd);
+void	pid_zero(char *full_path, char **env_array, t_token *token);
+int		pid_neg(char *full_path, char **env_array);
+int		pid_else(char *full_path, char **env_array, t_shell *shell, pid_t pid, int sts);
 
 #endif

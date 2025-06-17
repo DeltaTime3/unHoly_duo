@@ -71,6 +71,7 @@ int	execute2(t_shell *shell, t_token *token)
 	char	*full_path;
 	char	**env_array;
 
+	sts = 0;
 	full_path = get_cmd_path(token->value, shell->head);
 	if (!full_path)
 	{
@@ -85,13 +86,11 @@ int	execute2(t_shell *shell, t_token *token)
 	}
 	pid = fork();
 	if (pid == 0)
-		pid_zero(full_path, env_array, token);
+		return(pid_zero(full_path, env_array, token), 0);
 	else if (pid < 0)
-		pid_neg(full_path, env_array);
+		return (pid_neg(full_path, env_array));
 	else
-	{
-		pid_else(full_path, env_array, shell, pid, sts);
-	}
+		return (pid_else(full_path, env_array, shell, pid, sts));
 }
 
 void	pid_zero(char *full_path, char **env_array, t_token *token)
