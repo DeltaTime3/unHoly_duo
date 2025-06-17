@@ -117,9 +117,9 @@ void	pid_zero(char *full_path, char **env_array, t_token *token)
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	execve(full_path, token->args, env_array);
+	free_env_array(env_array);
 	perror("execve");
 	free(full_path);
-	free(env_array);
 	exit(EXIT_FAILURE);
 }
 

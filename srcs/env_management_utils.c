@@ -58,6 +58,20 @@ void	free_env_node(t_env *node)
 	free(node);
 }
 
+void free_env_array(char **env)
+{
+	int	i;
+	
+	i = 0;
+	if (!env)
+		return ;
+	while(env[i])
+	{
+		free(env[i]);
+		i++;
+	}
+	free(env);
+}
 void	free_env(t_env *head)
 {
 	t_env	*temp;
@@ -98,3 +112,4 @@ char	**env_list_to_array(t_env *head)
 	array[i] = NULL;
 	return(array);
 }
+
