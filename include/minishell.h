@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/17 09:22:35 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/17 13:06:32 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,5 +278,6 @@ char	*build_cmb_path(char *dir, char *cmd);
 void	pid_zero(char *full_path, char **env_array, t_token *token);
 int		pid_neg(char *full_path, char **env_array);
 int		pid_else(char *full_path, char **env_array, t_shell *shell, pid_t pid, int sts);
+void 	free_env_array(char **env);
 
 #endif

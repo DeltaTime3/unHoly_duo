@@ -6,7 +6,7 @@
 #    By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/16 12:39:09 by ppaula-d          #+#    #+#              #
-#    Updated: 2025/06/02 15:11:01 by afilipe-         ###   ########.fr        #
+#    Updated: 2025/06/17 12:03:52 by afilipe-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,7 @@ SRCS    = ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c ft_isprint.c \
         ft_ishex.c ft_isspace.c ft_lstadd_back.c ft_lstnew.c ft_printf_fd.c \
 		ft_print_hex.c ft_printf_fd.c ft_print_pointer.c ft_print_unsigned.c \
 		ft_printc.c ft_printnbr.c ft_printf.c ft_printstr.c ft_put_hex.c \
-		ft_uitoa.c
+		ft_uitoa.c ft_strcpy.c ft_strcat.c
         
 OBJS    = $(SRCS:.c=.o)
 AR      = ar rcs

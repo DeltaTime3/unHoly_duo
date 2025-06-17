@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 16:08:35 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/11 11:27:50 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/17 12:16:22 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,25 @@ t_env	*find_env_node(t_env *head, char *key)
 
 void 	update_env_value_bi(t_env *env, char *value, int flag)
 {
+	char	*new_value;
+	
 	if (!env)
 		return ;
-	free(env->value);
-	env->value = ft_strdup(value);
+	if (flag == 2)
+	{
+		new_value = malloc(ft_strlen(env->value) + ft_strlen(value) + 1);
+		if (!new_value)
+			return ;
+		ft_strcpy(new_value, env->value);
+		ft_strcat(new_value, value);
+		free(env->value);
+		env->value = new_value;
+	}
+	else
+	{
+		free(env->value);
+		env->value = ft_strdup(value);
+	}
 	if (flag)
 		env->flag = 1;
 }
@@ -55,7 +70,7 @@ char 	*extract_key(const char *args, int len)
 	key = malloc(len + 1);
 	if (!key)
 		return (NULL);
-	ft_strlcpy(key, args, len);
+	ft_strlcpy(key, args, len + 1);
 	key[len] = '\0';
 	return (key);
 }
