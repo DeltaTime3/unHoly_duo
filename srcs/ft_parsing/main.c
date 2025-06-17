@@ -10,7 +10,7 @@ int	main(int ac, char **av, char **envp)
 
     (void)ac;
     (void)av;
-    shell.head = init_env(envp);
+    shell.head = init_shell_env(envp);
 	shell.exit_code = 0;
 	shell.return_code = 0;
 	shell.prev_dir = NULL;
