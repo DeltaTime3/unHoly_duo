@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 09:41:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/17 09:22:35 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/17 13:02:12 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 
 // ERROR MESSAGES
 # define 	UNMATCHED_QUOTES "minishell: syntax error, unmatched quotes\n"
+# define 	UNCLOSED_QUOTES "minishell: syntax error, unclosed quotes\n"
 # define 	LOGICAL_OPERATORS "minishell: syntax error, logical operators \
 not supported according to project's subject\n"
 # define 	UNEXPECTED_TOKEN "minishell: syntax error near unexpected token\n"
