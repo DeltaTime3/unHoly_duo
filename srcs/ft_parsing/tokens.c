@@ -13,9 +13,13 @@ t_token	*create_token(t_cat type, char *content)
     token->type = type;
     token->content = content;
     if (content)
-        token->value = ft_strdup(content);
+        token->content= ft_strdup(content);
     else
-        token->value = NULL;
+        token->content= NULL;
+    if (content)
+        token->value= ft_strdup(content);
+    else
+        token->value= NULL;
     token->args = NULL;
     token->next = NULL;
     return (token);

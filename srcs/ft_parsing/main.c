@@ -37,9 +37,7 @@ int	main(int ac, char **av, char **envp)
                 if (tokens)
                 {
                 	if (is_builtin(tokens))
-					{
 						ft_execute(&shell, tokens);
-					}
 					else if (is_sp_expantion(tokens))
 					{
 						expanded = expand_token_value(tokens->value, &shell);

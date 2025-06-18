@@ -86,6 +86,7 @@ int	pipe_handling(const char *input, int *i, t_token **tokens)
 	add_token(tokens, create_token(PIPE, value));
 	while (input[*i] && ft_isspace(input[*i]))
 		(*i)++;
+	free(value);
 	return (0);
 }
 

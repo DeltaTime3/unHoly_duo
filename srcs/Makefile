@@ -32,6 +32,7 @@ SRC				= env_initializer.c \
 				  $(FT_PARSING_DIR)/main.c \
 				  $(FT_PARSING_DIR)/parsing_utils.c \
 				  $(FT_PARSING_DIR)/parsing_utils2.c \
+				  $(FT_PARSING_DIR)/pipes.c \
 				  $(FT_PARSING_DIR)/refractors.c \
 				  $(FT_PARSING_DIR)/tokens_helpers.c \
 				  $(FT_PARSING_DIR)/tokens_helpers2.c \

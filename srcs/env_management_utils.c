@@ -95,10 +95,13 @@ char	**env_list_to_array(t_env *head)
 	curr = head;
 	while (curr)
 	{
-		i++;
-		curr = curr->next;
+		if (curr->value) // Only count entries with values
+            i++;
+        curr = curr->next;
 	}
 	array = malloc(sizeof(char *) * (i + 1));
+	if (!array)
+		return (NULL);
 	curr = head;
 	i = 0;
 	while (curr)

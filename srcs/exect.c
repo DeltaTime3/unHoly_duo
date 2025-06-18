@@ -48,6 +48,7 @@ int	ft_execute(t_shell *shell, t_token *value)
 {
     int	saved_stdout;
     int	saved_stdin;
+	int	result;
 
     expand_tokens(value, shell);
     saved_stdout = dup(STDOUT_FILENO);
@@ -57,6 +58,15 @@ int	ft_execute(t_shell *shell, t_token *value)
         shell->exit_code = 1;
         return (1);
     }
+	if (count_pipes(value) > 0)
+	{
+		result = handle_pipes(value, shell);
+		dup2(saved_stdin, STDOUT_FILENO);
+		dup2(saved_stdout, STDIN_FILENO);
+		close(saved_stdout);
+		close(saved_stdin);
+		return (result);
+	}
     if (redirect_handling(value) == -1)
     {
         shell->exit_code = 1;
@@ -107,7 +117,7 @@ int	execute2(t_shell *shell, t_token *token)
 	if (pid == 0)
 		return(pid_zero(full_path, env_array, token), 0);
 	else if (pid < 0)
-		return (pid_neg(full_path, env_array));
+		return (pid_neg(full_path, env_array), -1);
 	else
 		return (pid_else(full_path, env_array, shell, pid, sts));
 }
@@ -127,7 +137,7 @@ int	pid_neg(char *full_path, char **env_array)
 {
 	perror("fork");
 	free(full_path);
-	free(env_array);
+	free_env_array(env_array);
 	return (-1);
 }
 
@@ -136,7 +146,7 @@ int	pid_else(char *full_path, char **env_array, t_shell *shell, pid_t pid, int s
 	waitpid(pid, &sts, 0);
 	shell->exit_code = WEXITSTATUS(sts);
 	free(full_path);
-	free(env_array);
+	free_env_array(env_array);
 	return (0);
 }
 
