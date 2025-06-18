@@ -234,6 +234,7 @@ int		ft_pwd(t_shell *type);
 
 //echo
 int		ft_echo(t_token *token);
+int		n_flag_validator(const char *arg);
 
 //utils
 long long	ft_atoll(char *str, int *error);

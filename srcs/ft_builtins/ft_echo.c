@@ -10,7 +10,7 @@ int	ft_echo(t_token *token)
     i = 1;
     flag = 0;
     first_arg = 1;
-    while (token->args && token->args[i] && ft_strcmp(token->args[i], "-n") == 0)
+    while (token->args && token->args[i] && n_flag_validator(token->args[i]))
     {
         flag = 1;
         i++;
@@ -29,4 +29,23 @@ int	ft_echo(t_token *token)
     if (!flag)
         ft_putstr_fd("\n", STDOUT_FILENO);
     return (0);
+}
+
+int	n_flag_validator(const char *arg)
+{
+	int	i;
+
+	i = 0;
+	if (arg[0] != '-')
+		return (0);
+	i = 1;
+	if (arg[i] == '\0')
+		return (0);
+	while (arg[i])
+	{
+		if (arg[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (1);
 }
