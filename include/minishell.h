@@ -216,6 +216,8 @@ void	print_env(t_shell *type);
 char 	*extract_key(const char *agrs, int len);
 void 	append_env_value(t_env *env, char *value);
 void	print_export_token(t_env *head);
+char    *expand_token_arg_to_value(char *value, t_shell *shell);
+char	*expand_command_arg(const char *imput, t_shell *shell);
 
 //unset
 int 	ft_unset(t_shell *shell, t_token *args);

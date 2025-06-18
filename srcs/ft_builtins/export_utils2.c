@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 16:08:35 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/17 12:16:22 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/18 13:39:19 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,4 +94,69 @@ void 	append_env_value(t_env *env, char *value)
 	}
 	free(env->value);
 	env->value = new_val;
+}
+
+
+char    *expand_token_arg_to_value(char *value, t_shell *shell)
+{
+    char	*result;
+    char	*temp;
+    char	*home;
+	char	*expan;
+
+	if (ft_strchr(value, '$'))
+		{
+			expan = expand_command_arg(value, shell);
+				return (expan);
+		}
+    if (value[0] == '~' && (value[1] == '\0' || value[1] == '/'))
+    {
+        home = get_env_value(shell->head, "HOME");
+        if (home)
+        {
+            temp = ft_strjoin(home, value + 1);
+            result = temp;
+        }
+        else
+            return (ft_strdup(value));
+    }
+    else if (ft_strcmp(value, "$?") == 0)
+        result = expand_exit_status(value, shell);
+    else if (value[0] == '$' && value[1] != '\0')
+        result = expand_env_var(value, shell);
+    else
+        result = ft_strdup(value);
+    return (result);
+}
+
+char	*expand_command_arg(const char *imput, t_shell *shell)
+{
+	char	*result;
+	char	*var_value;
+	char	*temp;
+	int		i;
+
+	i = 0;
+	result = ft_strdup("");
+	while (imput[i])
+	{
+		if (imput[i] == '$' && imput[i + 1] != '\0' && imput[i + 1] != ' ')
+		{
+			var_value = expand_env_var(&imput[i], shell);
+			temp = ft_strjoin(result, var_value);
+			free(result);
+			free(var_value);
+			result = temp;
+			while (imput[i] && !ft_isspace(imput[i]) && imput[i] != '=')
+				i++;
+		}
+		else
+		{
+			temp = ft_strjoin(result, &imput[i]);
+			free(result);
+			result = temp;
+			i++;
+		}
+	}
+	return (result);
 }

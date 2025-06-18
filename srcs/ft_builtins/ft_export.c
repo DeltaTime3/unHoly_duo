@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:25 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/16 12:08:22 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/06/18 13:37:46 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	ft_export(t_shell *type, char **args)
 {
 	int		status;
 	int		i;
+	char	*expanded_arg;
 	
 	i = 1;
 	status = 0;
@@ -23,6 +24,7 @@ int	ft_export(t_shell *type, char **args)
 		return(print_export_token(type->head), 0);
 	while (args[i])
 	{
+		expanded_arg = expand_token_arg_to_value(args[i], type);
 		if (validate_args(args[i]))
 		{
 			ft_printf_fd(2, "minishell: export: `%s': %s\n", args[i], E_INVALID_ID);
@@ -30,6 +32,7 @@ int	ft_export(t_shell *type, char **args)
 		}
 		else
 			process_export(type, args[i]);
+		free(expanded_arg);	
 		i++;
 	}
 	return (status);
