@@ -91,49 +91,92 @@ int	pipe_handling(const char *input, int *i, t_token **tokens)
 
 int	redirect_handling(t_token *tokens)
 {
-    int	fd_out = -1;
-    int	fd_in = -1;
+    int	fd_out;
+	int	fd_in;
+	int	temp_fd;
+	char	*last_out_file;
+	char	*last_append_file;
+	char	*last_in_file;
+	int		out_mode;
+	t_token	*temp;
 
-    while (tokens)
+	fd_out = -1;
+	fd_in = -1;
+	last_out_file = NULL;
+	last_append_file = NULL;
+	last_in_file = NULL;
+	out_mode = 0;
+	temp = tokens;
+	// collect the last redirection of each type
+	while (temp)
+	{
+		if (temp->type == REDIRECT)
+		{
+			if (!temp->next || temp->next->type != FILES)
+			{
+				ft_printf_fd(2, UNEXPECTED_TOKEN);
+				return (-1);
+			}
+			if (ft_strcmp(temp->value, ">") == 0)
+			{
+				last_out_file = temp->next->value;
+				out_mode = 1;
+			}
+			else if (ft_strcmp(temp->value, ">>") == 0)
+			{
+				last_append_file = temp->next->value;
+				out_mode = 2;
+			}
+			else if (ft_strcmp(temp->value, "<") == 0)
+				last_in_file = temp->next->value;
+		}
+		temp = temp->next;
+	}
+	// open files based on last redirection of each type
+	if (last_out_file && out_mode != 1)
+	{
+		temp_fd = open(last_out_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (temp_fd == -1)
+			return (print_error("Error opening file for output redirection\n"), -1);
+		close(temp_fd);
+	}
+	else if (last_append_file && out_mode != 2)
+	{
+		temp_fd = open(last_append_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		if (temp_fd == -1)
+			return (print_error("Error opening file for append redirection\n"), -1);
+		close(temp_fd);
+	}
+	if (out_mode == 1 && last_out_file)
     {
-        if (tokens->type == REDIRECT)
-        {
-            if (ft_strcmp(tokens->value, ">") == 0)
-            {
-                if (fd_out != -1)
-                    close(fd_out);
-                fd_out = open(tokens->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-                if (fd_out == -1)
-                    return (print_error("Error opening file for output redirection\n"), -1);
-            }
-            else if (ft_strcmp(tokens->value, ">>") == 0)
-            {
-                if (fd_out != -1)
-                    close(fd_out);
-                fd_out = open(tokens->next->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
-                if (fd_out == -1)
-                    return (print_error("Error opening file for append redirection\n"), -1);
-            }
-            else if (ft_strcmp(tokens->value, "<") == 0)
-            {
-                if (fd_in != -1)
-                    close(fd_in);
-                fd_in = open(tokens->next->value, O_RDONLY);
-                if (fd_in == -1)
-                    return (print_error("Error opening file for input redirection\n"), -1);
-            }
-        }
-        tokens = tokens->next;
+        fd_out = open(last_out_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        if (fd_out == -1)
+            return (print_error("Error opening file for output redirection\n"), -1);
     }
-    if (fd_out != -1)
-        dup2(fd_out, STDOUT_FILENO);
-    if (fd_in != -1)
-        dup2(fd_in, STDIN_FILENO);
-    if (fd_out != -1)
-        close(fd_out);
-    if (fd_in != -1)
-        close(fd_in);
-    return (0);
+    else if (out_mode == 2 && last_append_file)
+    {
+        fd_out = open(last_append_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+        if (fd_out == -1)
+            return (print_error("Error opening file for append redirection\n"), -1);
+	}
+	if (last_in_file)
+	{
+		fd_in = open(last_in_file, O_RDONLY);
+		if (fd_in == -1)
+			return (print_error("Error opening file for input redirection\n"), -1);
+	}
+	// apply redirections
+	if (fd_out != -1)
+	{
+		dup2(fd_out, STDOUT_FILENO);
+		close(fd_out);
+	}
+	if (fd_in != -1)
+	{
+		dup2(fd_in, STDIN_FILENO);
+		close(fd_in);
+	}
+	return (0);
 }
 
 // token handling
@@ -142,23 +185,36 @@ int	token_handling(const char *input, int *i, t_token **tokens,
 {
 	if (!input || !input[*i])
 		return (1);
-	if (special_tokens_handling(input, i, tokens, expect_command))
-		return (1);
-	if (input[*i] == '#')
-		return (2);
-	if (ft_isprint(input[*i]))
+	while (input[*i] && !ft_isspace(input[*i]))
 	{
-		if (*expect_command && !ft_isdigit(input[*i]))
+		if (!input[*i])
+			break ;
+		if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
 		{
-			if (word_handling(input, i, tokens, expect_command))
+			if (special_tokens_handling(input, i, tokens, expect_command))
 				return (1);
+			while (input[*i] && ft_isspace(input[*i]))
+				(*i)++;
+		}
+		else if (input[*i] == '#')
+			return (2);
+		else if (ft_isprint(input[*i]))
+		{
+			if (*expect_command && !ft_isdigit(input[*i]))
+			{
+				if (word_handling(input, i, tokens, expect_command))
+					return (1);
+			}
+			else
+			{
+				if (word_handling(input, i, tokens, expect_command))
+					return (1);
+			}
 		}
 		else
-		{
-			if (word_handling(input, i, tokens, expect_command))
-				return (1);
-		}
-		return (0);
+			(*i)++;
+		if (input[*i] && ft_isspace(input[*i]))
+			break ;
 	}
 	return (0);
 }

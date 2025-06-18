@@ -89,6 +89,13 @@ void	prep_cmd_args(t_token *head)
                 if (arg->type == ARGUMENT || arg->type == FLAG)
                 {
                     command->args[i] = ft_strdup(arg->value);
+                    if (!command->args[i])
+                    {
+                        while (--i >= 0)
+                            free (command->args[i]);
+                        free(command->args);
+                        return ;
+                    }
                     i++;
                 }
                 arg = arg->next;
