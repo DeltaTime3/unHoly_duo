@@ -29,7 +29,7 @@ not supported according to project's subject\n"
 # define	STDERR 2
 # define	E_TARG "Too may arguments for cd command.\n"
 # define	E_CD	"Failed to change directory.\n"
-# define	E_HOME "Directory path can not be NULL.\n"
+# define	E_HOME "cd: HOME not set.\n"
 # define	E_PERMIT "User does not have permition to access this directory.\n"
 # define	E_ARGS "Too may arguments.\n"
 # define	E_NOTNBR "The argument is not a number.\n"
@@ -234,6 +234,7 @@ void	ft_free_shell(t_shell *shell);
 
 //pwd
 int		ft_pwd(t_shell *type);
+int		pwd_ut(char cwd[MAX_PATH], t_shell *type);
 
 //echo
 int		ft_echo(t_token *token);

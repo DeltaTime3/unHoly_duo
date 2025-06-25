@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:47 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/11 12:32:40 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/25 14:00:54 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,13 @@ int	ft_pwd(t_shell *type)
 	}
 	else
 	{
-		if (getcwd(cwd, sizeof(cwd)))
+		return (pwd_ut(cwd, type));
+	}
+}
+
+int	pwd_ut(char cwd[MAX_PATH], t_shell *type)
+{
+	if (getcwd(cwd, MAX_PATH))
 		{
 			printf("%s\n", cwd);
 			type->exit_code = 0;
@@ -38,5 +44,4 @@ int	ft_pwd(t_shell *type)
 			type->exit_code = 1;
 			return (1);
 		}
-	}
 }
