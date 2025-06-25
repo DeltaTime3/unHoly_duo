@@ -59,6 +59,7 @@ int	main(int ac, char **av, char **envp)
 						}                   
 					}
 					free_tokens(tokens);
+					tokens = NULL;
                 }
             }
             else
@@ -67,8 +68,7 @@ int	main(int ac, char **av, char **envp)
         else
             free(input);
     }
-    rl_clear_history();
-    free_env(shell.head);
+	clean_all_resources(&shell);
     return (shell.exit_code);
 }
 

@@ -45,6 +45,7 @@ void expand_tokens(t_token *token, t_shell *shell)
     char    *final;
     
     i = 0;
+    final = NULL;
     printf("Token value: '%s'\n", token->value);
     printf("Token args: ");
     if (token->args) {
@@ -57,23 +58,31 @@ void expand_tokens(t_token *token, t_shell *shell)
         printf("(null)");
     }
     printf("\n");
-    i = 0;
-    if (token->value)
+    if (token && token->value)
     {
         expanded = expand_token_value(token->value, shell);
-        final = remove_quotes(expanded);
-        free(token->value);
-        free(expanded);
-        token->value = expanded;
+        if (expanded)
+        {
+            final = remove_quotes(expanded);
+            free(token->value);
+            token->value = final;
+            free(expanded);
+        }
+        
     }
-    if (token->args)
+    if (token && token->args)
     {
+        i = 0;
         while (token->args[i])
         {
             expanded = expand_token_value(token->args[i], shell);
-            final = remove_quotes(expanded);
-            free(token->args[i]);
-            token->args[i] = expanded;
+            if (expanded)
+            {
+                final = remove_quotes(expanded);
+                free(token->args[i]);
+                token->args[i] = final;
+                free(expanded);
+            }
             i++;
         }
         token->args[i] = NULL;

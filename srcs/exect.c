@@ -37,7 +37,7 @@ int	is_builtin(t_token *token)
     i = 0;
     while (builtin[i])
     {
-        if (ft_strcmp(token->value, builtin[i]) == 0)
+        if (token->value && ft_strcmp(token->value, builtin[i]) == 0)
             return (1);
         i++;
     }
