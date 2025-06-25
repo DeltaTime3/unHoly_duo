@@ -152,7 +152,8 @@ int		check_logical_operators(const char *input);
 int		check_unexpected_tokens(const char *input);
 int		validate_input(const char *input);
 int		handle_quote_error(t_token **tokens);
-
+int 	count_pipes(t_token *tokens);
+int 	handle_pipes(t_token *tokens, t_shell *shell);
 // int 	execute_command(t_token *command_token);
 
 // utils2.c
