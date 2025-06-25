@@ -240,7 +240,7 @@ char	*build_cmb_path(char *dir, char *cmd)
 		total_len = cmd_len + 3;
 	else
 		total_len = dir_len + cmd_len + 2;
-	full_path = malloc(total_len);
+	full_path = ft_calloc(1, total_len);
 	if(!full_path)
 		return (NULL);
 	if(!dir[0])

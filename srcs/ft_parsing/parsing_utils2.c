@@ -1,36 +1,31 @@
 #include "minishell.h"
 
-void	free_tokens(t_token *tokens)
+void free_tokens(t_token *tokens)
 {
     t_token *current;
     t_token *next;
-	int		i;
     
     current = tokens;
     while (current)
     {
         next = current->next;
+        
         if (current->value)
-		{   
-			free(current->value);
-			current->value = NULL;
-		}
+            free(current->value);
+            
         if (current->content)
-		{   
-			free(current->content);
-			current->content = NULL;
-		}
+            free(current->content);
+            
         if (current->args)
-		{   
-			i = 0;
-			while (current->args[i])
-			{
-				free(current->args[i]);
-				i++;
-			}
-			free(current->args);
-			current->args = NULL;
-		}
+        {
+            int i = 0;
+            while (current->args[i])
+            {
+                free(current->args[i]);
+                i++;
+            }
+            free(current->args);
+        }
         free(current);
         current = next;
     }

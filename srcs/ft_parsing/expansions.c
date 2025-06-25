@@ -41,15 +41,12 @@ char    *remove_quotes(const char *input)
 void expand_tokens(t_token *token, t_shell *shell)
 {
     char *expanded;
-    int i;
-    char    *final;
+    char *old_value;
     
-    i = 0;
-    final = NULL;
     printf("Token value: '%s'\n", token->value);
     printf("Token args: ");
     if (token->args) {
-        i = 0;
+        int i = 0;
         while (token->args[i]) {
             printf("'%s' ", token->args[i]);
             i++;
@@ -63,29 +60,27 @@ void expand_tokens(t_token *token, t_shell *shell)
         expanded = expand_token_value(token->value, shell);
         if (expanded)
         {
-            final = remove_quotes(expanded);
-            free(token->value);
-            token->value = final;
-            free(expanded);
+            old_value = token->value;
+            token->value = remove_quotes(expanded);
+            free(old_value);     // Free the old value
+            free(expanded);      // Free the expanded string
         }
-        
     }
     if (token && token->args)
     {
-        i = 0;
+        int i = 0;
         while (token->args[i])
         {
             expanded = expand_token_value(token->args[i], shell);
             if (expanded)
             {
-                final = remove_quotes(expanded);
-                free(token->args[i]);
-                token->args[i] = final;
-                free(expanded);
+                old_value = token->args[i];
+                token->args[i] = remove_quotes(expanded);
+                free(old_value);     // Free the old arg
+                free(expanded);      // Free the expanded string
             }
             i++;
         }
-        token->args[i] = NULL;
     }
 }
 

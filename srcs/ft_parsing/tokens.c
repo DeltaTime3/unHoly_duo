@@ -4,21 +4,20 @@ t_token	*create_token(t_cat type, char *content)
 {
 	t_token	*token;
 
-    token = malloc(sizeof(t_token));
+    token = ft_calloc(1, sizeof(t_token));
     if (!token)
         return (NULL);
     token->type = type;
-    token->content = content;
     if (content)
+    {
         token->content= ft_strdup(content);
-    else
-        token->content= NULL;
-    if (content)
         token->value= ft_strdup(content);
+    }
     else
-        token->value= NULL;
-    token->args = NULL;
-    token->next = NULL;
+    {
+        token->content = NULL;
+        token->value = NULL;
+    }
     return (token);
 }
 
@@ -80,7 +79,7 @@ void	prep_cmd_args(t_token *head)
                     arg_count++;
                 arg = arg->next;
             }
-            command->args = malloc(sizeof(char *) * (arg_count + 1));
+            command->args = ft_calloc(arg_count + 1, sizeof(char *));
             if (!command->args)
                 return;
             command->args[0] = ft_strdup(command->value);
@@ -102,7 +101,6 @@ void	prep_cmd_args(t_token *head)
                 }
                 arg = arg->next;
             }
-            command->args[i] = NULL;
 			arg = command->next;
             while (arg && arg->type != PIPE)
                 arg = arg->next;

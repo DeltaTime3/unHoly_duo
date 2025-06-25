@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 14:30:13 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/06/16 13:00:50 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/06/25 14:31:28 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*ft_strdup(const char *s)
 	char	*str;
 
 	j = ft_strlen(s);
-	str = (char *)malloc(sizeof(char) * (j + 1));
+	str = (char *)ft_calloc(j + 1, sizeof(char));
 	if (str == NULL)
 		return (NULL);
 	i = 0;
@@ -28,6 +28,5 @@ char	*ft_strdup(const char *s)
 		str[i] = s[i];
 		i++;
 	}
-	str[i] = '\0';
 	return (str);
 }

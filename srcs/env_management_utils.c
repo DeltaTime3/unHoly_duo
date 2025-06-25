@@ -99,7 +99,7 @@ char	**env_list_to_array(t_env *head)
             i++;
         curr = curr->next;
 	}
-	array = malloc(sizeof(char *) * (i + 1));
+	array = ft_calloc(i + 1, sizeof(char *));
 	if (!array)
 		return (NULL);
 	curr = head;
@@ -120,6 +120,10 @@ void	clean_all_resources(t_shell *shell)
 {
 	if (!shell)
 		return ;
+	if (shell->type)
+		free(shell->type);
+	if (shell->tail)
+		free(shell->tail);
 	if (shell->token)
 		free_tokens(shell->token);
 	if (shell->head)
@@ -128,7 +132,8 @@ void	clean_all_resources(t_shell *shell)
 		free(shell->prev_dir);
 	if (shell->curr_dir)
 		free(shell->curr_dir);
+	if (shell->value)
+		free(shell->value);
 	if (shell->pwd)
 		free(shell->pwd);
-	rl_clear_history();
 }

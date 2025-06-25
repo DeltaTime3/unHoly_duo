@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 11:07:44 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/11 09:52:08 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/25 14:35:19 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,15 +89,13 @@ void	add_env_node(t_env **head, const char *key, char *value, int flag)
 	t_env *new;
 	t_env *curr;
 	
-	new = malloc(sizeof(t_env));
+	new = ft_calloc(1, sizeof(t_env));
 	new->key = ft_strdup(key);
 	if(value)
 		new->value = ft_strdup(value);
 	else
 		new->value = NULL;
 	new->flag = flag;
-	new->next = NULL;
-
 	if (!*head)
 	{
 		*head = new;

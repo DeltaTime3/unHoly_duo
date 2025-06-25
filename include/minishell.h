@@ -112,6 +112,7 @@ typedef struct s_env
 // expansions.c
 char 	*expand_env_var(const char *input, t_shell *shell);
 char	*expand_exit_status(const char *input, t_shell *shell);
+char    *remove_quotes(const char *input);
 void 	expand_tokens(t_token *token, t_shell *shell);
 char 	*expand_token_value(char *value, t_shell *shell);
 
@@ -182,6 +183,7 @@ t_env 	*create_node_from_key(char *key, char *value);
 char	*append_env_value_man(char *old_val, char *add_val);
 void	add_new_node(t_env **head, t_env *tail, char *key, char *value);
 void	update_env_value(t_env *node, char *value, int append);
+void	clean_all_resources(t_shell *shell);
 
 //cd
 

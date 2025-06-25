@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/25 14:16:53 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/06/25 15:03:49 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ int	ft_is_nbr(char *str)
 void	ft_kill(t_shell *type, int e_code)
 {
 	clean_all_resources(type);
+	rl_clear_history();
 	exit(e_code);
 }
 

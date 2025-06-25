@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 16:08:35 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/18 13:39:19 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/25 14:36:15 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,11 +67,10 @@ char 	*extract_key(const char *args, int len)
 {
 	char *key;
 
-	key = malloc(len + 1);
+	key = ft_calloc(1, len + 1);
 	if (!key)
 		return (NULL);
 	ft_strlcpy(key, args, len + 1);
-	key[len] = '\0';
 	return (key);
 }
 void 	append_env_value(t_env *env, char *value)
@@ -82,7 +81,7 @@ void 	append_env_value(t_env *env, char *value)
 		return;
 	if (env->value && *env->value)
 	{
-		new_val = malloc(ft_strlen(env->value) + ft_strlen(value) + 1);
+		new_val = ft_calloc(1, ft_strlen(env->value) + ft_strlen(value) + 1);
 		if (!new_val)
 			return ;
 		ft_strlcpy(new_val, env->value, ft_strlen(env->value));
