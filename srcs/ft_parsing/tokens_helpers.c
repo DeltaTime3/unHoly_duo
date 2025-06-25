@@ -62,6 +62,7 @@ int	word_handling(const char *input, int *i, t_token **tokens,
     }
 	type = determine_token_type(value, expect_command);
 	add_token(tokens, create_token(type, value));
+	free(value);
 	return (0);
 }
 

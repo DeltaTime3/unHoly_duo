@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/17 14:34:43 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/25 14:16:53 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int	ft_is_nbr(char *str)
 
 void	ft_kill(t_shell *type, int e_code)
 {
-	ft_free_shell(type);
+	clean_all_resources(type);
 	exit(e_code);
 }
 
@@ -102,30 +102,30 @@ int	token_counter(t_token *token)
 	return (count);
 }
 
-void	ft_free_shell(t_shell *shell)
-{
-	if (!shell)
-        return;
-    if (shell->head)
-        free_env(shell->head);
-    if (shell->token)
-    {
-        if (shell->token->value)
-            free(shell->token->value);
-        if (shell->token->args)
-            free_args(shell->token->args);
-        free(shell->token);
-        shell->token = NULL;
-    }
-    if (shell->prev_dir)
-        free(shell->prev_dir);
-    if (shell->curr_dir)
-        free(shell->curr_dir);
-    if (shell->pwd)
-        free(shell->pwd);
-    shell->head = NULL;
-    shell->token = NULL;
-    shell->prev_dir = NULL;
-    shell->curr_dir = NULL;
-    shell->pwd = NULL;
-}
+// void	ft_free_shell(t_shell *shell)
+// {
+// 	if (!shell)
+//         return;
+//     if (shell->head)
+//         free_env(shell->head);
+//     if (shell->token)
+//     {
+//         if (shell->token->value)
+//             free(shell->token->value);
+//         if (shell->token->args)
+//             free_args(shell->token->args);
+//         free(shell->token);
+//         shell->token = NULL;
+//     }
+//     if (shell->prev_dir)
+//         free(shell->prev_dir);
+//     if (shell->curr_dir)
+//         free(shell->curr_dir);
+//     if (shell->pwd)
+//         free(shell->pwd);
+//     shell->head = NULL;
+//     shell->token = NULL;
+//     shell->prev_dir = NULL;
+//     shell->curr_dir = NULL;
+//     shell->pwd = NULL;
+// }

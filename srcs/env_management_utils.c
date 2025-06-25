@@ -116,3 +116,19 @@ char	**env_list_to_array(t_env *head)
 	return(array);
 }
 
+void	clean_all_resources(t_shell *shell)
+{
+	if (!shell)
+		return ;
+	if (shell->token)
+		free_tokens(shell->token);
+	if (shell->head)
+		free_env(shell->head);
+	if (shell->prev_dir)
+		free(shell->prev_dir);
+	if (shell->curr_dir)
+		free(shell->curr_dir);
+	if (shell->pwd)
+		free(shell->pwd);
+	rl_clear_history();
+}

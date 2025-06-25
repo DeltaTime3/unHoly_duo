@@ -6,10 +6,7 @@ t_token	*create_token(t_cat type, char *content)
 
     token = malloc(sizeof(t_token));
     if (!token)
-    {
-        printf("Error: Memory allocation failed for token.\n");
         return (NULL);
-    }
     token->type = type;
     token->content = content;
     if (content)
@@ -49,6 +46,7 @@ t_token	*tokenize_input(const char *input)
 		result = token_helper(input, &i, tokens, &expect_command);
 		if (result == 1)
 		{
+            free_tokens(*tokens);
 			free(tokens);
 			return (NULL);
 		}

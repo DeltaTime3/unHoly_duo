@@ -4,6 +4,7 @@ void	free_tokens(t_token *tokens)
 {
     t_token *current;
     t_token *next;
+	int		i;
     
     current = tokens;
     while (current)
@@ -21,6 +22,12 @@ void	free_tokens(t_token *tokens)
 		}
         if (current->args)
 		{   
+			i = 0;
+			while (current->args[i])
+			{
+				free(current->args[i]);
+				i++;
+			}
 			free(current->args);
 			current->args = NULL;
 		}
@@ -36,8 +43,7 @@ void	free_args(char **args)
 	i = 0;
 	while (args[i])
 	{
-		free(args[i++]);
-		args[i] = NULL;
+		free(args[i]);
 		i++;
 	}
 	free(args);
@@ -64,8 +70,12 @@ int	quote_handling(const char *input, int *i, t_token **tokens,
 	// (*i)++;
 	while (input[*i] == quote)
 		(*i)++;
-	type = determine_token_type(value, expect_command);
-	add_token(tokens, create_token(type, value));
+	if (value)
+	{
+		type = determine_token_type(value, expect_command);
+		add_token(tokens, create_token(type, value));
+		free(value);
+	}
 	return (0);
 }
 

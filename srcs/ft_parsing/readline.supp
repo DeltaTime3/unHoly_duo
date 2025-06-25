@@ -1,12 +1,27 @@
 {
-   leak readline
+   readline_history_leak
    Memcheck:Leak
-...
-   fun:readline
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   obj:*/libreadline.so*
+   ...
 }
 {
-   leak add_history
+   readline_leak
    Memcheck:Leak
-...
-   fun:add_history
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libreadline.so*
+   ...
+}
+{
+   ncurses_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libtinfo.so*
+   ...
 }
