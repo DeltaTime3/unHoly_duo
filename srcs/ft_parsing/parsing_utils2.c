@@ -10,11 +10,20 @@ void	free_tokens(t_token *tokens)
     {
         next = current->next;
         if (current->value)
-            free(current->value);
+		{   
+			free(current->value);
+			current->value = NULL;
+		}
         if (current->content)
-            free(current->content);
+		{   
+			free(current->content);
+			current->content = NULL;
+		}
         if (current->args)
-            free_args(current->args);
+		{   
+			free(current->args);
+			current->args = NULL;
+		}
         free(current);
         current = next;
     }
@@ -26,7 +35,11 @@ void	free_args(char **args)
 
 	i = 0;
 	while (args[i])
+	{
 		free(args[i++]);
+		args[i] = NULL;
+		i++;
+	}
 	free(args);
 }
 
@@ -48,7 +61,7 @@ int	quote_handling(const char *input, int *i, t_token **tokens,
 	value = ft_substr(input, start, *i - start);
 	if (!value)
 		return (1);
-	(*i)++;
+	// (*i)++;
 	while (input[*i] == quote)
 		(*i)++;
 	type = determine_token_type(value, expect_command);

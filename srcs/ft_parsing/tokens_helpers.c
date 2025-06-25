@@ -190,6 +190,12 @@ int	token_handling(const char *input, int *i, t_token **tokens,
 	{
 		if (!input[*i])
 			break ;
+		if (input[*i] == '\'' || input[*i] == '"')
+		{
+			if (quote_handling(input, i, tokens, expect_command))
+				return (1);
+			return (0);
+		}
 		if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
 		{
 			if (special_tokens_handling(input, i, tokens, expect_command))

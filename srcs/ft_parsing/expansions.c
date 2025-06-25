@@ -27,10 +27,22 @@ char *expand_exit_status(const char *input, t_shell *shell)
     return (ft_strdup(input));
 }
 
+char    *remove_quotes(const char *input)
+{
+    size_t  len;
+
+    len = ft_strlen(input);
+    if ((input[0] == '\'' && input[len - 1] == '\'') ||
+            (input[0] == '"' && input[len - 1] == '"'))
+            return (ft_substr(input, 1, len - 2));
+    return (ft_strdup(input));
+}
+
 void expand_tokens(t_token *token, t_shell *shell)
 {
     char *expanded;
     int i;
+    char    *final;
     
     i = 0;
     printf("Token value: '%s'\n", token->value);
@@ -49,7 +61,9 @@ void expand_tokens(t_token *token, t_shell *shell)
     if (token->value)
     {
         expanded = expand_token_value(token->value, shell);
+        final = remove_quotes(expanded);
         free(token->value);
+        free(expanded);
         token->value = expanded;
     }
     if (token->args)
@@ -57,10 +71,12 @@ void expand_tokens(t_token *token, t_shell *shell)
         while (token->args[i])
         {
             expanded = expand_token_value(token->args[i], shell);
+            final = remove_quotes(expanded);
             free(token->args[i]);
             token->args[i] = expanded;
             i++;
         }
+        token->args[i] = NULL;
     }
 }
 
