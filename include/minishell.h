@@ -126,7 +126,7 @@ void	skip_special_chars(const char *input, int *i);
 t_cat	determine_token_type(const char *value, int *expect_command);
 
 // tokens.c
-t_token	*create_token(t_cat type, char *content);
+t_token	*create_token(t_cat type, char *value);
 t_token	*tokenize_input(const char *input);
 void	prep_cmd_args(t_token *head);
 
@@ -228,9 +228,9 @@ int 	validate_unset_args(char *args);
 
 //exit
 int		ft_exit(t_token **token, t_shell *type);
-int		ft_exit2(t_shell *type, int nbr_args, char *arg);
+int		ft_exit2(t_shell *type, t_token *tokens, int nbr_args, char *arg);
 int		ft_is_nbr(char *str);
-void	ft_kill(t_shell *type, int e_code);
+void	ft_kill(t_shell *type, t_token *tokens, int e_code);
 int		token_counter(t_token *token);
 void	ft_free_shell(t_shell *shell);
 
