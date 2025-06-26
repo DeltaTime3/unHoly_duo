@@ -118,22 +118,44 @@ char	**env_list_to_array(t_env *head)
 
 void	clean_all_resources(t_shell *shell)
 {
-	if (!shell)
-		return ;
-	if (shell->type)
-		free(shell->type);
-	if (shell->tail)
-		free(shell->tail);
-	if (shell->token)
-		free_tokens(shell->token);
-	if (shell->head)
-		free_env(shell->head);
-	if (shell->prev_dir)
-		free(shell->prev_dir);
-	if (shell->curr_dir)
-		free(shell->curr_dir);
-	if (shell->value)
-		free(shell->value);
-	if (shell->pwd)
-		free(shell->pwd);
+	t_env *current;
+    t_env *next;
+
+    // Free environment variable list
+    if (shell->head)
+    {
+        current = shell->head;
+        while (current)
+        {
+            next = current->next;
+            if (current->key)
+                free(current->key);
+            if (current->value)
+                free(current->value);
+            free(current);
+            current = next;
+        }
+    }
+    // Free all dynamically allocated shell fields
+    if (shell->prev_dir)
+        free(shell->prev_dir);
+    if (shell->curr_dir)
+        free(shell->curr_dir);
+    if (shell->pwd)
+        free(shell->pwd);
+    if (shell->token)
+        free(shell->token);
+    if (shell->type)
+        free(shell->type);
+    if (shell->value)
+        free(shell->value);
+    // Null out pointers for safety
+    shell->head = NULL;
+    shell->tail = NULL;
+    shell->prev_dir = NULL;
+    shell->curr_dir = NULL;
+    shell->pwd = NULL;
+    shell->token = NULL;
+    shell->type = NULL;
+    shell->value = NULL;
 }

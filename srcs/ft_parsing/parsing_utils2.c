@@ -2,30 +2,21 @@
 
 void free_tokens(t_token *tokens)
 {
-    t_token *current;
+    t_token *current = tokens;
     t_token *next;
-    
-    current = tokens;
     while (current)
     {
         next = current->next;
-        
         if (current->value)
             free(current->value);
-            
+        if (current->token)
+            free(current->token);
+        if (current->command)
+            free(current->command);
+        if (current->args)
+            free_args(current->args);
         if (current->content)
             free(current->content);
-            
-        if (current->args)
-        {
-            int i = 0;
-            while (current->args[i])
-            {
-                free(current->args[i]);
-                i++;
-            }
-            free(current->args);
-        }
         free(current);
         current = next;
     }
@@ -33,15 +24,12 @@ void free_tokens(t_token *tokens)
 
 void	free_args(char **args)
 {
-	int	i;
-
-	i = 0;
-	while (args[i])
-	{
-		free(args[i]);
-		i++;
-	}
-	free(args);
+	int i = 0;
+    if (!args)
+        return;
+    while (args[i])
+        free(args[i++]);
+    free(args);
 }
 
 // quotes 

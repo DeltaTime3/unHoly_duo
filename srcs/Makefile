@@ -72,9 +72,9 @@ tester: $(TESTER_BIN)
 $(TESTER_BIN): $(TESTER_OBJ) $(LIBFT)
 	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -I$(LIBFT_DIR) $(TESTER_OBJ) -L$(LIBFT_DIR) -lft -o $(TESTER_BIN)
 
-valgrind:
-	@echo "{\n   leak readline\n   Memcheck:Leak\n...\n   fun:readline\n}\n{\n   leak add_history\n   Memcheck:Leak\n...\n   fun:add_history\n}" > readline.supp
-	@valgrind --suppressions=readline.supp --leak-check=full -s --show-leak-kinds=all ./$(NAME)
+# valgrind:
+# 	@echo "{\n   leak readline\n   Memcheck:Leak\n...\n   fun:readline\n}\n{\n   leak add_history\n   Memcheck:Leak\n...\n   fun:add_history\n}" > readline.supp
+# 	@valgrind --suppressions=readline.supp --leak-check=full -s --show-leak-kinds=all ./$(NAME)
 
 clean:
 	rm -f $(OBJS) $(TESTER_OBJ)

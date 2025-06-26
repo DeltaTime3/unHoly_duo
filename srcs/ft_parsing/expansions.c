@@ -30,12 +30,24 @@ char *expand_exit_status(const char *input, t_shell *shell)
 char    *remove_quotes(const char *input)
 {
     size_t  len;
+    char    *result;
 
     len = ft_strlen(input);
     if ((input[0] == '\'' && input[len - 1] == '\'') ||
             (input[0] == '"' && input[len - 1] == '"'))
-            return (ft_substr(input, 1, len - 2));
-    return (ft_strdup(input));
+            {
+                result = ft_substr(input, 1, len - 2);
+                if (!result)
+                    return (NULL);
+            }
+    else
+    {
+        result = ft_strdup(input);
+        if (!result)
+            return (NULL);
+        printf("ALLOC: remove_quotes allocated '%s' at %p\n", input, (void *)result);
+    }
+    return (result);
 }
 
 void expand_tokens(t_token *token, t_shell *shell)
@@ -43,18 +55,6 @@ void expand_tokens(t_token *token, t_shell *shell)
     char *expanded;
     char *old_value;
     
-    printf("Token value: '%s'\n", token->value);
-    printf("Token args: ");
-    if (token->args) {
-        int i = 0;
-        while (token->args[i]) {
-            printf("'%s' ", token->args[i]);
-            i++;
-        }
-    } else {
-        printf("(null)");
-    }
-    printf("\n");
     if (token && token->value)
     {
         expanded = expand_token_value(token->value, shell);
@@ -62,10 +62,11 @@ void expand_tokens(t_token *token, t_shell *shell)
         {
             old_value = token->value;
             token->value = remove_quotes(expanded);
-            free(old_value);     // Free the old value
-            free(expanded);      // Free the expanded string
+            free(old_value);  
+            free(expanded);
         }
     }
+    
     if (token && token->args)
     {
         int i = 0;
@@ -76,8 +77,8 @@ void expand_tokens(t_token *token, t_shell *shell)
             {
                 old_value = token->args[i];
                 token->args[i] = remove_quotes(expanded);
-                free(old_value);     // Free the old arg
-                free(expanded);      // Free the expanded string
+                free(old_value);
+                free(expanded);
             }
             i++;
         }

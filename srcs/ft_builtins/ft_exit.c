@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/25 15:03:49 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/06/26 10:36:16 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,51 +14,51 @@
 
 int	ft_exit(t_token **token, t_shell *type)
 {
-	int			nbr_args;
-	char		*arg;
+    int			nbr_args;
+    char		*arg;
 
-	arg = NULL;
-	nbr_args = token_counter(*token);
-	ft_putstr_fd("exit\n", STDOUT_FILENO);
-	if (nbr_args > 1)
-		arg = (*token)->next->value;
-	if (nbr_args > 2)
-	{
-		if (!ft_is_nbr(arg))
-		{
-			print_error(E_NOTNBR);
-			ft_kill(type, 2);
-		}
-		else
-		{
-			print_error(E_ARGS);
-			return (1);
-		}
-	}
-	ft_exit2(type, nbr_args, arg);
-	return (0);
+    arg = NULL;
+    nbr_args = token_counter(*token);
+    ft_putstr_fd("exit\n", STDOUT_FILENO);
+    if (nbr_args > 1)
+        arg = (*token)->next->value;
+    if (nbr_args > 2)
+    {
+        if (!ft_is_nbr(arg))
+        {
+            print_error(E_NOTNBR);
+            ft_kill(type, *token, 2); // Pass *token to ft_kill
+        }
+        else
+        {
+            print_error(E_ARGS);
+            return (1);
+        }
+    }
+    ft_exit2(type, *token, nbr_args, arg); // Pass *token to ft_exit2
+    return (0);
 }
 
-int	ft_exit2(t_shell *type, int nbr_args, char *arg)
+int	ft_exit2(t_shell *type, t_token *tokens, int nbr_args, char *arg)
 {
-	long long	code;
-	int			atol_error;
+    long long	code;
+    int			atol_error;
 
-	atol_error = 0;
-	if (nbr_args == 1)
-		ft_kill(type, 0);
-	if (nbr_args == 2)
-	{
-		code = ft_atoll(arg, &atol_error);
-		if (atol_error)
-		{
-			print_error(E_NOTNBR);
-			ft_kill(type, 2);
-		}
-		code = ((code % 256) + 256) % 256;
-		ft_kill(type, (int)code);
-	}
-	return (0);
+    atol_error = 0;
+    if (nbr_args == 1)
+        ft_kill(type, tokens, 0); // Pass tokens
+    if (nbr_args == 2)
+    {
+        code = ft_atoll(arg, &atol_error);
+        if (atol_error)
+        {
+            print_error(E_NOTNBR);
+            ft_kill(type, tokens, 2); // Pass tokens
+        }
+        code = ((code % 256) + 256) % 256;
+        ft_kill(type, tokens, (int)code); // Pass tokens
+    }
+    return (0);
 }
 
 int	ft_is_nbr(char *str)
@@ -81,11 +81,13 @@ int	ft_is_nbr(char *str)
 	return (1);
 }
 
-void	ft_kill(t_shell *type, int e_code)
+void	ft_kill(t_shell *type, t_token *tokens, int e_code)
 {
-	clean_all_resources(type);
-	rl_clear_history();
-	exit(e_code);
+    free_tokens(tokens); // Free the token list
+    clean_all_resources(type);
+    rl_clear_history();
+    rl_cleanup_after_signal();
+    exit(e_code);
 }
 
 int	token_counter(t_token *token)

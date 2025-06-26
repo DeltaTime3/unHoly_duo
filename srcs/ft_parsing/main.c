@@ -40,9 +40,11 @@ int	main(int ac, char **av, char **envp)
             }
         }
         free(input);
+		input = NULL;
     }
 	clean_all_resources(&shell);
 	rl_clear_history();
+	rl_cleanup_after_signal();
     return (shell.exit_code);
 }
 

@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 11:07:44 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/25 14:35:19 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/06/26 10:33:08 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,9 +78,11 @@ int	process_export(t_shell *type, char *args)
 		add_env_node(&type->head, key, value, flag);
 	}
 	if (key)
-		free(key);
-	if (value)
-		free(value);
+        free(key);
+    if (value)
+	{
+        free(value);
+	}
 	return (0);
 }
 	

@@ -36,7 +36,7 @@ void	print_tokens(t_token *tokens)
 	while (current)
 	{
 		token = current;
-		printf("Type: %s, Value: '%s'\n", get_token_type(token->type), token->content);
+		printf("Type: %s, Value: '%s'\n", get_token_type(token->type), token->value);
 		current = current->next;
 	}
 }

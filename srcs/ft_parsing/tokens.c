@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-t_token	*create_token(t_cat type, char *content)
+t_token	*create_token(t_cat type, char *value)
 {
 	t_token	*token;
 
@@ -8,16 +8,11 @@ t_token	*create_token(t_cat type, char *content)
     if (!token)
         return (NULL);
     token->type = type;
-    if (content)
-    {
-        token->content= ft_strdup(content);
-        token->value= ft_strdup(content);
-    }
-    else
-    {
-        token->content = NULL;
-        token->value = NULL;
-    }
+    token->value = ft_strdup(value);
+    token->content = NULL;
+    token->args = NULL;
+    token->next = NULL;
+    token->command = NULL;
     return (token);
 }
 
