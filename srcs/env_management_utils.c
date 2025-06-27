@@ -125,11 +125,9 @@ char	**env_list_to_array(t_env *head)
 
 void	clean_all_resources(t_shell *shell)
 {
-	printf("DEBUG: Cleaning all resources...\n");
     
     if (shell->head)
     {
-        printf("DEBUG: Freeing environment variables...\n");
         free_env(shell->head);
         shell->head = NULL;
     }
