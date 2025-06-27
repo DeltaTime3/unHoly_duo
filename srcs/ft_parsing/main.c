@@ -36,6 +36,8 @@ int	main(int ac, char **av, char **envp)
                     ft_execute(&shell, tokens);
                     free_tokens(tokens);
                     tokens = NULL;
+					clean_command_resources(&shell);
+					printf("DEBUG: Cleaning command resources...\n");
                 }
             }
         }

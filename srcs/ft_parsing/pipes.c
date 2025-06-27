@@ -68,12 +68,15 @@ int handle_pipes(t_token *tokens, t_shell *shell)
         }
         
         if (redirect_handling(current) == -1)
+        {
+            free_tokens(tokens);
             exit(1);
-        
+        }        
         if (is_builtin(current))
             choose_b_in(current, shell);
         else
             execute2(shell, current);
+        free_tokens(tokens);
         exit(0);
     }
     // Parent process continues
@@ -116,11 +119,15 @@ int handle_pipes(t_token *tokens, t_shell *shell)
             if (pipes[1][0] >= 0) close(pipes[1][0]);
             if (pipes[1][1] >= 0) close(pipes[1][1]);
             if (redirect_handling(current) == -1)
+            {
+                free_tokens(tokens);
                 exit(1);
+            }
             if (is_builtin(current))
                 choose_b_in(current, shell);
             else
                 execute2(shell, current);
+            free_tokens(tokens);
             exit(0);
         }
         // Parent: close previous pipe read end and current pipe write end
@@ -154,12 +161,15 @@ int handle_pipes(t_token *tokens, t_shell *shell)
                 if (pipes[1][1] >= 0) close(pipes[1][1]);
                 
                 if (redirect_handling(current) == -1)
+                {
+                    free_tokens(tokens);
                     exit(1);
-                
+                }                
                 if (is_builtin(current))
                     choose_b_in(current, shell);
                 else
                     execute2(shell, current);
+                free_tokens(tokens);
                 exit(0);
             }
             

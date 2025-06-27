@@ -184,6 +184,7 @@ char	*append_env_value_man(char *old_val, char *add_val);
 void	add_new_node(t_env **head, t_env *tail, char *key, char *value);
 void	update_env_value(t_env *node, char *value, int append);
 void	clean_all_resources(t_shell *shell);
+void	clean_command_resources(t_shell *shell);
 
 //cd
 

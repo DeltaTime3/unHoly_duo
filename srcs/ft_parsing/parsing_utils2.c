@@ -7,6 +7,7 @@ void free_tokens(t_token *tokens)
     while (current)
     {
         next = current->next;
+        printf("FREEING token type %d, value: '%s'\n", current->type, current->value ? current->value : "NULL");
         if (current->value)
             free(current->value);
         if (current->token)
