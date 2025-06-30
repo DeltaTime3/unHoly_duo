@@ -45,7 +45,6 @@ char    *remove_quotes(const char *input)
         result = ft_strdup(input);
         if (!result)
             return (NULL);
-        printf("ALLOC: remove_quotes allocated '%s' at %p\n", input, (void *)result);
     }
     return (result);
 }
@@ -91,15 +90,12 @@ char    *expand_token_value(char *value, t_shell *shell)
     char *temp;
     char *home;
 
-    printf("Expanding: '%s'\n", value);
     if (value[0] == '~' && (value[1] == '\0' || value[1] == '/'))
     {
         home = get_env_value(shell->head, "HOME");
-        printf("HOME value: '%s'\n", home ? home : "NULL");
         if (home)
         {
             temp = ft_strjoin(home, value + 1);
-            printf("Expanded to: '%s'\n", temp);
             result = temp;
         }
         else

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_initializer.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 10:28:42 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/17 10:09:16 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/27 11:24:23 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@ t_env *init_shell_env(char **enviroment)
 {
 	t_env *head;
 	char *equal;
+	t_env	*new_node;
+	char	*key;
+	char	*value;
 
 	head = NULL;
 	while (*enviroment)
@@ -23,13 +26,35 @@ t_env *init_shell_env(char **enviroment)
 		equal = ft_strchr(*enviroment, '=');
 		if (equal)
 		{
-			env_back(&head, env_lstnew(ft_substr(*enviroment, 0, equal - *enviroment),
-			ft_substr(equal + 1, 0, ft_strlen(equal + 1)), 1));
+			key = ft_substr(*enviroment, 0, equal - *enviroment);
+			value = ft_substr(equal + 1, 0, ft_strlen(equal + 1));
+			if (!key || !value)
+			{
+				if (key)
+					free(key);
+				if (value)
+					free(value);
+				free_env(head);
+				return (NULL);
+			}
+			new_node = env_lstnew(key, value, 1);
 		}
 		else
 		{
-			env_back(&head, env_lstnew(ft_strdup(*enviroment), NULL, 0));
+			key = ft_strdup(*enviroment);
+			if (!key)
+			{
+				free_env(head);
+				return (NULL);
+			}
+			new_node = env_lstnew(key, NULL, 0);
 		}
+		if (!new_node)
+		{
+			free_env(head);
+			return (NULL);
+		}
+		env_back(&head, new_node);
 		enviroment++;
 	}
 	return (head);
@@ -40,6 +65,8 @@ t_env *env_lstnew(char *key, char *value, int flag)
 	t_env	*new;
 	
 	new = malloc(sizeof(t_env));
+	if (!new)
+		return (NULL);
 	new->key = key;
 	new->flag = flag;
 	new->value = value;
