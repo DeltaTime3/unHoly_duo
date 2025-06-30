@@ -15,13 +15,14 @@ int	file_handling(const char *input, int *i, t_token **tokens)
 	if (!value)
 		return (1);
 	add_token(tokens, create_token(FILES, value));
+	free(value);
 	return (0);
 }
 
 // operators
 int	op_handling(const char *input, int *i, t_token **tokens)
 {
-	size_t	start;
+	int	start;
 	char	*value;
 	t_cat	type;
 
@@ -36,11 +37,15 @@ int	op_handling(const char *input, int *i, t_token **tokens)
         return (1);
     }
 	add_token(tokens, create_token(type, value));
+	free(value);
 	(*i)++;
 	while (input[*i] && ft_isspace(input[*i]))
 		(*i)++;
-	if (input[*i] && file_handling(input, i, tokens))
-		return (1);
+	if (type == REDIRECT || type == HERE_DOC)
+	{
+		if (input[*i] && file_handling(input, i, tokens))
+			return (1);
+	}
 	return (0);
 }
 
@@ -74,7 +79,7 @@ int	pipe_handling(const char *input, int *i, t_token **tokens)
 
 	while (input[*i] && ft_isspace(input[*i]))
 		(*i)++;
-	if (!input[*i] || (input[*i] == '|' && (input[*i + 1] == '\0' || input[*i + 2] == ' ')))
+	if (!input[*i] || (input[*i] == '|' && (input[*i + 1] == '\0' || input[*i + 1] == ' ')))
 	{
 		ft_printf_fd(2, OPEN_PIPE);
 		return (1);
@@ -111,29 +116,39 @@ int	redirect_handling(t_token *tokens)
 	temp = tokens;
 	// collect the last redirection of each type
 	while (temp)
-	{
-		if (temp->type == REDIRECT)
-		{
-			if (!temp->next || temp->next->type != FILES)
-			{
-				ft_printf_fd(2, UNEXPECTED_TOKEN);
-				return (-1);
-			}
-			if (ft_strcmp(temp->value, ">") == 0)
-			{
-				last_out_file = temp->next->value;
-				out_mode = 1;
-			}
-			else if (ft_strcmp(temp->value, ">>") == 0)
-			{
-				last_append_file = temp->next->value;
-				out_mode = 2;
-			}
-			else if (ft_strcmp(temp->value, "<") == 0)
-				last_in_file = temp->next->value;
-		}
-		temp = temp->next;
-	}
+    {
+        if (temp->type == REDIRECT)
+        {
+            // Make sure there's a token after the redirection
+            if (!temp->next)
+            {
+                ft_printf_fd(2, UNEXPECTED_TOKEN);
+                return (-1);
+            }
+            // Check if the next token is a file
+            if (temp->next->type == FILES)
+            {
+                if (ft_strcmp(temp->value, ">") == 0)
+                {
+                    last_out_file = temp->next->value;
+                    out_mode = 1;
+                }
+                else if (ft_strcmp(temp->value, ">>") == 0)
+                {
+                    last_append_file = temp->next->value;
+                    out_mode = 2;
+                }
+                else if (ft_strcmp(temp->value, "<") == 0)
+                    last_in_file = temp->next->value;
+            }
+            else
+            {
+                ft_printf_fd(2, UNEXPECTED_TOKEN);
+                return (-1);
+            }
+        }
+        temp = temp->next;
+    }
 	// open files based on last redirection of each type
 	if (last_out_file && out_mode != 1)
 	{
@@ -183,46 +198,44 @@ int	redirect_handling(t_token *tokens)
 
 // token handling
 int	token_handling(const char *input, int *i, t_token **tokens,
-		int *expect_command)
+        int *expect_command)
 {
-	if (!input || !input[*i])
-		return (1);
-	while (input[*i] && !ft_isspace(input[*i]))
-	{
-		if (!input[*i])
-			break ;
-		if (input[*i] == '\'' || input[*i] == '"')
-		{
-			if (quote_handling(input, i, tokens, expect_command))
-				return (1);
-			return (0);
-		}
-		if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
-		{
-			if (special_tokens_handling(input, i, tokens, expect_command))
-				return (1);
-			while (input[*i] && ft_isspace(input[*i]))
-				(*i)++;
-		}
-		else if (input[*i] == '#')
-			return (2);
-		else if (ft_isprint(input[*i]))
-		{
-			if (*expect_command && !ft_isdigit(input[*i]))
-			{
-				if (word_handling(input, i, tokens, expect_command))
-					return (1);
-			}
-			else
-			{
-				if (word_handling(input, i, tokens, expect_command))
-					return (1);
-			}
-		}
-		else
-			(*i)++;
-		if (input[*i] && ft_isspace(input[*i]))
-			break ;
-	}
-	return (0);
+    if (!input || !input[*i])
+        return (1);
+    while (input[*i] && !ft_isspace(input[*i]))
+    {
+        if (!input[*i])
+            break ;
+        if (input[*i] == '\'' || input[*i] == '"')
+        {
+            if (quote_handling(input, i, tokens, expect_command))
+                return (1);
+            break; // Changed from return(0) to break to continue processing
+        }
+        if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
+        {
+            if (special_tokens_handling(input, i, tokens, expect_command))
+                return (1);
+            *expect_command = 1;
+            while (input[*i] && ft_isspace(input[*i]))
+                (*i)++;
+            break; // Added break to exit the inner loop but continue processing
+        }
+        else if (input[*i] == '#')
+            return (2);
+        else if (ft_isprint(input[*i]))
+        {
+            if (*expect_command && !ft_isdigit(input[*i]))
+            {
+                if (word_handling(input, i, tokens, expect_command))
+                    return (1);
+            }
+            break; // Added break to exit inner loop after processing a word
+        }
+        else
+            (*i)++;
+        if (input[*i] && ft_isspace(input[*i]))
+            break ;
+    }
+    return (0);
 }

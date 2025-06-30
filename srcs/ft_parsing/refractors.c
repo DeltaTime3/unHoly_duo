@@ -23,33 +23,33 @@ int	operator_type(const char *input, int *i, t_cat *type)
 }
 
 int	special_tokens_handling(const char *input, int *i, t_token **tokens,
-		int *expect_command)
+        int *expect_command)
 {
-	if (!input || !input[*i])
-		return (1);
-	while (input[*i] && ft_isspace(input[*i]))
-		(*i)++;
-	if (input[*i] == '|')
-	{
-		*expect_command = 1;
-		if (pipe_handling(input, i, tokens))
-			return (1);
-		return (0);
-	}
-	if (input[*i] == '<' || input[*i] == '>')
-	{
-		*expect_command = 1;
-		if (op_handling(input, i, tokens))
-			return (1);
-		return (0);
-	}
-	if (input[*i] == '\'' || input[*i] == '"')
-	{
-		if (quote_handling(input, i, tokens, expect_command))
-			return (1);
-		return (0);
-	}
-	return (0);
+    if (!input || !input[*i])
+        return (1);
+    while (input[*i] && ft_isspace(input[*i]))
+        (*i)++;
+    if (input[*i] == '|')
+    {
+        if (pipe_handling(input, i, tokens))
+            return (1);
+        *expect_command = 1;
+        return (0);
+    }
+    if (input[*i] == '<' || input[*i] == '>')
+    {
+        if (op_handling(input, i, tokens))
+            return (1);
+        *expect_command = 1;
+        return (0);
+    }
+    if (input[*i] == '\'' || input[*i] == '"')
+    {
+        if (quote_handling(input, i, tokens, expect_command))
+            return (1);
+        return (0);
+    }
+    return (0);
 }
 
 int	token_helper(const char *input, int *i, t_token **tokens,

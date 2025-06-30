@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_print_unsigned.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 13:11:03 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/06/02 15:02:21 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/06/26 16:29:48 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,9 @@ int	ft_print_unsigned(unsigned int n)
 	int		lenght;
 
 	lenght = 0;
-	if (n < 0)
-	{
-		lenght = ft_printc(n + 48);
-	}
-	else
-	{
-		nb = ft_uitoa(n);
-		lenght = ft_printstr(nb);
-		free(nb);
-	}
+	lenght = ft_printc(n + 48);
+	nb = ft_uitoa(n);
+	lenght = ft_printstr(nb);
+	free(nb);
 	return (lenght);
 }
