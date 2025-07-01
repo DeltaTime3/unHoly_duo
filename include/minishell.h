@@ -118,6 +118,9 @@ char    *remove_quotes(const char *input);
 void 	expand_tokens(t_token *token, t_shell *shell);
 char 	*expand_token_value(char *value, t_shell *shell);
 
+// here_doc.c
+char    *read_heredoc_input(const char *delimeter);
+
 // refractors.c
 int		operator_type(const char *input, int *i, t_cat *type);
 int		special_tokens_handling(const char *input, int *i, t_token **tokens,
@@ -138,6 +141,7 @@ int		op_handling(const char *input, int *i, t_token **tokens);
 int		word_handling(const char *input, int *i, t_token **tokens,
 			int *expect_command);
 int		pipe_handling(const char *input, int *i, t_token **tokens);
+int		heredoc_handling(const char *input, int *i, t_token **tokens);
 int		token_handling(const char *input, int *i, t_token **tokens,
 			int *expect_command);
 int		redirect_handling(t_token *tokens);

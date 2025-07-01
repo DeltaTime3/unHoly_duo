@@ -36,6 +36,13 @@ int	special_tokens_handling(const char *input, int *i, t_token **tokens,
         *expect_command = 1;
         return (0);
     }
+	if (input[*i] == '<' && input[*i + 1] == '<')
+	{
+		if (heredoc_handling(input, i, tokens))
+			return (1);
+		*expect_command = 0;
+		return (0);
+	}
     if (input[*i] == '<' || input[*i] == '>')
     {
         if (op_handling(input, i, tokens))

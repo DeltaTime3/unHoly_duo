@@ -30,6 +30,7 @@ SRC				= env_initializer.c \
 				  $(FT_BUILTINS_DIR)/unset.c \
 				  $(FT_BUILTINS_DIR)/utils.c \
 				  $(FT_PARSING_DIR)/expansions.c \
+				  $(FT_PARSING_DIR)/here_doc.c \
 				  $(FT_PARSING_DIR)/main.c \
 				  $(FT_PARSING_DIR)/parsing_utils.c \
 				  $(FT_PARSING_DIR)/parsing_utils2.c \
