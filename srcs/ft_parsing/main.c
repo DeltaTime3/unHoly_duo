@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 int	main(int ac, char **av, char **envp)
@@ -21,16 +20,12 @@ int	main(int ac, char **av, char **envp)
 	shell.type = NULL;
 	shell.tail = NULL;
 	shell.value = NULL;
-	ft_signals();
     while (1)
     {
         input = readline("minishell> ");
-		signal_process(&shell);
         if (!input)
-		{
-            write(STDOUT_FILENO, "exit\n", 5);
-			break;
-		}
+            break;
+        
         if (ft_strlen(input) != 0)
         {
             add_history(input);
@@ -42,9 +37,6 @@ int	main(int ac, char **av, char **envp)
                     ft_execute(&shell, tokens);
                     free_tokens(tokens);
                     tokens = NULL;
-					clean_command_resources(&shell);
-					free_env(shell.head);
-					shell.head = init_shell_env(orig_envp);
                 }
             }
         }

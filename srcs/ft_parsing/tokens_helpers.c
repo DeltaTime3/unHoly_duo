@@ -79,7 +79,7 @@ int	pipe_handling(const char *input, int *i, t_token **tokens)
 
 	while (input[*i] && ft_isspace(input[*i]))
 		(*i)++;
-	if (!input[*i] || (input[*i] == '|' && (input[*i + 1] == '\0' || input[*i + 1] == ' ')))
+	if (!input[*i] || (input[*i] == '|' && (input[*i + 1] == '\0')))
 	{
 		ft_printf_fd(2, OPEN_PIPE);
 		return (1);

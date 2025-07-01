@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 t_token *find_next_cmd_after_pipe(t_token *current)

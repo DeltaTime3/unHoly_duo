@@ -40,7 +40,6 @@ t_token	*tokenize_input(const char *input)
 		result = token_helper(input, &i, tokens, &expect_command);
 		if (result == 1)
 		{
-            free_tokens(*tokens);
 			free(tokens);
 			return (NULL);
 		}
@@ -54,57 +53,46 @@ t_token	*tokenize_input(const char *input)
 	return (final_tokens);
 }
 
-void	prep_cmd_args(t_token *head)
+void prep_cmd_args(t_token *head)
 {
-	t_token	*command;
-	int		arg_count;
-	t_token	*arg;
-	int		i;
-
-	command = head;
-	while (command)
-	{
-		if (command->type == COMMAND)
-		{
-			arg_count = 1;
-            arg = command->next;
-            while (arg && arg->type != PIPE && arg->type != COMMAND)
+    t_token *current = head;
+    
+    while (current)
+    {
+        if (current->type == COMMAND)
+        {
+            // Count arguments for this command until we hit a pipe or end
+            int arg_count = 1; // Start with 1 for the command itself
+            t_token *temp = current->next;
+            
+            while (temp && temp->type != PIPE)
             {
-                if (arg->type == ARGUMENT || arg->type == FLAG)
+                if (temp->type == ARGUMENT || temp->type == FLAG)
                     arg_count++;
-                arg = arg->next;
+                temp = temp->next;
             }
-            command->args = ft_calloc(arg_count + 1, sizeof(char *));
-            if (!command->args)
+            
+            // Allocate args array
+            current->args = ft_calloc(arg_count + 1, sizeof(char *));
+            if (!current->args)
                 return;
-            command->args[0] = ft_strdup(command->value);
-            i = 1;
-            arg = command->next;
-            while (arg && arg->type != PIPE && arg->type != COMMAND && i < arg_count)
+            
+            // Fill the args array
+            current->args[0] = ft_strdup(current->value);
+            int i = 1;
+            temp = current->next;
+            
+            while (temp && temp->type != PIPE && i < arg_count)
             {
-                if (arg->type == ARGUMENT || arg->type == FLAG)
+                if (temp->type == ARGUMENT || temp->type == FLAG)
                 {
-                    command->args[i] = ft_strdup(arg->value);
-                    if (!command->args[i])
-                    {
-                        while (--i >= 0)
-                            free (command->args[i]);
-                        free(command->args);
-                        return ;
-                    }
+                    current->args[i] = ft_strdup(temp->value);
                     i++;
                 }
-                arg = arg->next;
+                temp = temp->next;
             }
-			arg = command->next;
-            while (arg && arg->type != PIPE)
-                arg = arg->next;
-			if (arg && arg->type == PIPE)
-                command = arg->next;
-            else
-                command = NULL;
+            current->args[i] = NULL; // Null terminate
         }
-        else
-            command = command->next;
-	}
+        current = current->next;
+    }
 }

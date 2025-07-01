@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 char *expand_env_var(const char *input, t_shell *shell)

@@ -4,6 +4,7 @@ void free_tokens(t_token *tokens)
 {
     t_token *current = tokens;
     t_token *next;
+    
     while (current)
     {
         next = current->next;

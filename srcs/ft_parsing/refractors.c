@@ -67,6 +67,7 @@ int	token_helper(const char *input, int *i, t_token **tokens,
 		if (result == 1)
 		{
 			free_tokens(*tokens);
+			*tokens = NULL;
 			return (1);
 		}
 		else if (result == 2)
