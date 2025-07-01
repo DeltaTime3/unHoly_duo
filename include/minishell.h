@@ -18,6 +18,8 @@
 
 # define	MAX_PATH 4096
 
+extern int	global_sig;
+
 // ERROR MESSAGES
 # define 	UNMATCHED_QUOTES "minishell: syntax error, unmatched quotes\n"
 # define 	UNCLOSED_QUOTES "minishell: syntax error, unclosed quotes\n"
@@ -278,4 +280,5 @@ int		pid_neg(char *full_path, char **env_array);
 int		pid_else(char *full_path, char **env_array, t_shell *shell, pid_t pid, int sts);
 void 	free_env_array(char **env);
 int		is_sp_expantion(t_token *token);
+
 #endif
