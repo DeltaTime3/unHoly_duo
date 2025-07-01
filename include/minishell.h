@@ -282,4 +282,11 @@ int		pid_else(char *full_path, char **env_array, t_shell *shell, pid_t pid, int 
 void 	free_env_array(char **env);
 int		is_sp_expantion(t_token *token);
 
+//signals
+void	ft_signals(void);
+void	handle_sig_int(int sig);
+void	handle_sig_heredoc(int sig);
+void	signal_process(t_shell *shell);
+void	clean_exit(char *input);
+
 #endif
