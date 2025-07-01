@@ -98,35 +98,44 @@ int	pipe_handling(const char *input, int *i, t_token **tokens)
 
 int	redirect_handling(t_token *tokens)
 {
-    int	fd_out;
-	int	fd_in;
-	int	temp_fd;
-	char	*last_out_file;
-	char	*last_append_file;
-	char	*last_in_file;
-	int		out_mode;
-	t_token	*temp;
-
-	fd_out = -1;
-	fd_in = -1;
-	last_out_file = NULL;
-	last_append_file = NULL;
-	last_in_file = NULL;
-	out_mode = 0;
-	temp = tokens;
-	// collect the last redirection of each type
-	while (temp)
+    int	fd_out = -1;
+    int	fd_in = -1;
+    char	*last_out_file = NULL;
+    char	*last_append_file = NULL;
+    char	*last_in_file = NULL;
+    int	out_mode = 0;
+    t_token	*temp = tokens;
+    
+    // Process all redirections
+    while (temp)
     {
-        if (temp->type == REDIRECT)
+        if (temp->type == HERE_DOC && temp->next && temp->next->type == DELIMETER)
         {
-            // Make sure there's a token after the redirection
-            if (!temp->next)
+            char *heredoc_content = read_heredoc_input(temp->next->value);
+            if (!heredoc_content)
+                return (-1);
+            
+            int heredoc_fd[2];
+            if (pipe(heredoc_fd) == -1)
             {
-                ft_printf_fd(2, UNEXPECTED_TOKEN);
+                free(heredoc_content);
                 return (-1);
             }
-            // Check if the next token is a file
-            if (temp->next->type == FILES)
+            
+            // Write content to pipe
+            write(heredoc_fd[1], heredoc_content, ft_strlen(heredoc_content));
+            close(heredoc_fd[1]);
+            
+            // Redirect stdin to read from pipe
+            dup2(heredoc_fd[0], STDIN_FILENO);
+            close(heredoc_fd[0]);
+            
+            free(heredoc_content);
+            temp = temp->next; // Skip delimiter
+        }
+        else if (temp->type == REDIRECT)
+        {
+            if (temp->next && temp->next->type == FILES)
             {
                 if (ft_strcmp(temp->value, ">") == 0)
                 {
@@ -139,7 +148,10 @@ int	redirect_handling(t_token *tokens)
                     out_mode = 2;
                 }
                 else if (ft_strcmp(temp->value, "<") == 0)
+                {
                     last_in_file = temp->next->value;
+                }
+                temp = temp->next; // Skip the file token
             }
             else
             {
@@ -147,53 +159,62 @@ int	redirect_handling(t_token *tokens)
                 return (-1);
             }
         }
+        // Remove the else clause that was catching all other tokens
         temp = temp->next;
     }
-	// open files based on last redirection of each type
-	if (last_out_file && out_mode != 1)
-	{
-		temp_fd = open(last_out_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (temp_fd == -1)
-			return (print_error("Error opening file for output redirection\n"), -1);
-		close(temp_fd);
-	}
-	else if (last_append_file && out_mode != 2)
-	{
-		temp_fd = open(last_append_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		if (temp_fd == -1)
-			return (print_error("Error opening file for append redirection\n"), -1);
-		close(temp_fd);
-	}
-	if (out_mode == 1 && last_out_file)
+    
+    // Handle other redirections after processing all tokens
+    if (out_mode == 1 && last_out_file)
     {
         fd_out = open(last_out_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
         if (fd_out == -1)
-            return (print_error("Error opening file for output redirection\n"), -1);
+            return (-1);
+        dup2(fd_out, STDOUT_FILENO);
+        close(fd_out);
     }
     else if (out_mode == 2 && last_append_file)
     {
         fd_out = open(last_append_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
         if (fd_out == -1)
-            return (print_error("Error opening file for append redirection\n"), -1);
-	}
-	if (last_in_file)
-	{
-		fd_in = open(last_in_file, O_RDONLY);
-		if (fd_in == -1)
-			return (print_error("Error opening file for input redirection\n"), -1);
-	}
-	// apply redirections
-	if (fd_out != -1)
-	{
-		dup2(fd_out, STDOUT_FILENO);
-		close(fd_out);
-	}
-	if (fd_in != -1)
-	{
-		dup2(fd_in, STDIN_FILENO);
-		close(fd_in);
-	}
-	return (0);
+            return (-1);
+        dup2(fd_out, STDOUT_FILENO);
+        close(fd_out);
+    }
+    
+    if (last_in_file)
+    {
+        fd_in = open(last_in_file, O_RDONLY);
+        if (fd_in == -1)
+            return (-1);
+        dup2(fd_in, STDIN_FILENO);
+        close(fd_in);
+    }
+    
+    return (0);
+}
+
+int	heredoc_handling(const char *input, int *i, t_token **tokens)
+{
+	char	*delimiter;
+	int		start;
+
+	(*i) += 2;
+	while (input[*i] && ft_isspace(input[*i]))
+		(*i)++;
+	// extract delimeter
+	start = *i;
+	while (input[*i] && !ft_isspace(input[*i]) && input[*i] != '|'
+			&& input[*i] != '<' && input[*i] != '>')
+			(*i)++;
+	delimiter = ft_substr(input, start, *i - start);
+	if (!delimiter)
+		return (1);
+	add_token(tokens, create_token(HERE_DOC, "<<"));
+	add_token(tokens, create_token(DELIMETER, delimiter));
+	free(delimiter);
+	while (input[*i] && ft_isspace(input[*i]))
+		(*i)++;
+	return (0);	
 }
 
 // token handling
@@ -219,7 +240,6 @@ int	token_handling(const char *input, int *i, t_token **tokens,
             *expect_command = 1;
             while (input[*i] && ft_isspace(input[*i]))
                 (*i)++;
-            break; // Added break to exit the inner loop but continue processing
         }
         else if (input[*i] == '#')
             return (2);
