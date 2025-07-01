@@ -80,7 +80,11 @@ void	free_env(t_env *head)
 	{
 		temp = head;
 		head = head->next;
-		free_env_node(temp);
+		if (temp->key)
+			free(temp->key);
+		if (temp->value)
+			free(temp->value);
+		free(temp);
 	}
 }
 
@@ -106,11 +110,14 @@ char	**env_list_to_array(t_env *head)
 	i = 0;
 	while (curr)
 	{
-		temp = ft_strjoin(curr->key, "=");
-		array[i] = ft_strjoin(temp, curr->value);
-		free(temp);
-		curr = curr->next;
-		i++;
+		if (curr->value)
+		{
+			temp = ft_strjoin(curr->key, "=");
+			array[i] = ft_strjoin(temp, curr->value);
+			free(temp);
+			curr = curr->next;
+			i++;
+		}
 	}
 	array[i] = NULL;
 	return(array);
@@ -118,44 +125,62 @@ char	**env_list_to_array(t_env *head)
 
 void	clean_all_resources(t_shell *shell)
 {
-	t_env *current;
-    t_env *next;
-
-    // Free environment variable list
+    
     if (shell->head)
     {
-        current = shell->head;
-        while (current)
-        {
-            next = current->next;
-            if (current->key)
-                free(current->key);
-            if (current->value)
-                free(current->value);
-            free(current);
-            current = next;
-        }
+        free_env(shell->head);
+        shell->head = NULL;
     }
     // Free all dynamically allocated shell fields
     if (shell->prev_dir)
+    {
         free(shell->prev_dir);
+        shell->prev_dir = NULL;
+    }
     if (shell->curr_dir)
+    {
         free(shell->curr_dir);
+        shell->curr_dir = NULL;
+    }
     if (shell->pwd)
+    {
         free(shell->pwd);
+        shell->pwd = NULL;
+    }
     if (shell->token)
+    {
         free(shell->token);
+        shell->token = NULL;
+    }
     if (shell->type)
+    {
         free(shell->type);
+        shell->type = NULL;
+    }
     if (shell->value)
+    {
         free(shell->value);
+        shell->value = NULL;
+    }
     // Null out pointers for safety
-    shell->head = NULL;
     shell->tail = NULL;
-    shell->prev_dir = NULL;
-    shell->curr_dir = NULL;
-    shell->pwd = NULL;
-    shell->token = NULL;
-    shell->type = NULL;
-    shell->value = NULL;
+}
+
+void	clean_command_resources(t_shell *shell)
+{
+	if (shell->token)
+	{
+		free(shell->token);
+		shell->token = NULL;
+	}
+	if (shell->type)
+	{
+		free(shell->type);
+		shell->type = NULL;
+	}
+	if (shell->value)
+	{
+		free(shell->value);
+		shell->value = NULL;
+	}
 }

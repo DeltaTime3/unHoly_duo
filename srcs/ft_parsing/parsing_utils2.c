@@ -36,30 +36,38 @@ void	free_args(char **args)
 int	quote_handling(const char *input, int *i, t_token **tokens,
 	int *expect_command)
 {
-	char	quote;
-	size_t	start;
-	char	*value;
-	t_cat	type;
+	char    quote;
+    size_t  start;
+    char   *raw;
+    char  **words;
+    int     j;
+    t_cat   type;
 
-	quote = input[(*i)++];
-	start = *i;
-	while (input[*i] && input[*i] != quote)
-		(*i)++;
-	if (input[*i] != quote)
-		return (1);
-	value = ft_substr(input, start, *i - start);
-	if (!value)
-		return (1);
-	// (*i)++;
-	while (input[*i] == quote)
-		(*i)++;
-	if (value)
-	{
-		type = determine_token_type(value, expect_command);
-		add_token(tokens, create_token(type, value));
-		free(value);
-	}
-	return (0);
+    quote = input[(*i)++];                     // skip opening quote
+    start = *i;
+    while (input[*i] && input[*i] != quote)
+        (*i)++;
+    if (input[*i] != quote)
+        return (handle_quote_error(tokens));
+    raw = ft_substr(input, start, *i - start); // raw = inner text
+    if (!raw)
+        return (handle_quote_error(tokens));
+    (*i)++;                                    // skip closing quote
+    // split the inner text on spaces
+    words = ft_split(raw, ' ');
+    free(raw);
+    if (!words)
+        return (handle_quote_error(tokens));
+    // for each word, determine its type and add a token
+    j = 0;
+    while (words[j])
+    {
+        type = determine_token_type(words[j], expect_command);
+        add_token(tokens, create_token(type, words[j]));
+        free(words[j++]);
+    }
+    free(words);
+    return 0;
 }
 
 bool	open_pipe(const char *input, int i)
@@ -75,16 +83,18 @@ bool	open_pipe(const char *input, int i)
 	return (false);
 }
 
-static int	is_invalid_sequence(const char *input, int i)
+static int is_invalid_sequence(const char *input, int i)
 {
-	if (input[i + 1] && input[i + 2])
-    {
-        if ((input[i] == '|' && input[i + 2] == '|') ||
-            (input[i] == '>' && input[i + 2] == '>') ||
-            (input[i] == '<' && input[i + 2] == '<') ||
-            (input[i] == '&' && input[i + 2] == '&'))
-	            return (1);
-    }
+	if (!input[i] || !input[i+1] || !input[i+2])
+		return (0);
+    if (input[i + 1] && input[i + 2]
+     && (  (input[i] == '|' && input[i + 1] == '|')
+        || (input[i] == '|' && input[i + 2] == '|')
+        || (input[i] == '<' && input[i + 1] == '<')
+        || (input[i] == '<' && input[i + 2] == '<')
+        || (input[i] == '>' && input[i + 1] == '>')
+        || (input[i] == '>' && input[i + 2] == '>') ) )
+        return (1);
     return (0);
 }
 
@@ -97,6 +107,8 @@ int	check_token_sequence(const char *input)
 	{
 		while (input[i] && ft_isspace(input[i]))
 			i++;
+		if (input[i])
+			break ;
 		if (is_invalid_sequence(input, i))
         {
             ft_printf_fd(2, UNEXPECTED_TOKEN);

@@ -6,10 +6,12 @@ int	main(int ac, char **av, char **envp)
 	char	*input;
     t_token	*tokens;
     t_shell	shell;
+	char	**orig_envp;
 
+	orig_envp = envp;
     (void)ac;
     (void)av;
-    shell.head = init_shell_env(envp);
+    shell.head = init_shell_env(orig_envp);
 	shell.exit_code = 0;
 	shell.return_code = 0;
 	shell.prev_dir = NULL;
@@ -40,6 +42,9 @@ int	main(int ac, char **av, char **envp)
                     ft_execute(&shell, tokens);
                     free_tokens(tokens);
                     tokens = NULL;
+					clean_command_resources(&shell);
+					free_env(shell.head);
+					shell.head = init_shell_env(orig_envp);
                 }
             }
         }
