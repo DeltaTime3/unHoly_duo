@@ -117,6 +117,11 @@ char	*expand_exit_status(const char *input, t_shell *shell);
 char    *remove_quotes(const char *input);
 void 	expand_tokens(t_token *token, t_shell *shell);
 char 	*expand_token_value(char *value, t_shell *shell);
+void 	expand_token_va_aux(char *value, int *start, int *i, char **result, t_shell *shell);
+char	*append_norm(char *value, int *start, int i, char *result, t_shell *shell);
+char	*append_aft_last(char *value, int start, int i, char *result);
+char	*append_bfr_dolar(char *value, int start, int i, char *result);
+char	*append_qst(char *value, int *start, int *i, char *result, t_shell *shell);
 
 // refractors.c
 int		operator_type(const char *input, int *i, t_cat *type);

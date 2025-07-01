@@ -83,28 +83,129 @@ void expand_tokens(t_token *token, t_shell *shell)
     }
 }
 
-char    *expand_token_value(char *value, t_shell *shell)
+char	*expand_token_value(char *value, t_shell *shell)
 {
-    char *result;
-    char *temp;
-    char *home;
+	char	*result;
+	int		start;
+	int		i;
+	int		len;
 
-    if (value[0] == '~' && (value[1] == '\0' || value[1] == '/'))
-    {
-        home = get_env_value(shell->head, "HOME");
-        if (home)
-        {
-            temp = ft_strjoin(home, value + 1);
-            result = temp;
-        }
-        else
-            return (ft_strdup(value));
-    }
-    else if (ft_strcmp(value, "$?") == 0)
-        result = expand_exit_status(value, shell);
-    else if (value[0] == '$' && value[1] != '\0')
-        result = expand_env_var(value, shell);
-    else
-        result = ft_strdup(value);
-    return (result);
+	i = 0;
+	start = 0;
+	len = ft_strlen(value);
+	result = ft_calloc(1, sizeof(char));
+	if(!result)
+		return(NULL);
+	while (i < len)
+	{
+		expand_token_va_aux(value, &start, &i, &result, shell);
+	}
+	if (i > start)
+		result = append_aft_last(value, start, i, result);
+	return (result);
+}
+
+char	*append_bfr_dolar(char *value, int start, int i, char *result)
+{
+	char	*temp;
+	char	*join;
+
+	temp = ft_substr(value, start, i - start);
+	join = ft_strjoin(result, temp);
+	if (!join)
+	{
+		free(join);
+		return(NULL);
+	}
+	if (!temp)
+		return(NULL);
+	free(result);
+	result = join;
+	free(temp);
+	return(result);
+}
+
+char	*append_aft_last(char *value, int start, int i, char *result)
+{
+	char	*temp;
+	char	*join;
+
+	temp = ft_substr(value, start, i - start);
+	join = ft_strjoin(result, temp);
+	if (!join)
+	{
+		free(join);
+		return(NULL);
+	}
+	if (!temp)
+		return(NULL);
+	free(result);
+	result = join;
+	free(temp);
+	return (result);
+}
+
+char	*append_norm(char *value, int *start, int i, char *result, t_shell *shell)
+{
+	char	*temp;
+	char	*join;
+	char	*val;
+	
+	temp = ft_substr(value, *start, i - *start);
+	val = get_env_value(shell->head, temp);
+	if (!val)
+		val = "";
+	join = ft_strjoin(result, val);
+	if (!join)
+	{
+		free(join);
+		return(NULL);
+	}
+	if (!temp)
+		return(NULL);
+	free(result);
+	result = join;
+	free(temp);
+	*start = i;
+	return(result);
+}
+
+void expand_token_va_aux(char *value, int *start, int *i, char **result, t_shell *shell)
+{
+	if (value[*i] == '$' && value[*i + 1] == '?')
+	{
+		*result = append_qst(value, start, i, *result, shell);
+	}
+	else if (value[*i] == '$' && value[*i + 1] != '\0')
+	{
+		if(*i > *start)
+			*result = append_bfr_dolar(value, *start, *i, *result);
+		(*i)++;
+		*start = *i;
+		while (value[*i] && (ft_isalnum(value[*i]) || value[*i] == '_'))
+			(*i)++;
+		*result = append_norm(value, start, *i, *result, shell);
+	}
+	else
+			(*i)++;
+}
+
+char	*append_qst(char *value, int *start, int *i, char *result, t_shell *shell)
+{
+	char	*code;
+	char	*join;
+
+	if (value[*i] == '$' && value[*i + 1] == '?')
+	{
+		if (*i > *start)
+			result = append_bfr_dolar(value, *start, *i, result);
+		*i += 2;
+		code = ft_itoa(shell->exit_code);
+		join = ft_strjoin(result, code);
+		free(result);
+		result = join;
+		free(code);
+		*start = *i;
+	}
+	return (result);
 }
