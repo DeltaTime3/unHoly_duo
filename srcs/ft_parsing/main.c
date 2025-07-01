@@ -1,6 +1,8 @@
 
 #include "minishell.h"
 
+int	global_sig;
+
 int	main(int ac, char **av, char **envp)
 {
 	char	*input;

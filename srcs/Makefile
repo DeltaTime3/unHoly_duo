@@ -15,6 +15,7 @@ SRC				= env_initializer.c \
 				  env_management_utils.c \
 				  errors.c \
 				  exect.c \
+				  signal.c \
 				  $(FT_BUILTINS_DIR)/cd_utils.c \
 				  $(FT_BUILTINS_DIR)/cd_utils2.c \
 				  $(FT_BUILTINS_DIR)/export_utils.c \
