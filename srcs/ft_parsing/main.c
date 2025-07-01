@@ -8,7 +8,7 @@ int	main(int ac, char **av, char **envp)
     t_token	*tokens;
     t_shell	shell;
 	char	**orig_envp;
-
+	
 	orig_envp = envp;
     (void)ac;
     (void)av;
@@ -22,11 +22,16 @@ int	main(int ac, char **av, char **envp)
 	shell.type = NULL;
 	shell.tail = NULL;
 	shell.value = NULL;
+	ft_signals();
     while (1)
     {
         input = readline("minishell> ");
+		signal_process(&shell);
         if (!input)
-            break;
+		{
+    		write(STDOUT_FILENO, "exit\n", 5);
+			break;
+		}
         
         if (ft_strlen(input) != 0)
         {
