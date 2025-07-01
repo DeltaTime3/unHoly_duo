@@ -34,41 +34,43 @@ void	free_args(char **args)
 }
 
 // quotes 
-int	quote_handling(const char *input, int *i, t_token **tokens,
-	int *expect_command)
+int quote_handling(const char *input, int *i, t_token **tokens, int *expect_command)
 {
-	char    quote;
-    size_t  start;
-    char   *raw;
-    char  **words;
-    int     j;
-    t_cat   type;
-
-    quote = input[(*i)++];                     // skip opening quote
+    char quote;
+    size_t start;
+    char *content;
+    t_cat type;
+    
+    quote = input[(*i)++]; // skip opening quote
     start = *i;
+    
+    // Find closing quote
     while (input[*i] && input[*i] != quote)
         (*i)++;
+    
     if (input[*i] != quote)
         return (handle_quote_error(tokens));
-    raw = ft_substr(input, start, *i - start); // raw = inner text
-    if (!raw)
+    
+    // Extract content between quotes
+    content = ft_substr(input, start, *i - start);
+    if (!content)
         return (handle_quote_error(tokens));
-    (*i)++;                                    // skip closing quote
-    // split the inner text on spaces
-    words = ft_split(raw, ' ');
-    free(raw);
-    if (!words)
-        return (handle_quote_error(tokens));
-    // for each word, determine its type and add a token
-    j = 0;
-    while (words[j])
+    
+    (*i)++; // skip closing quote
+    
+    // If content is empty, skip this token (handles "" case)
+    if (!content[0])
     {
-        type = determine_token_type(words[j], expect_command);
-        add_token(tokens, create_token(type, words[j]));
-        free(words[j++]);
+        free(content);
+        return (0);
     }
-    free(words);
-    return 0;
+    
+    // Create single token with entire quoted content
+    type = determine_token_type(content, expect_command);
+    add_token(tokens, create_token(type, content));
+    
+    free(content);
+    return (0);
 }
 
 bool	open_pipe(const char *input, int i)
