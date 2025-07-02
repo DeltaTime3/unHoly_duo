@@ -1,0 +1,67 @@
+Here-doc Test Cases for read_heredoc_input
+
+1. Basic single-line
+   Input:
+     command << DELIM
+     hello
+     DELIM
+   Expectation: “hello\n” is sent to stdin of command.
+
+2. Multi-line content                                           DONE
+   Input:
+     cat << EOF
+     line1
+     line2
+     EOF
+   Expectation: “line1\nline2\n”.
+
+3. Empty here-doc                                               DONE
+   Input:
+     cmd << X
+     X
+   Expectation: An empty string (“”).
+
+4. No matching delimiter (EOF)                                  DONE
+   Input ends with Ctrl-D before delimiter.
+   Expectation: Function returns NULL; shell handles gracefully.
+
+5. Delimiter vs. similar string                                 DONE
+   Input:
+     sh << D
+     D  
+     D1
+     D
+   Expectation: Stops only on exact “D”; “D1” is treated as content.
+
+6. Leading/trailing whitespace                                  DONE
+   Input:
+     echo << END
+       indented
+     END 
+   Expectation: Only a line matching exactly “END” (no spaces) stops input.
+
+7. Special characters in content                                DONE
+   Input:
+     cat << EOF
+     $HOME and `pwd`
+     EOF
+   Expectation: Literal “$HOME and `pwd`” (no expansion).
+
+8. Quoted delimiter (no stripping)                              X
+   Input:
+     cmd << "DELIM"
+     foo
+     DELIM
+   Expectation: Only a line equal to “DELIM” ends input.
+
+9. Interrupt signal (Ctrl-C)
+   During prompt (“> ”), press Ctrl-C.
+   Expectation: Signal handler invoked; function returns NULL.
+
+10. Integration with pipes & redirects
+    Input:
+      grep foo << E | wc -l > out.txt
+      foo
+      bar
+      E
+    Expectation: Only “foo\n” is piped to wc -l; result written to out.txt.
