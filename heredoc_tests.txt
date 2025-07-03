@@ -47,7 +47,7 @@ Here-doc Test Cases for read_heredoc_input
      EOF
    Expectation: Literal “$HOME and `pwd`” (no expansion).
 
-8. Quoted delimiter (no stripping)                              X
+8. Quoted delimiter (no stripping)                              DONE
    Input:
      cmd << "DELIM"
      foo

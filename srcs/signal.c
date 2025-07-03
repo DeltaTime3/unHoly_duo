@@ -4,6 +4,7 @@ void	ft_signals(void)
 {
 	signal(SIGINT, handle_sig_int);
 	signal(SIGQUIT, SIG_IGN);
+	signal(SIGPIPE, handle_sig_pipe);
 }
 
 void	handle_sig_int(int sig)
@@ -26,6 +27,11 @@ void	handle_sig_heredoc(int sig)
 		write(STDERR_FILENO, "\n", 1);
 		global_sig = 130;
 	}
+}
+void	handle_sig_pipe(int sig)
+{
+	(void)sig;
+	write(STDERR_FILENO, "Broken pipe\n", 12);
 }
 
 void	signal_process(t_shell *shell)

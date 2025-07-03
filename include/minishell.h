@@ -295,6 +295,7 @@ int		is_sp_expantion(t_token *token);
 void	ft_signals(void);
 void	handle_sig_int(int sig);
 void	handle_sig_heredoc(int sig);
+void	handle_sig_pipe(int sig);
 void	signal_process(t_shell *shell);
 void	clean_exit(char *input);
 
