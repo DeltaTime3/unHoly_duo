@@ -13,6 +13,7 @@ t_token	*create_token(t_cat type, char *value)
     token->args = NULL;
     token->next = NULL;
     token->command = NULL;
+    token->expand_heredoc = 0;
     return (token);
 }
 

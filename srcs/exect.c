@@ -67,7 +67,7 @@ int	ft_execute(t_shell *shell, t_token *value)
 		close(saved_stdin);
 		return (result);
 	}
-    if (redirect_handling(value) == -1)
+    if (redirect_handling(value, shell) == -1)
     {
         shell->exit_code = 1;
         dup2(saved_stdout, STDOUT_FILENO);
