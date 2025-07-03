@@ -103,19 +103,17 @@ int	redirect_handling(t_token *tokens)
     int		fd_out;
     t_token	*temp;
     int		heredoc_fd[2];
-    char    *final_heredoc_content;
+    char    *heredoc_content;
 
     fd_out = -1;
     temp = tokens;
-    final_heredoc_content = NULL;
+    heredoc_content = NULL;
     while (temp != NULL)
     {
         if (temp->type == HERE_DOC && temp->next && temp->next->type == DELIMETER)
         {
-            if (final_heredoc_content)
-                free(final_heredoc_content);
-            final_heredoc_content = read_heredoc_input(temp->next->value);
-            if (!final_heredoc_content)
+            heredoc_content = read_heredoc_input(temp->next->value);
+            if (!heredoc_content)
                 return (-1);
             temp = temp->next->next;
         }
@@ -136,18 +134,18 @@ int	redirect_handling(t_token *tokens)
         else
             temp = temp->next;
     }
-    if (final_heredoc_content)
+    if (heredoc_content)
     {
         if (pipe(heredoc_fd) == -1)
         {
-            free(final_heredoc_content);
+            free(heredoc_content);
             return (-1);
         }
-        write (heredoc_fd[1], final_heredoc_content, ft_strlen(final_heredoc_content));
+        write (heredoc_fd[1], heredoc_content, ft_strlen(heredoc_content));
         close(heredoc_fd[1]);
         dup2(heredoc_fd[0], STDIN_FILENO);
         close(heredoc_fd[0]);
-        free(final_heredoc_content);
+        free(heredoc_content);
     }
     return (0);
 }
