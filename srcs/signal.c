@@ -23,7 +23,6 @@ void	handle_sig_heredoc(int sig)
 {
 	if(sig == SIGINT)
 	{
-		(void)sig;
 		write(STDERR_FILENO, "\n", 1);
 		global_sig = 130;
 	}

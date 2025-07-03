@@ -109,8 +109,10 @@ int redirect_handling(t_token *tokens)
     {
         if (temp->type == HERE_DOC && temp->next && temp->next->type == DELIMETER)
         {
-            char *heredoc_content = read_heredoc_input(temp->next->value);
-            if (!heredoc_content)
+            signal(SIGINT, handle_sig_heredoc);
+			char *heredoc_content = read_heredoc_input(temp->next->value);
+            signal(SIGINT, handle_sig_int);
+			if (!heredoc_content)
                 return (-1);
 
             if (pipe(heredoc_fd) == -1)
