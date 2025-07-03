@@ -78,6 +78,8 @@ int	validate_input(const char *input)
 		add_history(input);
 	while (input[i] && ft_isspace(input[i]))
 		i++;
+	if (input[i] == '\0')
+		return (0);
 	if (input[i] == '\n' || ft_isspace(input[i]))
 		printf("\n");
 	if (check_unmatched_quotes(input))

@@ -49,7 +49,6 @@ t_token	*tokenize_input(const char *input)
 	}
 	final_tokens = *tokens;
 	free(tokens);
-	print_tokens(final_tokens);
 	prep_cmd_args(final_tokens);
 	return (final_tokens);
 }
