@@ -96,78 +96,58 @@ int	pipe_handling(const char *input, int *i, t_token **tokens)
 	return (0);
 }
 
+// In srcs/ft_parsing/tokens_helpers.c
+
 int	redirect_handling(t_token *tokens)
 {
-    int	fd_out = -1;
-    t_token	*temp = tokens;
-    int heredoc_fd[2];
-    int pipe_fd[2];
-    pid_t   pid;
-    char *heredoc_content;
-    
-    // Process all redirections
-    while (temp)
+    int		fd_out;
+    t_token	*temp;
+    int		heredoc_fd[2];
+    char    *final_heredoc_content;
+
+    fd_out = -1;
+    temp = tokens;
+    final_heredoc_content = NULL;
+    while (temp != NULL)
     {
         if (temp->type == HERE_DOC && temp->next && temp->next->type == DELIMETER)
         {
-            heredoc_content = read_heredoc_input(temp->next->value);
-            if (!heredoc_content)
+            if (final_heredoc_content)
+                free(final_heredoc_content);
+            final_heredoc_content = read_heredoc_input(temp->next->value);
+            if (!final_heredoc_content)
                 return (-1);
-            
-            if (pipe(heredoc_fd) == -1)
-            {
-                free(heredoc_content);
-                return (-1);
-            }
-            // Write content to pipe
-            write(heredoc_fd[1], heredoc_content, ft_strlen(heredoc_content));
-            close(heredoc_fd[1]);
-            // Redirect stdin to read from pipe
-            dup2(heredoc_fd[0], STDIN_FILENO);
-            close(heredoc_fd[0]);
-            free(heredoc_content);
-            temp = temp->next;
+            temp = temp->next->next;
         }
         else if (temp->type == REDIRECT && temp->next && temp->next->type == FILES)
         {
             if (ft_strcmp(temp->value, ">") == 0)
             {
+                if (fd_out != -1)
+                    close(fd_out);
                 fd_out = open(temp->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
                 if (fd_out == -1)
                     return (-1);
                 dup2(fd_out, STDOUT_FILENO);
                 close(fd_out);
             }
-            temp = temp->next;
+            temp = temp->next->next;
         }
-        else if (temp->type == PIPE)
+        else
+            temp = temp->next;
+    }
+    if (final_heredoc_content)
+    {
+        if (pipe(heredoc_fd) == -1)
         {
-            if (pipe(pipe_fd) == -1)
-                {
-                    free(heredoc_content);
-                    return (-1);
-                }
-            // redirect stdout to the write end of the pipe
-            dup2(pipe_fd[1], STDOUT_FILENO);
-            close(pipe_fd[1]);
-            // fork the process to execute the next command
-            pid = fork();
-            if (pid == -1)
-                return (-1);
-            else if (pid == 0)
-            {
-                // child, redirects stdin to the read end of the pipe
-                dup2(pipe_fd[0], STDIN_FILENO);
-                close(pipe_fd[0]);
-                free(tokens);
-                exit(0);
-                // continue processing next command
-            }
-            else
-                close(pipe_fd[0]); // parent, close the read end of the pipe
+            free(final_heredoc_content);
+            return (-1);
         }
-        if (temp)
-            temp = temp->next;
+        write (heredoc_fd[1], final_heredoc_content, ft_strlen(final_heredoc_content));
+        close(heredoc_fd[1]);
+        dup2(heredoc_fd[0], STDIN_FILENO);
+        close(heredoc_fd[0]);
+        free(final_heredoc_content);
     }
     return (0);
 }
@@ -196,7 +176,7 @@ int	heredoc_handling(const char *input, int *i, t_token **tokens)
         free(delimiter);
         delimiter = unquoted_delimeter;
     }
-	add_token(tokens, create_token(HERE_DOC, "<<"));
+    add_token(tokens, create_token(HERE_DOC, "<<"));
 	add_token(tokens, create_token(DELIMETER, delimiter));
 	free(delimiter);
 	while (input[*i] && ft_isspace(input[*i]))

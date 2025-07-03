@@ -72,7 +72,7 @@ Here-doc Test Cases for read_heredoc_input
 
 # Heredoc Test Cases and Expected Outputs
 
-## Test 1: Basic Heredoc
+## Test 1: Basic Heredoc					DONE
 Input:
 cat << EOF
 Hello, World!
@@ -107,7 +107,7 @@ Expected Output:
 Hello, $NAME!
 Today is $(date +%A)
 
-## Test 4: Heredoc with Indentation (<<-)
+## Test 4: Heredoc with Indentation (<<-)			
 Input:
 if true; then
     cat <<-EOF
@@ -137,7 +137,7 @@ This is a multi-line
 message stored in
 a variable.
 
-## Test 6: Heredoc with Special Characters
+## Test 6: Heredoc with Special Characters			DONE
 Input:
 cat << EOF
 Special characters: !@#$%^&*()
