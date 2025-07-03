@@ -50,7 +50,6 @@ int	ft_execute(t_shell *shell, t_token *value)
     int	saved_stdin;
 	int	result;
 
-    expand_tokens(value, shell);
     saved_stdout = dup(STDOUT_FILENO);
     saved_stdin = dup(STDIN_FILENO);
     if (saved_stdout == -1 || saved_stdin == -1)
@@ -58,11 +57,12 @@ int	ft_execute(t_shell *shell, t_token *value)
         shell->exit_code = 1;
         return (1);
     }
+    expand_tokens(value, shell);
 	if (count_pipes(value) > 0)
 	{
 		result = handle_pipes(value, shell);
-		dup2(saved_stdin, STDOUT_FILENO);
-		dup2(saved_stdout, STDIN_FILENO);
+		dup2(saved_stdout, STDOUT_FILENO);
+		dup2(saved_stdin, STDIN_FILENO);
 		close(saved_stdout);
 		close(saved_stdin);
 		return (result);
@@ -78,12 +78,12 @@ int	ft_execute(t_shell *shell, t_token *value)
     }
     if (is_builtin(value))
         choose_b_in(value, shell);
+	else
+		execute2(shell, value);
     dup2(saved_stdout, STDOUT_FILENO);
     dup2(saved_stdin, STDIN_FILENO);
     close(saved_stdout);
     close(saved_stdin);
-    if (!is_builtin(value))
-        execute2(shell, value);
     return (shell->exit_code);
 }
 
