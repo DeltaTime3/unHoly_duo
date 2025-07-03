@@ -166,7 +166,7 @@ Function: print_info
 Arguments: arg1 arg2
 Working Directory: /current/working/directory
 
-## Test 8: Multiple Heredocs
+## Test 8: Multiple Heredocs					DONE
 Input:
 cat << FIRST
 This is the first heredoc.
