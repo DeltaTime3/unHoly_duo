@@ -25,8 +25,7 @@ char    *read_heredoc_input(const char *delimiter)
         if (ft_strcmp(line, delimiter) == 0)
         {
             free(line);
-            free(content);
-            return (0);
+            return (content);
         }
         // append line to content with newline
         temp = ft_strjoin(content, line);

@@ -96,7 +96,6 @@ int	pipe_handling(const char *input, int *i, t_token **tokens)
 	return (0);
 }
 
-// In srcs/ft_parsing/tokens_helpers.c
 
 int	redirect_handling(t_token *tokens)
 {
@@ -112,6 +111,8 @@ int	redirect_handling(t_token *tokens)
     {
         if (temp->type == HERE_DOC && temp->next && temp->next->type == DELIMETER)
         {
+            if (heredoc_content)
+                free(heredoc_content);
             heredoc_content = read_heredoc_input(temp->next->value);
             if (!heredoc_content)
                 return (-1);
