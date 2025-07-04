@@ -7,25 +7,29 @@ char    *read_heredoc_input(const char *delimiter)
     char    *content;
     char    *temp;
     
+	global_sig = 0;
 	signal(SIGINT, handle_sig_heredoc);
     content = ft_strdup("");
     if (!content)
-        return (NULL);
+	{
+		signal(SIGINT, handle_sig_int);
+		return (NULL);
+	}
     while (1)
     {
 		line = readline("> ");
-        if (!line || global_sig	== 130)
+        if (!line || global_sig	== 1)
         {
-            if(line)
-				free(line);
+			free(line);
 			free(content);
+			signal(SIGINT, handle_sig_int);
             return (NULL);
         }
         // Simple string comparison without trimming
         if (ft_strcmp(line, delimiter) == 0)
         {
             free(line);
-            return (content);
+            break;
         }
         // append line to content with newline
         temp = ft_strjoin(content, line);
@@ -33,6 +37,7 @@ char    *read_heredoc_input(const char *delimiter)
         if (!temp)
         {
             free(line);
+			signal(SIGINT, handle_sig_int);
             return (NULL);
         }
         content = temp;
@@ -41,6 +46,7 @@ char    *read_heredoc_input(const char *delimiter)
         if (!temp)
         {
             free(line);
+			signal(SIGINT, handle_sig_int);
             return (NULL);
         }
         content = temp;
