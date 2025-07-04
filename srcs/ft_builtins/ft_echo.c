@@ -14,9 +14,6 @@ int	ft_echo(t_token *token)
     {
 		flag = 1;
         i++;
-		for (int j = 0; token->args && token->args[j]; j++)
-  			printf("args[%d]: '%s'\n", j, token->args[j]);
-
     }
     while (token->args && token->args[i])
     {
