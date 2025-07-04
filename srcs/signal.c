@@ -24,13 +24,8 @@ void	handle_sig_heredoc(int sig)
 	if(sig == SIGINT)
 	{
 		close(STDIN_FILENO);
-<<<<<<< HEAD
 		write(STDOUT_FILENO,"\n", 1);
 		global_sig = 1;
-=======
-		write(STDERR_FILENO, "\n", 1);
-		global_sig = 130;
->>>>>>> 0ad8f7c57200e66676b2b35208a1efa7663fd16b
 	}
 }
 void	handle_sig_pipe(int sig)
