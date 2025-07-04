@@ -79,7 +79,6 @@ int	token_helper(const char *input, int *i, t_token **tokens,
 		}
 		else if (result == 2)
 			break ;
-		(*i)++;
 	}
 	return (0);
 }
