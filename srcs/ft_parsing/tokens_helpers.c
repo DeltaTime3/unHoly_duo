@@ -97,7 +97,7 @@ int	pipe_handling(const char *input, int *i, t_token **tokens)
 }
 
 
-int	redirect_handling(t_token *tokens)
+int	redirect_handling(t_token *tokens, t_shell *shell)
 {
     int		fd_out;
     t_token	*temp;
@@ -113,7 +113,7 @@ int	redirect_handling(t_token *tokens)
         {
             if (heredoc_content)
                 free(heredoc_content);
-            heredoc_content = read_heredoc_input(temp->next->value);
+            heredoc_content = read_heredoc_input(temp->next->value, temp->next->expand_heredoc, shell);
             if (!heredoc_content)
                 return (-1);
             temp = temp->next->next;
@@ -153,34 +153,38 @@ int	redirect_handling(t_token *tokens)
 
 int	heredoc_handling(const char *input, int *i, t_token **tokens)
 {
-	char	*delimiter;
-	int		start;
-    char    *unquoted_delimeter;
+    char	*delimiter;
+    int		start;
+    int		expand;
+    t_token	*heredoc_token;
+    t_token	*delimiter_token;
 
-	(*i) += 2;
-	while (input[*i] && ft_isspace(input[*i]))
-		(*i)++;
-	// extract delimeter
-	start = *i;
-	while (input[*i] && !ft_isspace(input[*i]) && input[*i] != '|'
-			&& input[*i] != '<' && input[*i] != '>')
-			(*i)++;
-	delimiter = ft_substr(input, start, *i - start);
-	if (!delimiter)
-		return (1);
-    while ((delimiter[0] == '\'' && delimiter[ft_strlen(delimiter) - 1] == '\'') ||
-        (delimiter[0] == '"' && delimiter[ft_strlen(delimiter) - 1] == '"'))
+    (*i) += 2;
+    while (input[*i] && ft_isspace(input[*i]))
+        (*i)++;
+    start = *i;
+    while (input[*i] && !ft_isspace(input[*i]) && input[*i] != '|'
+        && input[*i] != '<' && input[*i] != '>')
+        (*i)++;
+    delimiter = ft_substr(input, start, *i - start);
+    if (!delimiter)
+        return (1);
+    expand = 1;
+    if ((delimiter[0] == '\'' && delimiter[ft_strlen(delimiter) - 1] == '\'')
+        || (delimiter[0] == '"' && delimiter[ft_strlen(delimiter) - 1] == '"'))
     {
-        unquoted_delimeter = ft_substr(delimiter, 1, ft_strlen(delimiter) - 2);
+        char *temp = ft_strtrim(delimiter, "\'\"");
         free(delimiter);
-        delimiter = unquoted_delimeter;
+        delimiter = temp;
+        expand = 0;
     }
-    add_token(tokens, create_token(HERE_DOC, "<<"));
-	add_token(tokens, create_token(DELIMETER, delimiter));
-	free(delimiter);
-	while (input[*i] && ft_isspace(input[*i]))
-		(*i)++;
-	return (0);	
+    heredoc_token = create_token(HERE_DOC, "<<");
+    add_token(tokens, heredoc_token);
+    delimiter_token = create_token(DELIMETER, delimiter);
+    delimiter_token->expand_heredoc = expand;
+    add_token(tokens, delimiter_token);
+    free(delimiter);
+    return (0);
 }
 
 // token handling
@@ -197,7 +201,7 @@ int	token_handling(const char *input, int *i, t_token **tokens,
         {
             if (quote_handling(input, i, tokens, expect_command))
                 return (1);
-            break; // Changed from return(0) to break to continue processing
+            break;
         }
         if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
         {

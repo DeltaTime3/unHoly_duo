@@ -1,48 +1,6 @@
 
 #include "minishell.h"
 
-static const char	*get_token_type(t_cat type)
-{
-	if (type == COMMAND)
-		return ("COMMAND");
-	else if (type == ARGUMENT)
-		return ("ARGUMENT");
-	else if (type == OPERATOR)
-		return ("OPERATOR");
-	else if (type == QUOTE)
-		return ("QUOTE");
-	else if (type == FLAG)
-		return ("FLAG");
-	else if (type == COMMENT)
-		return ("COMMENT");
-	else if (type == PIPE)
-		return ("PIPE");
-	else if (type == REDIRECT)
-		return ("REDIRECT");
-	else if (type == HERE_DOC)
-		return ("HERE_DOC");
-	else if (type == DELIMETER)
-		return ("DELIMETER");
-	else if (type == FILES)
-		return ("FILES");
-	else
-		return ("UNKNOWN");
-}
-
-void	print_tokens(t_token *tokens)
-{
-	t_token		*current;
-	t_token	*token;
-
-	current = tokens;
-	while (current)
-	{
-		token = current;
-		printf("Type: %s, Value: '%s'\n", get_token_type(token->type), token->value);
-		current = current->next;
-	}
-}
-
 void	input_handling(char *input, t_token *tokens)
 {
 	(void)tokens;
@@ -75,10 +33,7 @@ void process_input(char *input)
     }
     free(input);
     if (tokens)
-    {
-        print_tokens(tokens);
         free_tokens(tokens);
-    }
 }
 
 void	exit_handling(char *input)

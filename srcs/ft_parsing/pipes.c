@@ -66,7 +66,7 @@ int handle_pipes(t_token *tokens, t_shell *shell)
             if (pipes[0][1] >= 0) close(pipes[0][1]);
         }
         
-        if (redirect_handling(current) == -1)
+        if (redirect_handling(current, shell) == -1)
         {
             free_tokens(tokens);
             clean_command_resources(shell);
@@ -121,7 +121,7 @@ int handle_pipes(t_token *tokens, t_shell *shell)
             if (pipes[0][1] >= 0) close(pipes[0][1]);
             if (pipes[1][0] >= 0) close(pipes[1][0]);
             if (pipes[1][1] >= 0) close(pipes[1][1]);
-            if (redirect_handling(current) == -1)
+            if (redirect_handling(current, shell) == -1)
             {
                 free_tokens(tokens);
                 clean_command_resources(shell);
@@ -167,7 +167,7 @@ int handle_pipes(t_token *tokens, t_shell *shell)
                 if (pipes[1][0] >= 0) close(pipes[1][0]);
                 if (pipes[1][1] >= 0) close(pipes[1][1]);
                 
-                if (redirect_handling(current) == -1)
+                if (redirect_handling(current, shell) == -1)
                 {
                     free_tokens(tokens);
                     clean_command_resources(shell);

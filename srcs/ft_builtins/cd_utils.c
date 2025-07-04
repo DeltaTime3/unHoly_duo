@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 11:14:00 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/11 12:23:11 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/03 14:33:56 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,6 @@ int	ct_nodes(t_token *token)
     int i = 0;
     while (token)
     {
-        printf("Token value: %s\n", token->value);
         i++;
         token = token->next;
     }

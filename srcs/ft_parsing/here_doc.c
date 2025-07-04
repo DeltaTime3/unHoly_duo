@@ -1,7 +1,9 @@
 
 #include "minishell.h"
 
-char    *read_heredoc_input(const char *delimiter)
+#include "minishell.h"
+
+char    *read_heredoc_input(const char *delimiter, int expand, t_shell *shell)
 {
     char    *line;
     char    *content;
@@ -25,13 +27,17 @@ char    *read_heredoc_input(const char *delimiter)
 			signal(SIGINT, handle_sig_int);
             return (NULL);
         }
-        // Simple string comparison without trimming
         if (ft_strcmp(line, delimiter) == 0)
         {
             free(line);
             break;
         }
-        // append line to content with newline
+        if (expand)
+        {
+            char *expanded_line = expand_token_value(line, shell);
+            free(line);
+            line = expanded_line;
+        }
         temp = ft_strjoin(content, line);
         free(content);
         if (!temp)
@@ -52,6 +58,6 @@ char    *read_heredoc_input(const char *delimiter)
         content = temp;
         free(line);
     }
-	signal(SIGINT, handle_sig_int);
+    signal(SIGINT, handle_sig_int);
     return (content);
 }

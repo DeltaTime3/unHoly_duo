@@ -13,6 +13,7 @@ t_token	*create_token(t_cat type, char *value)
     token->args = NULL;
     token->next = NULL;
     token->command = NULL;
+    token->expand_heredoc = 0;
     return (token);
 }
 
@@ -48,7 +49,6 @@ t_token	*tokenize_input(const char *input)
 	}
 	final_tokens = *tokens;
 	free(tokens);
-	print_tokens(final_tokens);
 	prep_cmd_args(final_tokens);
 	return (final_tokens);
 }

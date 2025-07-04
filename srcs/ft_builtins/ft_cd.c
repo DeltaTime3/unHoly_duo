@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 14:29:58 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/12 15:14:41 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/03 14:33:35 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,21 +28,17 @@ void	ft_cd(t_token *token, t_shell *type)
     int		is_cd_minus;
 
     is_cd_minus = 0;
-    printf("Entering ft_cd\n");
     if (!token)
     {
         printf("Error: token is NULL\n");
         return;
     }
-    printf("Token value: %s\n", token->value);
     if (ct_nodes(token) > 2)
     {
         print_error(E_TARG);
         type->r_code = 1;
         return;
     }
-    if (token->next)
-        printf("Next token value: %s\n", token->next->value);
 //if (token->next)
 //		expander(&token->next, type);
     new_dir = get_cd_target(token, type, &is_cd_minus);

@@ -99,6 +99,7 @@ typedef struct s_token
 	struct s_token	*next;
 	t_cat			type;
 	char			*content;
+	int				expand_heredoc;
 } t_token;
  
 typedef struct s_env
@@ -124,7 +125,7 @@ char	*append_bfr_dolar(char *value, int start, int i, char *result);
 char	*append_qst(char *value, int *start, int *i, char *result, t_shell *shell);
 
 // here_doc.c
-char    *read_heredoc_input(const char *delimeter);
+char    *read_heredoc_input(const char *delimiter, int expand, t_shell *shell);
 
 // refractors.c
 int		operator_type(const char *input, int *i, t_cat *type);
@@ -149,7 +150,7 @@ int		pipe_handling(const char *input, int *i, t_token **tokens);
 int		heredoc_handling(const char *input, int *i, t_token **tokens);
 int		token_handling(const char *input, int *i, t_token **tokens,
 			int *expect_command);
-int		redirect_handling(t_token *tokens);
+int	redirect_handling(t_token *tokens, t_shell *shell);
 
 // tokens_helpers2.c
 void 	print_tokens(t_token *tokens);
