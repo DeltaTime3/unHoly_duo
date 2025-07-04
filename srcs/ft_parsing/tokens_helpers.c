@@ -220,6 +220,11 @@ int	token_handling(const char *input, int *i, t_token **tokens,
                 if (word_handling(input, i, tokens, expect_command))
                     return (1);
             }
+            else
+            {
+                if (word_handling(input, i, tokens, expect_command))
+                    return (1);
+            }
             break; // Added break to exit inner loop after processing a word
         }
         else

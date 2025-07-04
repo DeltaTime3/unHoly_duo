@@ -14,10 +14,10 @@ int	ft_echo(t_token *token)
     {
 		flag = 1;
         i++;
-    }
+	}
     while (token->args && token->args[i])
     {
-		if (token->args[i][0] != '\0')
+		if (token->args[i][0] != '\0' || (token->args[i][0] == '\0' && token->args[i-1] && token->args[i-1][0] != '\0'))
         {
 			if (!first_arg)
 			ft_putstr_fd(" ", STDOUT_FILENO);
