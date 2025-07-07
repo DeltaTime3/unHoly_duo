@@ -36,9 +36,10 @@ int handle_pipes(t_token *tokens, t_shell *shell)
     int saved_stdin;
     int saved_stdout;
 
-    // Initialize all pipe file descriptors to -1
-    pipes[0][0] = -1; pipes[0][1] = -1;
-    pipes[1][0] = -1; pipes[1][1] = -1;
+    pipes[0][0] = -1; 
+    pipes[0][1] = -1;
+    pipes[1][0] = -1; 
+    pipes[1][1] = -1;
     pipe_count = count_pipes(tokens);
     current = tokens;
     if (!current)
@@ -193,7 +194,7 @@ int handle_pipes(t_token *tokens, t_shell *shell)
     for (i = 0; i <= pipe_count; i++)
     {
         wait(&status);
-        if (WIFEXITED(status))
+        if (WIFEXITED(status) && !is_builtin(current))
             shell->exit_code = WEXITSTATUS(status);
     }
     // Restore original stdin/stdout
