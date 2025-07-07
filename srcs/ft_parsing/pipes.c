@@ -71,7 +71,7 @@ int handle_pipes(t_token *tokens, t_shell *shell)
             free_tokens(tokens);
             clean_command_resources(shell);
             free_env(shell->head);
-            exit(1);
+            exit(shell->exit_code);
         }        
         if (is_builtin(current))
             choose_b_in(current, shell);
@@ -80,7 +80,7 @@ int handle_pipes(t_token *tokens, t_shell *shell)
         free_tokens(tokens);
         clean_command_resources(shell);
         free_env(shell->head);
-        exit(0);
+        exit(shell->exit_code);
     }
     // Parent process continues
     if (pipe_count > 0 && pipes[0][1] >= 0)
@@ -126,7 +126,7 @@ int handle_pipes(t_token *tokens, t_shell *shell)
                 free_tokens(tokens);
                 clean_command_resources(shell);
                 free_env(shell->head);
-                exit(1);
+                exit(shell->exit_code);
             }
             if (is_builtin(current))
                 choose_b_in(current, shell);
@@ -135,7 +135,7 @@ int handle_pipes(t_token *tokens, t_shell *shell)
             free_tokens(tokens);
             clean_command_resources(shell);
             free_env(shell->head);
-            exit(0);
+            exit(shell->exit_code);
         }
         // Parent: close previous pipe read end and current pipe write end
         if (pipes[(i-1) % 2][0] >= 0)
@@ -172,7 +172,7 @@ int handle_pipes(t_token *tokens, t_shell *shell)
                     free_tokens(tokens);
                     clean_command_resources(shell);
                     free_env(shell->head);
-                    exit(1);
+                    exit(shell->exit_code);
                 }                
                 if (is_builtin(current))
                     choose_b_in(current, shell);
@@ -181,7 +181,7 @@ int handle_pipes(t_token *tokens, t_shell *shell)
                 free_tokens(tokens);
                 clean_command_resources(shell);
                 free_env(shell->head);
-                exit(0);
+                exit(shell->exit_code);
             }
             
             // Close the last pipe read end

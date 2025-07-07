@@ -92,30 +92,34 @@ void	expand_tokens(t_token *token, t_shell *shell)
     char	*old_value;
     int		i;
 
-    if (token && token->value)
+    while (token)
     {
-        expanded = expand_token_value(token->value, shell);
-        if (expanded)
+        if (token->value)
         {
-            old_value = token->value;
-            token->value = expanded;
-            free(old_value);
-        }
-    }    
-    if (token && token->args)
-    {
-        i = 0;
-        while (token->args[i])
-        {
-            expanded = expand_token_value(token->args[i], shell);
+            expanded = expand_token_value(token->value, shell);
             if (expanded)
             {
-                old_value = token->args[i];
-                token->args[i] = expanded;
+                old_value = token->value;
+                token->value = expanded;
                 free(old_value);
             }
-            i++;
         }
+        if (token->args)
+        {
+            i = 0;
+            while (token->args[i])
+            {
+                expanded = expand_token_value(token->args[i], shell);
+                if (expanded)
+                {
+                    old_value = token->args[i];
+                    token->args[i] = expanded;
+                    free(old_value);
+                }
+                i++;
+            }
+        }
+        token = token->next;
     }
 }
 
@@ -215,27 +219,34 @@ static char	*append_norm(char *value, t_exp_state *state)
 
 static void	expand_token_va_aux(char *value, t_exp_state *state)
 {
-    if ((value[state->i] == '\'' || value[state->i] == '"'))
+    if (value[state->i] == '\'' || value[state->i] == '"')
     {
         if (state->in_quote == 0)
             state->in_quote = value[state->i];
         else if (state->in_quote == value[state->i])
             state->in_quote = 0;
     }
-    if (value[state->i] == '$' && value[state->i + 1] == '?')
+    // check for variable expansion only if not inside single quotes
+    if (value[state->i] == '$' && state->in_quote != '\'')
     {
-        state->result = append_qst(value, state);
-    }
-    else if (value[state->i] == '$' && state->in_quote != '\'' &&
-             (ft_isalnum(value[state->i + 1]) || value[state->i + 1] == '_'))
-    {
-        if (state->i > state->start)
-            state->result = append_bfr_dolar(value, state->start, state->i, state->result);
-        (state->i)++;
-        state->start = state->i;
-        while (value[state->i] && (ft_isalnum(value[state->i]) || value[state->i] == '_'))
+        if (value[state->i + 1] == '?')
+        {
+            state->result = append_qst(value, state);
+        }
+        else if (ft_isalnum(value[state->i + 1]) || value[state->i + 1] == '_')
+        {
+            if (state->i > state->start)
+                state->result = append_bfr_dolar(value, state->start, state->i, state->result);
             (state->i)++;
-        state->result = append_norm(value, state);
+            state->start = state->i;
+            while (value[state->i] && (ft_isalnum(value[state->i]) || value[state->i] == '_'))
+                (state->i)++;
+            state->result = append_norm(value, state);
+        }
+        else
+        {
+            (state->i)++;
+        }
     }
     else
     {

@@ -30,13 +30,21 @@ int	check_unmatched_quotes(const char *input)
 int	check_logical_operators(const char *input)
 {
 	int	i;
+	char	quote;
 
 	i = 0;
+	quote = '\0';
 	while (input[i])
 	{
-		if ((input[i] == '&' && input[i + 1] == '&')
-			|| (input[i] == '|' && input[i + 1] == '|')
-			|| (input[i] == '!'))
+		if (input[i] == '\'' || input[i] == '"')
+		{
+			if (quote == '\0')
+				quote = input[i];
+			else if (quote == input[i])
+				quote = '\0';
+		}
+		if (quote == '\0' && ((input[i] == '&' && input[i + 1] == '&')
+            || (input[i] == '|' && input[i + 1] == '|')))
 		{
 			ft_printf_fd(2, LOGICAL_OPERATORS);
 			return (1);

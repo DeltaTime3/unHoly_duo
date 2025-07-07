@@ -17,6 +17,20 @@ t_token	*create_token(t_cat type, char *value)
     return (token);
 }
 
+static int  is_all_ws(const char *input)
+{
+    int i;
+
+    i = 0;
+    while(input[i])
+    {
+        if (!ft_isspace(input[i]))
+            return (0);
+        i++;
+    }
+    return (1);
+}
+
 t_token	*tokenize_input(const char *input)
 {
 	t_token	**tokens;
@@ -31,7 +45,7 @@ t_token	*tokenize_input(const char *input)
 	*tokens = NULL;
 	i = 0;
 	expect_command = 1;
-	if (!input || ft_strlen(input) == 0 || ft_isspace(input[0]))
+	if (!input || ft_strlen(input) == 0 || is_all_ws(input))
 	{
 		free(tokens);
 		return (NULL);

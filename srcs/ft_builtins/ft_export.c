@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:25 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/07/07 11:23:26 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/07 14:53:23 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,22 +21,26 @@ int	ft_export(t_shell *type, char **args)
 	i = 1;
 	status = 0;
 	if (!args[1])
-		return(print_export_token(type->head), 0);
+    {
+		sort_env(type->head);
+        print_export_token(type->head);
+        return (0);
+    }
 	while (args[i])
-	{
-		expanded_arg = expand_token_arg_to_value(args[i], type);
-		if (validate_args(args[i]))
-		{
-			ft_printf_fd(2, "minishell: export: `%s': %s\n", args[i], E_INVALID_ID);
-			status = 1;
-		}
-		else
-			process_export(type, args[i]);
-		free(expanded_arg);	
-		i++;
-	}
-	type->exit_code = status;
-	return (status);
+    {
+        expanded_arg = expand_token_arg_to_value(args[i], type);
+        if (validate_args(args[i]))
+        {
+            ft_printf_fd(2, "minishell: export: `%s': %s\n", args[i], E_INVALID_ID);
+            status = 1;
+        }
+        else
+            process_export(type, args[i]);
+        free(expanded_arg);	
+        i++;
+    }
+    type->exit_code = status;
+    return (status);
 }
 
 int	validate_args(char *args)

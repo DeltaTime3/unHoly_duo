@@ -67,7 +67,7 @@ int	ft_execute(t_shell *shell, t_token *value)
 		close(saved_stdin);
 		return (result);
 	}
-    if (redirect_handling(value, shell) == -1)
+	if (redirect_handling(value, shell) == -1)
     {
         shell->exit_code = 1;
         dup2(saved_stdout, STDOUT_FILENO);
@@ -144,6 +144,7 @@ int	pid_neg(char *full_path, char **env_array)
 
 int	pid_else(char *full_path, char **env_array, t_shell *shell, pid_t pid, int sts)
 {
+	wait(&sts);
 	waitpid(pid, &sts, 0);
 	shell->exit_code = WEXITSTATUS(sts);
 	free(full_path);
