@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ppaula-d <ppaula-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 14:29:58 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/07/03 14:33:35 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/07 12:37:16 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,22 +26,25 @@ void	ft_cd(t_token *token, t_shell *type)
 {
     char	*new_dir;
     int		is_cd_minus;
+	int		arg_count;
 
     is_cd_minus = 0;
-    if (!token)
-    {
-        printf("Error: token is NULL\n");
+	if (!token || !token->args || !token->args[0])
         return;
-    }
-    if (ct_nodes(token) > 2)
+	arg_count = ct_nodes(token);
+	if (arg_count > 2)
     {
-        print_error(E_TARG);
+        ft_printf_fd(2, "cd: Too many arguments.\n", 1);
         type->r_code = 1;
         return;
     }
-//if (token->next)
-//		expander(&token->next, type);
     new_dir = get_cd_target(token, type, &is_cd_minus);
+	if (!new_dir)
+	{
+		ft_printf_fd(2, "cd: Failed to change directory.\n", 1);
+        type->r_code = 1;
+        return;
+	}
     cd_change_dir(new_dir, type, is_cd_minus);
 }
 

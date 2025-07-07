@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:25 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/18 13:37:46 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/07 11:23:26 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int	ft_export(t_shell *type, char **args)
 		free(expanded_arg);	
 		i++;
 	}
+	type->exit_code = status;
 	return (status);
 }
 

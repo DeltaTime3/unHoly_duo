@@ -1,11 +1,13 @@
 
 #include "../../include/minishell.h"
 
-static void print_echo_args(t_token *token, int start_index)
+static int print_echo_args(t_token *token, int start_index)
 {
 	int first_arg;
+	int print;
 	
 	first_arg = 1;
+	print = 0;
 	while (token->args && token->args[start_index])
 	{
 		if (token -> args[start_index][0] != '\0' ||
@@ -16,9 +18,11 @@ static void print_echo_args(t_token *token, int start_index)
 					ft_putstr_fd(" ", STDOUT_FILENO);
 				ft_putstr_fd(token->args[start_index], STDOUT_FILENO);
 				first_arg = 0;
+				print = 1;
 			}
 			start_index++;
 	}
+	return(print);
 }
 
 static int skip_n(t_token *token, int *i)
@@ -38,11 +42,12 @@ int	ft_echo(t_token *token)
 {
 	int		flag;
     int		i;
+	int		print;
 
     i = 1;
     flag = skip_n(token, &i);
-    print_echo_args(token, i);
-	if (!flag)
+    print = print_echo_args(token, i);
+	if (!flag || !print)
 		ft_putstr_fd("\n", STDOUT_FILENO);
 	return (0);
 }

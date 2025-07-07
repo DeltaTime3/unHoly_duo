@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ppaula-d <ppaula-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 11:14:00 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/07/03 14:33:56 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/07 12:36:28 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,17 +140,12 @@ void add_old_pwd_to_env(t_shell *type)
  */
 int	ct_nodes(t_token *token)
 {
-	if (!token)
-    {
-        printf("Error: token is NULL in ct_nodes\n");
-        return 0;
-    }
+	int argc;
 
-    int i = 0;
-    while (token)
-    {
-        i++;
-        token = token->next;
-    }
-    return i;
+	argc = 0;
+	if (!token || !token->args)
+		return (0);
+	while (token->args[argc])
+		argc++;
+	return (argc);
 }

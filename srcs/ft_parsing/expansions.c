@@ -63,8 +63,7 @@ void expand_tokens(t_token *token, t_shell *shell)
             free(old_value);  
             free(expanded);
         }
-    }
-    
+    }    
     if (token && token->args)
     {
         int i = 0;
