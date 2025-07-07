@@ -41,34 +41,28 @@ int quote_handling(const char *input, int *i, t_token **tokens, int *expect_comm
     char *content;
     t_cat type;
     
-    quote = input[(*i)++]; // skip opening quote
     start = *i;
-    
-    // Find closing quote
+    quote = input[(*i)++]; // skip opening quote
     while (input[*i] && input[*i] != quote)
         (*i)++;
-    
     if (input[*i] != quote)
         return (handle_quote_error(tokens));
-    
-    // Extract content between quotes
+    (*i)++;
     content = ft_substr(input, start, *i - start);
     if (!content)
         return (handle_quote_error(tokens));
-    
-    (*i)++; // skip closing quote
-    
-    // If content is empty, skip this token (handles "" case)
     if (!content[0])
     {
         free(content);
         return (0);
     }
-    
-    // Create single token with entire quoted content
+    if (ft_strlen(content) == 2)
+    {
+        free(content);
+        content = ft_strdup("");
+    }
     type = determine_token_type(content, expect_command);
     add_token(tokens, create_token(type, content));
-    
     free(content);
     return (0);
 }

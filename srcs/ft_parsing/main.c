@@ -22,6 +22,7 @@ int	main(int ac, char **av, char **envp)
 	shell.type = NULL;
 	shell.tail = NULL;
 	shell.value = NULL;
+	shell.heredoc_fd = -1;
 	ft_signals();
     while (1)
     {

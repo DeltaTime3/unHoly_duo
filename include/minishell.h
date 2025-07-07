@@ -85,6 +85,7 @@ typedef struct s_shell
 	t_token			*token;
 	int				return_code;
 	int				exit_code;
+	int				heredoc_fd;
 	struct s_shell	*next;
 	int	r_code;
 }	t_shell;
@@ -110,6 +111,15 @@ typedef struct s_env
 	struct s_env	*next;
 }	t_env;
 
+typedef struct s_exp_state
+{
+	char *result;
+	int		i;
+	int		start;
+	t_shell	*shell;
+}				t_exp_state;
+
+
 // PARSING PROTOTYPES
 
 // expansions.c
@@ -118,11 +128,6 @@ char	*expand_exit_status(const char *input, t_shell *shell);
 char    *remove_quotes(const char *input);
 void 	expand_tokens(t_token *token, t_shell *shell);
 char 	*expand_token_value(char *value, t_shell *shell);
-void 	expand_token_va_aux(char *value, int *start, int *i, char **result, t_shell *shell);
-char	*append_norm(char *value, int *start, int i, char *result, t_shell *shell);
-char	*append_aft_last(char *value, int start, int i, char *result);
-char	*append_bfr_dolar(char *value, int start, int i, char *result);
-char	*append_qst(char *value, int *start, int *i, char *result, t_shell *shell);
 
 // here_doc.c
 char    *read_heredoc_input(const char *delimiter, int expand, t_shell *shell);
@@ -140,6 +145,7 @@ t_cat	determine_token_type(const char *value, int *expect_command);
 t_token	*create_token(t_cat type, char *value);
 t_token	*tokenize_input(const char *input);
 void	prep_cmd_args(t_token *head);
+t_token *find_command_token(t_token *head);
 
 // tokens_helpers.c
 int		file_handling(const char *input, int *i, t_token **tokens);
