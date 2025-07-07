@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/07/07 15:24:01 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/07 16:04:03 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,10 @@ int	ft_exit(t_token **token, t_shell *type)
     arg = NULL;
     nbr_args = token_counter(*token);
     ft_putstr_fd("exit\n", STDOUT_FILENO);
-    if (nbr_args > 1)
-        arg = (*token)->next->value;
+	if (nbr_args > 1)
+		arg = (*token)->next->value;
+	if (nbr_args == 2 && arg && ft_strcmp(arg, "--") == 0)
+		ft_kill(type, *token, 0);
     if (nbr_args > 2)
     {
 		printf("DEBUG: exit arg = '%s'\n", arg);
@@ -53,7 +55,7 @@ int	ft_exit2(t_shell *type, t_token *tokens, int nbr_args, char *arg)
         code = ft_atoll(arg, &atol_error);
         if (atol_error)
         {
-            print_error(E_NOTNBR);
+            ft_printf_fd(2, "exit: %s: numeric argument required\n", arg);
             ft_kill(type, tokens, 2); 
         }
         code = ((code % 256) + 256) % 256;
