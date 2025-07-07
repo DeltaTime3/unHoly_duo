@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 13:34:36 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/07/07 10:53:42 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/07 15:58:59 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,9 @@ void ft_env(t_shell *type, t_token *command)
 	env = type->head;
 	if (command->args && command->args[1])
 	{
-		ft_printf_fd(2, "env:‘%s‘: No such file or directory\n", command->args[1]);
-		return;
+		ft_printf_fd(2, "env: '%s': No such file or directory\n", command->args[1]);
+		type->exit_code = 1;
+		return ;
 	}
 	while (env)
 	{
@@ -29,11 +30,3 @@ void ft_env(t_shell *type, t_token *command)
 		env = env->next;
 	}
 }
-/**
-int ft_env_extra_args(t_token *command)
-{
-	if (command->args && command->args[0] && command->args[1])
-		return (1);
-	return (0);
-}
-*/
