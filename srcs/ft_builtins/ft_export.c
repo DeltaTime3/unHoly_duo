@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:25 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/07/07 11:23:26 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/07 15:17:54 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	validate_args(char *args)
 	if(val_empt_operat(args) || val_fst_char(args) ||
 		val_var_name(args))
 		{
-			print_error(E_INPUT);
+			//print_error(E_INPUT);
 			return (1);
 		}
 	return (0);

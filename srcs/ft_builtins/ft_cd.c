@@ -6,7 +6,7 @@
 /*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 14:29:58 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/07/07 12:37:16 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/07 15:09:04 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ void	ft_cd(t_token *token, t_shell *type)
 	arg_count = ct_nodes(token);
 	if (arg_count > 2)
     {
-        ft_printf_fd(2, "cd: Too many arguments.\n", 1);
+        ft_printf_fd(2, "cd: too many arguments\n");
+		type->exit_code = 1;
         type->r_code = 1;
         return;
     }
@@ -108,8 +109,7 @@ char	*get_cd_target(t_token *token, t_shell *type, int *is_cd_minus)
 	char	*temp;
 
 	*is_cd_minus = 0;
-	if (!token->next || !token->next->value || ft_strcmp(token->next->value,
-			"~") == 0)
+	if (!token->args[1] || ft_strcmp(token->args[1], "~") == 0)
 	{
 		temp = get_env_value(type->head, "HOME");
 		if (temp)
@@ -125,9 +125,9 @@ char	*get_cd_target(t_token *token, t_shell *type, int *is_cd_minus)
 			return (ft_strdup(temp));
 		return (NULL);
 	}
-	else if (ft_strcmp(token->next->value, ".") == 0)
+	else if (ft_strcmp(token->args[1], ".") == 0)
 		return (ft_strdup(type->curr_dir));
-	return (ft_strdup(token->next->value));
+	return (ft_strdup(token->args[1]));
 }
 
 /**
