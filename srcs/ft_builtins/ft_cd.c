@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_cd.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/12 14:29:58 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/07/07 15:09:04 by afilipe-         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
@@ -117,7 +106,7 @@ char	*get_cd_target(t_token *token, t_shell *type, int *is_cd_minus)
 		else
 			return (NULL);
 	}
-	else if (ft_strcmp(token->next->value, "-") == 0)
+	else if (ft_strcmp(token->args[1], "-") == 0)
 	{
 		*is_cd_minus = 1;
 		temp = get_env_value(type->head, "OLDPWD");
