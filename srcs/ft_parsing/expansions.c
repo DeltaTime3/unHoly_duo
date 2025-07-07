@@ -1,5 +1,12 @@
 #include "minishell.h"
 
+static char	*expand_variables(char *value, t_shell *shell);
+static void	expand_token_va_aux(char *value, t_exp_state *state);
+static char	*append_qst(char *value, t_exp_state *state);
+static char	*append_norm(char *value, t_exp_state *state);
+static char	*append_bfr_dolar(char *value, int start, int i, char *result);
+static char	*append_aft_last(char *value, int start, int i, char *result);
+
 char *expand_env_var(const char *input, t_shell *shell)
 {
     char    *var_name;
@@ -48,60 +55,85 @@ char    *remove_quotes(const char *input)
     return (result);
 }
 
-void expand_tokens(t_token *token, t_shell *shell)
+void	expand_tokens(t_token *token, t_shell *shell)
 {
-    char *expanded;
-    char *old_value;
-    
+    char	*expanded;
+    char	*old_value;
+    int		i;
+
     if (token && token->value)
     {
         expanded = expand_token_value(token->value, shell);
         if (expanded)
         {
             old_value = token->value;
-            token->value = remove_quotes(expanded);
-            free(old_value);  
-            free(expanded);
+            token->value = expanded;
+            free(old_value);
         }
     }    
     if (token && token->args)
     {
-        int i = 0;
+        i = 0;
         while (token->args[i])
         {
             expanded = expand_token_value(token->args[i], shell);
             if (expanded)
             {
                 old_value = token->args[i];
-                token->args[i] = remove_quotes(expanded);
+                token->args[i] = expanded;
                 free(old_value);
-                free(expanded);
             }
             i++;
         }
     }
 }
 
+static char	*expand_variables(char *value, t_shell *shell)
+{
+    t_exp_state	state;
+
+    state.i = 0;
+    state.start = 0;
+    state.shell = shell;
+    state.result = ft_calloc(1, sizeof(char));
+    if (!state.result)
+        return (NULL);
+    while (value[state.i])
+    {
+        expand_token_va_aux(value, &state);
+    }
+    if (state.i > state.start)
+        state.result = append_aft_last(value, state.start,
+                state.i, state.result);
+    return (state.result);
+}
+
 char	*expand_token_value(char *value, t_shell *shell)
 {
-	char	*result;
-	int		start;
-	int		i;
-	int		len;
+    char	*result;
+    char	*content;
+    int		len;
 
-	i = 0;
-	start = 0;
-	len = ft_strlen(value);
-	result = ft_calloc(1, sizeof(char));
-	if(!result)
-		return(NULL);
-	while (i < len)
-	{
-		expand_token_va_aux(value, &start, &i, &result, shell);
-	}
-	if (i > start)
-		result = append_aft_last(value, start, i, result);
-	return (result);
+    if (!value)
+        return (NULL);
+    len = ft_strlen(value);
+    if (len >= 2 && value[0] == '\'' && value[len - 1] == '\'')
+    {
+        result = ft_substr(value, 1, len - 2);
+    }
+    else if (len >= 2 && value[0] == '"' && value[len - 1] == '"')
+    {
+        content = ft_substr(value, 1, len - 2);
+        if (!content)
+            return (NULL);
+        result = expand_variables(content, shell);
+        free(content);
+    }
+    else
+    {
+        result = expand_variables(value, shell);
+    }
+    return (result);
 }
 
 char	*append_bfr_dolar(char *value, int start, int i, char *result)
@@ -144,67 +176,61 @@ char	*append_aft_last(char *value, int start, int i, char *result)
 	return (result);
 }
 
-char	*append_norm(char *value, int *start, int i, char *result, t_shell *shell)
+static char	*append_norm(char *value, t_exp_state *state)
 {
-	char	*temp;
-	char	*join;
-	char	*val;
-	
-	temp = ft_substr(value, *start, i - *start);
-	val = get_env_value(shell->head, temp);
-	if (!val)
-		val = "";
-	join = ft_strjoin(result, val);
-	if (!join)
-	{
-		free(join);
-		return(NULL);
-	}
-	if (!temp)
-		return(NULL);
-	free(result);
-	result = join;
-	free(temp);
-	*start = i;
-	return(result);
+    char	*temp;
+    char	*join;
+    char	*val;
+
+    temp = ft_substr(value, state->start, state->i - state->start);
+    val = get_env_value(state->shell->head, temp);
+    if (!val)
+        val = "";
+    join = ft_strjoin(state->result, val);
+    free(state->result);
+    free(temp);
+    state->start = state->i;
+    return (join);
 }
 
-void expand_token_va_aux(char *value, int *start, int *i, char **result, t_shell *shell)
+static void	expand_token_va_aux(char *value, t_exp_state *state)
 {
-	if (value[*i] == '$' && value[*i + 1] == '?')
-	{
-		*result = append_qst(value, start, i, *result, shell);
-	}
-	else if (value[*i] == '$' && value[*i + 1] != '\0')
-	{
-		if(*i > *start)
-			*result = append_bfr_dolar(value, *start, *i, *result);
-		(*i)++;
-		*start = *i;
-		while (value[*i] && (ft_isalnum(value[*i]) || value[*i] == '_'))
-			(*i)++;
-		*result = append_norm(value, start, *i, *result, shell);
-	}
-	else
-			(*i)++;
+    if (value[state->i] == '$' && value[state->i + 1] == '?')
+    {
+        state->result = append_qst(value, state);
+    }
+    else if (value[state->i] == '$' && (ft_isalnum(value[state->i + 1])
+        || value[state->i + 1] == '_'))
+    {
+        if (state->i > state->start)
+            state->result = append_bfr_dolar(value, state->start,
+                    state->i, state->result);
+        (state->i)++;
+        state->start = state->i;
+        while (value[state->i] && (ft_isalnum(value[state->i])
+            || value[state->i] == '_'))
+            (state->i)++;
+        state->result = append_norm(value, state);
+    }
+    else
+    {
+        (state->i)++;
+    }
 }
 
-char	*append_qst(char *value, int *start, int *i, char *result, t_shell *shell)
+static char	*append_qst(char *value, t_exp_state *state)
 {
-	char	*code;
-	char	*join;
+    char	*code;
+    char	*join;
 
-	if (value[*i] == '$' && value[*i + 1] == '?')
-	{
-		if (*i > *start)
-			result = append_bfr_dolar(value, *start, *i, result);
-		*i += 2;
-		code = ft_itoa(shell->exit_code);
-		join = ft_strjoin(result, code);
-		free(result);
-		result = join;
-		free(code);
-		*start = *i;
-	}
-	return (result);
+    if (state->i > state->start)
+        state->result = append_bfr_dolar(value, state->start,
+                state->i, state->result);
+    state->i += 2;
+    code = ft_itoa(state->shell->exit_code);
+    join = ft_strjoin(state->result, code);
+    free(state->result);
+    free(code);
+    state->start = state->i;
+    return (join);
 }

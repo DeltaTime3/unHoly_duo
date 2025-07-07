@@ -53,22 +53,38 @@ int	op_handling(const char *input, int *i, t_token **tokens)
 int	word_handling(const char *input, int *i, t_token **tokens,
 	int *expect_command)
 {
-	size_t	start;
-	char	*value;
-	t_cat	type;
+	int start;
+    char    quote_char;
+    char    *content;
+    t_cat   type;
 
-	start = *i;
-	skip_special_chars(input, i);
-	value = ft_substr(input, start, *i - start);
-	if (!value || ft_strlen(value) == 0)
+    start = *i;
+    quote_char = 0;
+    while (input[*i])
     {
-        free(value);
-        return (1);
+        if (quote_char)
+        {
+            if (input[*i] == quote_char)
+                quote_char = 0;
+        }
+        else
+        {
+            if (input[*i] == '\'' || input[*i] == '"')
+                quote_char = input[*i];
+            else if (ft_isspace(input[*i]) || input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
+                break ;
+        }
+        (*i)++;
     }
-	type = determine_token_type(value, expect_command);
-	add_token(tokens, create_token(type, value));
-	free(value);
-	return (0);
+    if (quote_char)
+        return (handle_quote_error(tokens));
+    content = ft_substr(input, start, *i - start);
+    if (!content)
+        return (1);
+    type = determine_token_type(content, expect_command);
+    add_token(tokens, create_token(type, content));
+    free (content);
+    return (0);
 }
 
 // pipes
@@ -121,15 +137,13 @@ int	redirect_handling(t_token *tokens, t_shell *shell)
         else if (temp->type == REDIRECT && temp->next && temp->next->type == FILES)
         {
             if (ft_strcmp(temp->value, ">") == 0)
-            {
-                if (fd_out != -1)
-                    close(fd_out);
                 fd_out = open(temp->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-                if (fd_out == -1)
-                    return (-1);
-                dup2(fd_out, STDOUT_FILENO);
-                close(fd_out);
-            }
+            else if (ft_strcmp(temp->value, ">>") == 0)
+                fd_out = open(temp->next->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
+            if (fd_out == -1)
+                return (-1);
+            dup2(fd_out, STDOUT_FILENO);
+            close(fd_out);
             temp = temp->next->next;
         }
         else
