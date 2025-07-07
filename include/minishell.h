@@ -116,6 +116,7 @@ typedef struct s_exp_state
 	char *result;
 	int		i;
 	int		start;
+	char	in_quote;
 	t_shell	*shell;
 }				t_exp_state;
 

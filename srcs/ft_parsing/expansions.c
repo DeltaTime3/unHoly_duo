@@ -7,6 +7,37 @@ static char	*append_norm(char *value, t_exp_state *state);
 static char	*append_bfr_dolar(char *value, int start, int i, char *result);
 static char	*append_aft_last(char *value, int start, int i, char *result);
 
+char    *remove_all_quotes(const char *input)
+{
+    int len;
+    char    *result;
+    int     i;
+    int     j;
+    char    in_quote;
+
+    if (!input)
+        return (NULL);
+    len = ft_strlen(input);
+    result = ft_calloc(len + 1, sizeof(char));
+    if (!result)
+        return (NULL);
+    i = 0;
+    j = 0;
+    in_quote = 0;
+    while (input[i])
+    {
+        if (in_quote == 0 && (input[i] == '\'' || input[i] == '"'))
+            in_quote = input[i];
+        else if (in_quote != 0 && input[i] == in_quote)
+            in_quote = 0;
+        else
+            result[j++] = input[i];
+        i++;
+    }
+    result[j] = '\0';
+    return (result);
+}
+
 char *expand_env_var(const char *input, t_shell *shell)
 {
     char    *var_name;
@@ -96,6 +127,7 @@ static char	*expand_variables(char *value, t_shell *shell)
     state.start = 0;
     state.shell = shell;
     state.result = ft_calloc(1, sizeof(char));
+    state.in_quote = 0;
     if (!state.result)
         return (NULL);
     while (value[state.i])
@@ -110,30 +142,18 @@ static char	*expand_variables(char *value, t_shell *shell)
 
 char	*expand_token_value(char *value, t_shell *shell)
 {
-    char	*result;
-    char	*content;
-    int		len;
+    char	*expanded_vars;
+    char	*final_result;
 
     if (!value)
         return (NULL);
-    len = ft_strlen(value);
-    if (len >= 2 && value[0] == '\'' && value[len - 1] == '\'')
-    {
-        result = ft_substr(value, 1, len - 2);
-    }
-    else if (len >= 2 && value[0] == '"' && value[len - 1] == '"')
-    {
-        content = ft_substr(value, 1, len - 2);
-        if (!content)
-            return (NULL);
-        result = expand_variables(content, shell);
-        free(content);
-    }
-    else
-    {
-        result = expand_variables(value, shell);
-    }
-    return (result);
+    expanded_vars = expand_variables(value, shell);
+    if (!expanded_vars)
+        return (ft_strdup(""));
+    final_result = remove_all_quotes(expanded_vars);
+    free(expanded_vars);
+
+    return (final_result);
 }
 
 char	*append_bfr_dolar(char *value, int start, int i, char *result)
@@ -195,20 +215,25 @@ static char	*append_norm(char *value, t_exp_state *state)
 
 static void	expand_token_va_aux(char *value, t_exp_state *state)
 {
+    if ((value[state->i] == '\'' || value[state->i] == '"'))
+    {
+        if (state->in_quote == 0)
+            state->in_quote = value[state->i];
+        else if (state->in_quote == value[state->i])
+            state->in_quote = 0;
+    }
     if (value[state->i] == '$' && value[state->i + 1] == '?')
     {
         state->result = append_qst(value, state);
     }
-    else if (value[state->i] == '$' && (ft_isalnum(value[state->i + 1])
-        || value[state->i + 1] == '_'))
+    else if (value[state->i] == '$' && state->in_quote != '\'' &&
+             (ft_isalnum(value[state->i + 1]) || value[state->i + 1] == '_'))
     {
         if (state->i > state->start)
-            state->result = append_bfr_dolar(value, state->start,
-                    state->i, state->result);
+            state->result = append_bfr_dolar(value, state->start, state->i, state->result);
         (state->i)++;
         state->start = state->i;
-        while (value[state->i] && (ft_isalnum(value[state->i])
-            || value[state->i] == '_'))
+        while (value[state->i] && (ft_isalnum(value[state->i]) || value[state->i] == '_'))
             (state->i)++;
         state->result = append_norm(value, state);
     }

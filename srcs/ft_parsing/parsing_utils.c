@@ -16,11 +16,6 @@ int	check_unmatched_quotes(const char *input)
 				quote = input[i];
 			else if (quote == input[i])
 				quote = '\0';
-			else
-			{
-				ft_printf_fd(2, UNMATCHED_QUOTES);
-				return (1);
-			}
 		}
 		i++;
 	}
