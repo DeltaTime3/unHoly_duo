@@ -141,7 +141,10 @@ int	redirect_handling(t_token *tokens, t_shell *shell)
             else if (ft_strcmp(temp->value, ">>") == 0)
                 fd_out = open(temp->next->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
             if (fd_out == -1)
+            {
+                shell->exit_code = 1;
                 return (-1);
+            }
             dup2(fd_out, STDOUT_FILENO);
             close(fd_out);
             temp = temp->next->next;
