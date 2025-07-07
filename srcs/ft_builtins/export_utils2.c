@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 16:08:35 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/25 14:36:15 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/07 09:41:59 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,31 +95,36 @@ void 	append_env_value(t_env *env, char *value)
 	env->value = new_val;
 }
 
+static char	*handle_dolar(char *value, t_shell *shell)
+{
+	char *home;
+	char *temp;
+
+	if (ft_strchr(value, '$'))
+		return (expand_command_arg(value, shell));
+	if (value[0] == '~' && (value[1] == '\0' || value[1] == '/'))
+	{
+		home = get_env_value(shell->head, "HOME");
+		if (home)
+		{
+			temp = ft_strjoin(home, value + 1);
+			return(temp);
+		}
+		else
+			return (ft_strdup(value));	
+	}
+	return (NULL);
+}
+
 
 char    *expand_token_arg_to_value(char *value, t_shell *shell)
 {
     char	*result;
-    char	*temp;
-    char	*home;
-	char	*expan;
 
-	if (ft_strchr(value, '$'))
-		{
-			expan = expand_command_arg(value, shell);
-				return (expan);
-		}
-    if (value[0] == '~' && (value[1] == '\0' || value[1] == '/'))
-    {
-        home = get_env_value(shell->head, "HOME");
-        if (home)
-        {
-            temp = ft_strjoin(home, value + 1);
-            result = temp;
-        }
-        else
-            return (ft_strdup(value));
-    }
-    else if (ft_strcmp(value, "$?") == 0)
+		result = handle_dolar(value, shell);
+	if (result)
+		return (result);
+	if (ft_strcmp(value, "$?") == 0)
         result = expand_exit_status(value, shell);
     else if (value[0] == '$' && value[1] != '\0')
         result = expand_env_var(value, shell);
@@ -128,30 +133,41 @@ char    *expand_token_arg_to_value(char *value, t_shell *shell)
     return (result);
 }
 
-char	*expand_command_arg(const char *imput, t_shell *shell)
+
+static int append_exp_var(const char *input, int i, char **result, t_shell *shell)
+{
+	char	*var_value;
+	char	*temp;
+	int		start;
+
+	start = i;
+	var_value = expand_env_var(&input[i], shell);
+	temp = ft_strjoin(*result, var_value);
+	free(*result);
+	free(var_value);
+	*result = temp;
+	while (input[i] && !ft_isspace(input[i]) && input[i] != '=')
+		i++;
+	return (i);
+}
+
+char	*expand_command_arg(const char *input, t_shell *shell)
 {
 	char	*result;
-	char	*var_value;
 	char	*temp;
 	int		i;
 
 	i = 0;
 	result = ft_strdup("");
-	while (imput[i])
+	while (input[i])
 	{
-		if (imput[i] == '$' && imput[i + 1] != '\0' && imput[i + 1] != ' ')
+		if (input[i] == '$' && input[i + 1] != '\0' && input[i + 1] != ' ')
 		{
-			var_value = expand_env_var(&imput[i], shell);
-			temp = ft_strjoin(result, var_value);
-			free(result);
-			free(var_value);
-			result = temp;
-			while (imput[i] && !ft_isspace(imput[i]) && imput[i] != '=')
-				i++;
+			i = append_exp_var(input, i, &result, shell);
 		}
 		else
 		{
-			temp = ft_strjoin(result, &imput[i]);
+			temp = ft_strjoin(result, &input[i]);
 			free(result);
 			result = temp;
 			i++;
