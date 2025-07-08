@@ -190,7 +190,7 @@ int handle_pipes(t_token *tokens, t_shell *shell)
         }
     }
     // Wait for all child processes
-    i= 0;
+    i= 0; 
     while (i <= pipe_count)
     {
         wait(&status);
