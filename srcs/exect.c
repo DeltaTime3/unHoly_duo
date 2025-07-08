@@ -105,7 +105,7 @@ int	execute2(t_shell *shell, t_token *token)
 	if (!full_path)
 	{
 		ft_printf_fd(2, "minishell: %s: command not found\n", token->value);
-		shell->exit_code = 1;
+		shell->exit_code = 127;
 		return (127);
 	}
 	env_array = env_list_to_array(shell->head);
