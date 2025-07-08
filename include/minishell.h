@@ -33,7 +33,7 @@ not supported according to project's subject\n"
 # define	E_CD	"Failed to change directory.\n"
 # define	E_HOME "cd: HOME not set.\n"
 # define	E_PERMIT "User does not have permition to access this directory.\n"
-# define	E_ARGS " too many arguments.\n"
+# define	E_ARGS " too many arguments\n"
 # define	E_NOTNBR "numeric argument required\n"
 # define	E_MSH "Invadid option.\n"
 # define	E_ENV "Environment error.\n"
@@ -241,7 +241,7 @@ void 	append_env_value(t_env *env, char *value);
 void	print_export_token(t_env *head);
 char    *expand_token_arg_to_value(char *value, t_shell *shell);
 char	*expand_command_arg(const char *imput, t_shell *shell);
-
+int		export_while_args(t_shell *type, char **args);
 //unset
 int 	ft_unset(t_shell *shell, t_token *args);
 int 	validate_unset_args(char *args);
@@ -253,6 +253,7 @@ int		ft_is_nbr(char *str);
 void	ft_kill(t_shell *type, t_token *tokens, int e_code);
 int		token_counter(t_token *token);
 void	ft_free_shell(t_shell *shell);
+int		exit_args(t_token **token, t_shell *type, int nbr_args, char *arg);
 
 //pwd
 int		ft_pwd(t_shell *type);
@@ -283,6 +284,17 @@ void	env_remove(t_env **head, char *key);
 void	update_env(t_env **head, char *key, char *value, int append);
 t_env	 *create_node_from_key(char *key, char *value);
 char	*append_env_value_man(char *old_val, char *add_val);
+t_env	*create_new_node(char *env_str, t_env **head);
+t_env	*create_env_with_val(char *env_str, char *equal, t_env **head);
+t_env	*create_env_without_val(char *env_str, t_env **head);
+void 	free_not_null(void *ptr);
+int		count_env(t_env *head);
+void	fill_env_array(char **array, t_env *head);
+void	clean_env(t_shell *shell);
+void	clean_directories(t_shell *shell);
+void	clean_token_type_value(t_shell *shell);
+void	clean_command_resources(t_shell *shell);
+void	free_and_null(void **ptr);
 
 //executer
 void	choose_b_in(t_token *token, t_shell *shell);

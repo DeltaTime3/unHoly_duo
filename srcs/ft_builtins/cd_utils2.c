@@ -1,4 +1,3 @@
-
 #include "../../include/minishell.h"
 
 /**
@@ -15,10 +14,10 @@ char	*get_env_value(t_env *head, const char *key)
 	while (curr)
 	{
 		if (ft_strcmp(curr->key, key) == 0)
-			{
-				return (curr->value);
-			}
-			curr = curr->next;
+		{
+			return (curr->value);
+		}
+		curr = curr->next;
 	}
 	return (NULL);
 }
@@ -45,4 +44,3 @@ void	change_dir(char *new_dir, t_shell *type)
 	else
 		ft_cd_2(type, new_dir);
 }
- 

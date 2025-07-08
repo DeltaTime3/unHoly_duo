@@ -1,4 +1,3 @@
-
 #include "../../include/minishell.h"
 
 /**
@@ -13,29 +12,29 @@
 
 void	ft_cd(t_token *token, t_shell *type)
 {
-    char	*new_dir;
-    int		is_cd_minus;
+	char	*new_dir;
+	int		is_cd_minus;
 	int		arg_count;
 
-    is_cd_minus = 0;
+	is_cd_minus = 0;
 	if (!token || !token->args || !token->args[0])
-        return;
+		return ;
 	arg_count = ct_nodes(token);
 	if (arg_count > 2)
-    {
-        ft_printf_fd(2, "cd: too many arguments\n");
+	{
+		ft_printf_fd(2, "cd: too many arguments\n");
 		type->exit_code = 1;
-        type->r_code = 1;
-        return;
-    }
-    new_dir = get_cd_target(token, type, &is_cd_minus);
+		type->r_code = 1;
+		return ;
+	}
+	new_dir = get_cd_target(token, type, &is_cd_minus);
 	if (!new_dir)
 	{
 		ft_printf_fd(2, "cd: Failed to change directory.\n", 1);
-        type->r_code = 1;
-        return;
+		type->r_code = 1;
+		return ;
 	}
-    cd_change_dir(new_dir, type, is_cd_minus);
+	cd_change_dir(new_dir, type, is_cd_minus);
 }
 
 void	cd_change_dir(char *new, t_shell *type, int is_cd_minus)

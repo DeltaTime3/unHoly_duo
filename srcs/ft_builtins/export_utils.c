@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   export_utils.c                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ppaula-d <ppaula-d@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/19 11:07:44 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/07/07 10:51:27 by ppaula-d         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../include/minishell.h"
 
 /**
@@ -19,7 +7,7 @@ void	sort_env(t_env *head)
 {
 	t_env	*curr;
 	int		i;
-	
+
 	if (!head)
 		return ;
 	i = 1;
@@ -39,7 +27,7 @@ void	sort_env(t_env *head)
 	}
 }
 
-void swap_env(t_env *arg1, t_env *arg2)
+void	swap_env(t_env *arg1, t_env *arg2)
 {
 	char	*temp_key;
 	char	*temp_value;
@@ -74,26 +62,22 @@ int	process_export(t_shell *type, char *args)
 			update_env_value_bi(env, value, flag);
 	}
 	else
-	{
 		add_env_node(&type->head, key, value, flag);
-	}
 	if (key)
-        free(key);
-    if (value)
-	{
-        free(value);
-	}
+		free(key);
+	if (value)
+		free(value);
 	return (0);
 }
-	
+
 void	add_env_node(t_env **head, const char *key, char *value, int flag)
 {
-	t_env *new;
-	t_env *curr;
-	
+	t_env	*new;
+	t_env	*curr;
+
 	new = ft_calloc(1, sizeof(t_env));
 	new->key = ft_strdup(key);
-	if(value)
+	if (value)
 		new->value = ft_strdup(value);
 	else
 		new->value = NULL;
@@ -111,16 +95,16 @@ void	add_env_node(t_env **head, const char *key, char *value, int flag)
 	}
 }
 
-void parse_exp_args(const char *args, char **key, char **value, int *flag)
+void	parse_exp_args(const char *args, char **key, char **value, int *flag)
 {
 	int	i;
-	
+
 	i = 0;
 	*flag = 0;
 	*value = NULL;
 	while (args[i] && args[i] != '=' && !(args[i] == '+' && args[i + 1] == '='))
 		i++;
-	if (args[i] == '+' && args[i+1] == '=')
+	if (args[i] == '+' && args[i + 1] == '=')
 	{
 		*flag = 2;
 		*key = extract_key(args, i);

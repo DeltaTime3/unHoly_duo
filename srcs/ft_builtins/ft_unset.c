@@ -1,31 +1,21 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_unset.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/27 16:04:50 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/11 13:28:26 by afilipe-         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../include/minishell.h"
 
 /**
  * Attempts to remove env variables listed in the token list.
- * for each argument in the token list, it checks if the argument is a valid identifier.
+ * for each argument in the token list, it checks if the argument 
+ * is a valid identifier.
  * if vadid, removes the variable from the environment.
- * if invalid, sets error code to 1 but continues processing the rest of the arguments.
+ * if invalid, sets error code to 1 but continues processing the rest of the 
+ * arguments.
  * sets shell->return_code to the error code.(0 for success, 1 for error).
  * @param shell pointer to shell Struct
  * @param args linked list of tokens.
  * @return 0 if successful, 1 if there was an error with any of the arguments.
 */
-int ft_unset(t_shell *shell, t_token *args)
+int	ft_unset(t_shell *shell, t_token *args)
 {
-	int error_code;
-	t_token *curr;
+	int		error_code;
+	t_token	*curr;
 
 	error_code = 0;
 	curr = args;
@@ -50,10 +40,11 @@ int ft_unset(t_shell *shell, t_token *args)
  * the rest of the string must be alphanumeric or '_'.
  * returns 1 if valid, 0 if invalid.
  */
-int validate_unset_args(char *args)
+
+int	validate_unset_args(char *args)
 {
 	int	i;
-	
+
 	if (!args || !*args)
 		return (0);
 	if (!ft_isalpha(args[0]) && args[0] != '_')
@@ -61,7 +52,7 @@ int validate_unset_args(char *args)
 	i = 1;
 	while (args[i])
 	{
-		if(!ft_isalnum(args[i]) && args[i] != '_')
+		if (!ft_isalnum(args[i]) && args[i] != '_')
 			return (0);
 		i++;
 	}

@@ -91,23 +91,41 @@ void	free_env(t_env *head)
 char	**env_list_to_array(t_env *head)
 {
 	char 	**array;
+	int		count;
+
+	count = count_env(head);
+	array = ft_calloc(count + 1, sizeof(char *));
+	if (!array)
+		return (NULL);
+	fill_env_array(array, head);
+	return(array);
+}
+
+int	count_env(t_env *head)
+{
+	int	count;
+	t_env	*curr;
+
+	count = 0;
+	curr = head;
+
+	while (curr)
+	{
+		if (curr->value)
+			count++;
+		curr = curr->next;
+	}
+	return (count);
+}
+
+void	fill_env_array(char **array, t_env *head)
+{
+	int	i;
 	char	*temp;
-	int		i;
 	t_env	*curr;
 
 	i = 0;
 	curr = head;
-	while (curr)
-	{
-		if (curr->value) // Only count entries with values
-            i++;
-        curr = curr->next;
-	}
-	array = ft_calloc(i + 1, sizeof(char *));
-	if (!array)
-		return (NULL);
-	curr = head;
-	i = 0;
 	while (curr)
 	{
 		if (curr->value)
@@ -115,55 +133,52 @@ char	**env_list_to_array(t_env *head)
 			temp = ft_strjoin(curr->key, "=");
 			array[i] = ft_strjoin(temp, curr->value);
 			free(temp);
-			curr = curr->next;
 			i++;
 		}
+		curr = curr->next;
 	}
 	array[i] = NULL;
-	return(array);
 }
 
 void	clean_all_resources(t_shell *shell)
 {
     
-    if (shell->head)
-    {
-        free_env(shell->head);
-        shell->head = NULL;
-    }
-    // Free all dynamically allocated shell fields
-    if (shell->prev_dir)
-    {
-        free(shell->prev_dir);
-        shell->prev_dir = NULL;
-    }
-    if (shell->curr_dir)
-    {
-        free(shell->curr_dir);
-        shell->curr_dir = NULL;
-    }
-    if (shell->pwd)
-    {
-        free(shell->pwd);
-        shell->pwd = NULL;
-    }
-    if (shell->token)
-    {
-        free(shell->token);
-        shell->token = NULL;
-    }
-    if (shell->type)
-    {
-        free(shell->type);
-        shell->type = NULL;
-    }
-    if (shell->value)
-    {
-        free(shell->value);
-        shell->value = NULL;
-    }
-    // Null out pointers for safety
-    shell->tail = NULL;
+    clean_env(shell);
+	clean_directories(shell);
+	clean_token_type_value(shell);
+	shell->tail = NULL;
+}
+
+void	clean_env(t_shell *shell)
+{
+	if (shell->head)
+	{
+		free_env(shell->head);
+		shell->head = NULL;
+	}
+}
+
+void	clean_directories(t_shell *shell)
+{
+	free_and_null((void **)&(shell->prev_dir));
+	free_and_null((void **)&(shell->curr_dir));
+	free_and_null((void **)&(shell->pwd));
+}
+
+void	clean_token_type_value(t_shell *shell)
+{
+	free_and_null((void **)&(shell->token));
+	free_and_null((void **)&(shell->type));
+	free_and_null((void **)&(shell->value));
+}
+
+void	free_and_null(void **ptr)
+{
+	if (*ptr)
+	{
+		free(*ptr);
+		*ptr = NULL;
+	}
 }
 
 void	clean_command_resources(t_shell *shell)
