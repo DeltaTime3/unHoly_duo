@@ -1,22 +1,24 @@
-total 220
--rw-r--r-- 1 ppaula-d 2024_lisboa   2315 Jul  7 09:59 env_initializer.c
--rw-r--r-- 1 ppaula-d 2024_lisboa   5856 Jul  7 10:13 env_initializer.o
--rw-r--r-- 1 ppaula-d 2024_lisboa   3092 Jul  7 09:59 env_management.c
--rw-r--r-- 1 ppaula-d 2024_lisboa   7608 Jul  7 10:13 env_management.o
--rw-r--r-- 1 ppaula-d 2024_lisboa   2754 Jul  7 09:59 env_management_utils.c
--rw-r--r-- 1 ppaula-d 2024_lisboa   9984 Jul  7 10:13 env_management_utils.o
--rw-r--r-- 1 ppaula-d 2024_lisboa    179 Jul  7 09:59 errors.c
--rw-r--r-- 1 ppaula-d 2024_lisboa   2768 Jul  7 10:13 errors.o
--rw-r--r-- 1 ppaula-d 2024_lisboa   5369 Jul  7 09:59 exect.c
--rw-r--r-- 1 ppaula-d 2024_lisboa  16552 Jul  7 10:13 exect.o
-drwxr-xr-x 2 ppaula-d 2024_lisboa   4096 Jul  7 10:51 ft_builtins
-drwxr-xr-x 2 ppaula-d 2024_lisboa   4096 Jul  7 11:08 ft_parsing
--rw-r--r-- 1 ppaula-d 2024_lisboa   2404 Jul  7 09:59 Makefile
--rwxr-xr-x 1 ppaula-d 2024_lisboa 117632 Jul  7 11:08 minishell
--rw-r--r-- 1 ppaula-d 2024_lisboa    128 Jul  7 09:59 readline.supp
--rw-r--r-- 1 ppaula-d 2024_lisboa    762 Jul  7 09:59 signal.c
--rw-r--r-- 1 ppaula-d 2024_lisboa   7224 Jul  7 10:13 signal.o
--rw-r--r-- 1 ppaula-d 2024_lisboa      0 Jul  7 11:09 test
+total 236
+-rw-r--r-- 1 ppaula-d 2024_lisboa   2316 Jul  8 14:48 env_initializer.c
+-rw-r--r-- 1 ppaula-d 2024_lisboa   5856 Jul  8 15:04 env_initializer.o
+-rw-r--r-- 1 ppaula-d 2024_lisboa   3092 Jul  8 13:59 env_management.c
+-rw-r--r-- 1 ppaula-d 2024_lisboa   7608 Jul  8 15:04 env_management.o
+-rw-r--r-- 1 ppaula-d 2024_lisboa   2754 Jul  8 14:48 env_management_utils.c
+-rw-r--r-- 1 ppaula-d 2024_lisboa  10032 Jul  8 15:04 env_management_utils.o
+-rw-r--r-- 1 ppaula-d 2024_lisboa    180 Jul  8 13:59 errors.c
+-rw-r--r-- 1 ppaula-d 2024_lisboa   2768 Jul  8 15:04 errors.o
+-rw-r--r-- 1 ppaula-d 2024_lisboa   6065 Jul  8 14:48 exect.c
+-rw-r--r-- 1 ppaula-d 2024_lisboa  17640 Jul  8 15:04 exect.o
+drwxr-xr-x 2 ppaula-d 2024_lisboa   4096 Jul  8 15:04 ft_builtins
+drwxr-xr-x 2 ppaula-d 2024_lisboa   4096 Jul  8 15:04 ft_parsing
+-rw-r--r-- 1 ppaula-d 2024_lisboa   2404 Jul  8 14:48 Makefile
+-rwxr-xr-x 1 ppaula-d 2024_lisboa 123816 Jul  8 15:04 minishell
+-rw-r--r-- 1 ppaula-d 2024_lisboa      2 Jul  8 13:59 out
+-rw-r--r-- 1 ppaula-d 2024_lisboa    128 Jul  8 13:59 readline.supp
+-rw-r--r-- 1 ppaula-d 2024_lisboa    762 Jul  8 13:59 signal.c
+-rw-r--r-- 1 ppaula-d 2024_lisboa   7264 Jul  8 15:04 signal.o
+-rw-r--r-- 1 ppaula-d 2024_lisboa      0 Jul  8 15:10 test
+-rw-r--r-- 1 ppaula-d 2024_lisboa      5 Jul  8 13:59 test_out
 
 # Compiler and flags
 CC				= cc

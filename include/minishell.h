@@ -39,7 +39,7 @@ not supported according to project's subject\n"
 # define	E_MSH "Invadid option.\n"
 # define	E_ENV "Environment error.\n"
 # define	E_INPUT "Invalid input.\n"
-# define    E_INVALID_ID "not a valid identifier\n"
+# define    E_INVALID_ID "not a valid identifier"
 
 // STRUCTS
 

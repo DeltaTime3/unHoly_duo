@@ -151,6 +151,16 @@ char	*expand_token_value(char *value, t_shell *shell)
 
     if (!value)
         return (NULL);
+    if (value[0] == '~' && (value[1] == '\0' || value[1] == '/'))
+    {
+        char *home = get_env_value(shell->head, "HOME");
+        if (home)
+        {
+            char *expanded = ft_strjoin(home, value + 1);
+            return expanded;
+        }
+        return ft_strdup(value);
+    }
     expanded_vars = expand_variables(value, shell);
     if (!expanded_vars)
         return (ft_strdup(""));
