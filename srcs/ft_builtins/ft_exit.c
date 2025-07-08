@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:51:52 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/07/07 16:04:03 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/08 12:50:02 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ int	ft_exit(t_token **token, t_shell *type)
 		ft_kill(type, *token, 0);
     if (nbr_args > 2)
     {
-		printf("DEBUG: exit arg = '%s'\n", arg);
 		if (!ft_is_nbr(arg))
         {
             ft_printf_fd(2, "exit: %s: numeric argument required\n", arg);
@@ -35,6 +34,7 @@ int	ft_exit(t_token **token, t_shell *type)
         else
         {
             print_error(E_ARGS);
+            type->exit_code = 1;
             return (1);
         }
     }
