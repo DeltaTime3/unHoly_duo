@@ -1,22 +1,58 @@
 #include "minishell.h"
 
 // files
-int	file_handling(const char *input, int *i, t_token **tokens)
-{
-	size_t	start;
-	char	*value;
 
-	while (input[*i] && ft_isspace(input[*i]))
-		(*i)++;
-	start = *i;
-	while (input[*i] && !ft_isspace(input[*i]))
-		(*i)++;
-	value = ft_substr(input, start, *i - start);
-	if (!value)
-		return (1);
-	add_token(tokens, create_token(FILES, value));
-	free(value);
-	return (0);
+static char *ft_strjoin_free(char *s1, char *s2)
+{
+    char *res = ft_strjoin(s1, s2);
+    free(s1);
+    return res;
+}
+
+int file_handling(const char *input, int *i, t_token **tokens)
+{
+    char    *value;
+    char    *tmp;
+    size_t  start;
+    char    quote;
+
+    // skip leading spaces
+    while (input[*i] && ft_isspace(input[*i]))
+        (*i)++;
+    // init empty accumulator
+    value = ft_strdup("");
+    if (!value)
+        return (1);
+    // loop until next whitespace
+    while (input[*i] && !ft_isspace(input[*i]))
+    {
+        if (input[*i] == '"' || input[*i] == '\'')
+        {
+            quote = input[(*i)++];
+            start = *i;
+            while (input[*i] && input[*i] != quote)
+                (*i)++;
+            tmp = ft_substr(input, start, *i - start);
+            if (input[*i] == quote)
+                (*i)++;
+        }
+        else
+        {
+            start = *i;
+            while (input[*i] && !ft_isspace(input[*i])
+                   && input[*i] != '"' && input[*i] != '\'')
+                (*i)++;
+            tmp = ft_substr(input, start, *i - start);
+        }
+        if (!tmp)
+            return (free(value), 1);
+        // append to accumulator
+        value = ft_strjoin_free(value, tmp);
+        free(tmp);
+    }
+    add_token(tokens, create_token(FILES, value));
+    free(value);
+    return (0);
 }
 
 // operators
