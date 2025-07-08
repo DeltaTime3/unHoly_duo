@@ -1,3 +1,18 @@
+<<<<<<< HEAD
+=======
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ppaula-d <ppaula-d@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/15 11:51:52 by afilipe-          #+#    #+#             */
+/*   Updated: 2025/07/08 12:50:02 by ppaula-d         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+>>>>>>> bec33a2 (164)
 #include "../../include/minishell.h"
 
 int	ft_exit(t_token **token, t_shell *type)
@@ -12,6 +27,7 @@ int	ft_exit(t_token **token, t_shell *type)
 		arg = (*token)->next->value;
 	if (nbr_args == 2 && arg && ft_strcmp(arg, "--") == 0)
 		ft_kill(type, *token, 0);
+<<<<<<< HEAD
 	return (exit_args(token, type, nbr_args, arg));
 }
 
@@ -33,6 +49,24 @@ int	exit_args(t_token **token, t_shell *type, int nbr_args, char *arg)
 	}
 	ft_exit2(type, *token, nbr_args, arg);
 	return (0);
+=======
+    if (nbr_args > 2)
+    {
+		if (!ft_is_nbr(arg))
+        {
+            ft_printf_fd(2, "exit: %s: numeric argument required\n", arg);
+            ft_kill(type, *token, 2);
+        }
+        else
+        {
+            print_error(E_ARGS);
+            type->exit_code = 1;
+            return (1);
+        }
+    }
+    ft_exit2(type, *token, nbr_args, arg);
+    return (0);
+>>>>>>> bec33a2 (164)
 }
 
 int	ft_exit2(t_shell *type, t_token *tokens, int nbr_args, char *arg)
