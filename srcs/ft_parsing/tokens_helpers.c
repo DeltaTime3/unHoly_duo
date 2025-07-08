@@ -240,14 +240,14 @@ int	token_handling(const char *input, int *i, t_token **tokens,
                 return (1);
             break;
         }
-        if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
+        if (input[*i] == '|')
         {
             if (special_tokens_handling(input, i, tokens, expect_command))
                 return (1);
             *expect_command = 1;
-            while (input[*i] && ft_isspace(input[*i]))
-                (*i)++;
         }
+        else if (input[*i] == '<' || input[*i] == '>')
+            special_tokens_handling(input, i, tokens, expect_command);
         else if (input[*i] == '#')
             return (2);
         else if (ft_isprint(input[*i]))

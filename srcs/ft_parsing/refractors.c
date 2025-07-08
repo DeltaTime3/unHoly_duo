@@ -47,7 +47,6 @@ int	special_tokens_handling(const char *input, int *i, t_token **tokens,
     {
         if (op_handling(input, i, tokens))
             return (1);
-        *expect_command = 1;
         return (0);
     }
     if (input[*i] == '\'' || input[*i] == '"')

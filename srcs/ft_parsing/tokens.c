@@ -85,17 +85,14 @@ void prep_cmd_args(t_token *head)
                     arg_count++;
                 temp = temp->next;
             }
-            
             // Allocate args array
             current->args = ft_calloc(arg_count + 1, sizeof(char *));
             if (!current->args)
                 return;
-            
             // Fill the args array
             current->args[0] = ft_strdup(current->value);
             int i = 1;
             temp = current->next;
-            
             while (temp && temp->type != PIPE && i < arg_count)
             {
                 if (temp->type == ARGUMENT || temp->type == FLAG)
