@@ -3,6 +3,7 @@
 # define MINISHELL_H
 
 # include "../libft/libft.h"
+# include <errno.h>
 # include <fcntl.h>
 # include <limits.h>
 # include <readline/readline.h>
