@@ -48,7 +48,6 @@ int	ft_execute(t_shell *shell, t_token *value)
 {
     int	saved_stdout;
     int	saved_stdin;
-	int	result;
 
     saved_stdout = dup(STDOUT_FILENO);
     saved_stdin = dup(STDIN_FILENO);
@@ -60,21 +59,20 @@ int	ft_execute(t_shell *shell, t_token *value)
     expand_tokens(value, shell);
 	if (count_pipes(value) > 0)
 	{
-		result = handle_pipes(value, shell);
+		handle_pipes(value, shell);
 		dup2(saved_stdout, STDOUT_FILENO);
 		dup2(saved_stdin, STDIN_FILENO);
 		close(saved_stdout);
 		close(saved_stdin);
-		return (result);
+		return (shell->exit_code);
 	}
 	if (redirect_handling(value, shell) == -1)
     {
-        shell->exit_code = 1;
         dup2(saved_stdout, STDOUT_FILENO);
         dup2(saved_stdin, STDIN_FILENO);
         close(saved_stdout);
         close(saved_stdin);
-        return (1);
+        return (shell->exit_code);
     }
     if (is_builtin(value))
         choose_b_in(value, shell);
