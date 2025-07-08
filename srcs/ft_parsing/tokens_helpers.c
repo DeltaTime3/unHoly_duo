@@ -157,7 +157,7 @@ int redirect_handling(t_token *tokens, t_shell *shell)
     int heredoc_fd[2];
     char *heredoc_content = NULL;
     
-    while (temp != NULL)
+    while (temp && temp->type != PIPE)
     {
         if (temp->type == REDIRECT && temp->next && temp->next->type == FILES)
         {
