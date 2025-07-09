@@ -1,22 +1,58 @@
 #include "minishell.h"
 
 // files
-int	file_handling(const char *input, int *i, t_token **tokens)
-{
-	size_t	start;
-	char	*value;
 
-	while (input[*i] && ft_isspace(input[*i]))
-		(*i)++;
-	start = *i;
-	while (input[*i] && !ft_isspace(input[*i]))
-		(*i)++;
-	value = ft_substr(input, start, *i - start);
-	if (!value)
-		return (1);
-	add_token(tokens, create_token(FILES, value));
-	free(value);
-	return (0);
+static char *ft_strjoin_free(char *s1, char *s2)
+{
+    char *res = ft_strjoin(s1, s2);
+    free(s1);
+    return res;
+}
+
+int file_handling(const char *input, int *i, t_token **tokens)
+{
+    char    *value;
+    char    *tmp;
+    size_t  start;
+    char    quote;
+
+    // skip leading spaces
+    while (input[*i] && ft_isspace(input[*i]))
+        (*i)++;
+    // init empty accumulator
+    value = ft_strdup("");
+    if (!value)
+        return (1);
+    // loop until next whitespace
+    while (input[*i] && !ft_isspace(input[*i]))
+    {
+        if (input[*i] == '"' || input[*i] == '\'')
+        {
+            quote = input[(*i)++];
+            start = *i;
+            while (input[*i] && input[*i] != quote)
+                (*i)++;
+            tmp = ft_substr(input, start, *i - start);
+            if (input[*i] == quote)
+                (*i)++;
+        }
+        else
+        {
+            start = *i;
+            while (input[*i] && !ft_isspace(input[*i])
+                   && input[*i] != '"' && input[*i] != '\'')
+                (*i)++;
+            tmp = ft_substr(input, start, *i - start);
+        }
+        if (!tmp)
+            return (free(value), 1);
+        // append to accumulator
+        value = ft_strjoin_free(value, tmp);
+        free(tmp);
+    }
+    add_token(tokens, create_token(FILES, value));
+    free(value);
+    return (0);
 }
 
 // operators
@@ -113,57 +149,77 @@ int	pipe_handling(const char *input, int *i, t_token **tokens)
 }
 
 
-int	redirect_handling(t_token *tokens, t_shell *shell)
+int redirect_handling(t_token *tokens, t_shell *shell)
 {
-    int		fd_out;
-    t_token	*temp;
-    int		heredoc_fd[2];
-    char    *heredoc_content;
-
-    fd_out = -1;
-    temp = tokens;
-    heredoc_content = NULL;
-    while (temp != NULL)
+    int fd_out = -1;
+    int fd_in = -1;
+    t_token *temp = tokens;
+    int heredoc_fd[2];
+    char *heredoc_content = NULL;
+    
+    while (temp && temp->type != PIPE)
     {
-        if (temp->type == HERE_DOC && temp->next && temp->next->type == DELIMETER)
+        if (temp->type == REDIRECT && temp->next && temp->next->type == FILES)
         {
-            if (heredoc_content)
-                free(heredoc_content);
-            heredoc_content = read_heredoc_input(temp->next->value, temp->next->expand_heredoc, shell);
+            if (ft_strcmp(temp->value, "<") == 0)
+            {
+                fd_in = open(temp->next->value, O_RDONLY);
+                if (fd_in == -1)
+                {
+                    perror(temp->next->value);
+                    return (-1);
+                }
+                dup2(fd_in, STDIN_FILENO);
+                close(fd_in);
+            }
+            else if (ft_strcmp(temp->value, ">") == 0)
+            {
+                // Output redirection
+                fd_out = open(temp->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+                if (fd_out == -1)
+                {
+                    perror(temp->next->value);
+                    return (-1);
+                }
+                dup2(fd_out, STDOUT_FILENO);
+                close(fd_out);
+            }
+            else if (ft_strcmp(temp->value, ">>") == 0)
+            {
+                // Append redirection
+                fd_out = open(temp->next->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
+                if (fd_out == -1)
+                {
+                    perror(temp->next->value);
+                    return (-1);
+                }
+                dup2(fd_out, STDOUT_FILENO);
+                close(fd_out);
+            }
+            temp = temp->next; // Skip the filename token
+        }
+        else if (temp->type == HERE_DOC && temp->next && temp->next->type == DELIMETER)
+        {
+            char *delimiter = temp->next->value;
+            int expand = temp->next->expand_heredoc;
+            
+            heredoc_content = read_heredoc_input(delimiter, expand, shell);
             if (!heredoc_content)
                 return (-1);
-            temp = temp->next->next;
-        }
-        else if (temp->type == REDIRECT && temp->next && temp->next->type == FILES)
-        {
-            if (ft_strcmp(temp->value, ">") == 0)
-                fd_out = open(temp->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-            else if (ft_strcmp(temp->value, ">>") == 0)
-                fd_out = open(temp->next->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
-            if (fd_out == -1)
+            if (pipe(heredoc_fd) == -1)
             {
-                shell->exit_code = 1;
+                free(heredoc_content);
                 return (-1);
             }
-            dup2(fd_out, STDOUT_FILENO);
-            close(fd_out);
-            temp = temp->next->next;
-        }
-        else
-            temp = temp->next;
-    }
-    if (heredoc_content)
-    {
-        if (pipe(heredoc_fd) == -1)
-        {
+            write(heredoc_fd[1], heredoc_content, ft_strlen(heredoc_content));
+            close(heredoc_fd[1]);
+            dup2(heredoc_fd[0], STDIN_FILENO);
+            close(heredoc_fd[0]);
             free(heredoc_content);
-            return (-1);
+            
+            temp = temp->next; // Skip the delimiter token
         }
-        write (heredoc_fd[1], heredoc_content, ft_strlen(heredoc_content));
-        close(heredoc_fd[1]);
-        dup2(heredoc_fd[0], STDIN_FILENO);
-        close(heredoc_fd[0]);
-        free(heredoc_content);
+        temp = temp->next;
     }
     return (0);
 }
@@ -220,14 +276,14 @@ int	token_handling(const char *input, int *i, t_token **tokens,
                 return (1);
             break;
         }
-        if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
+        if (input[*i] == '|')
         {
             if (special_tokens_handling(input, i, tokens, expect_command))
                 return (1);
             *expect_command = 1;
-            while (input[*i] && ft_isspace(input[*i]))
-                (*i)++;
         }
+        else if (input[*i] == '<' || input[*i] == '>')
+            special_tokens_handling(input, i, tokens, expect_command);
         else if (input[*i] == '#')
             return (2);
         else if (ft_isprint(input[*i]))
