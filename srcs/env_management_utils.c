@@ -174,7 +174,7 @@ void	clean_token_type_value(t_shell *shell)
 
 void	free_and_null(void **ptr)
 {
-	if (*ptr)
+	if (ptr && *ptr)
 	{
 		free(*ptr);
 		*ptr = NULL;

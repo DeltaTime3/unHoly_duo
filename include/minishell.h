@@ -146,7 +146,7 @@ t_cat	determine_token_type(const char *value, int *expect_command);
 t_token	*create_token(t_cat type, char *value);
 t_token	*tokenize_input(const char *input);
 void	prep_cmd_args(t_token *head);
-t_token *find_command_token(t_token *head);
+//t_token *find_command_token(t_token *head);
 
 // tokens_helpers.c
 int		file_handling(const char *input, int *i, t_token **tokens);
@@ -160,7 +160,7 @@ int		token_handling(const char *input, int *i, t_token **tokens,
 int	redirect_handling(t_token *tokens, t_shell *shell);
 
 // tokens_helpers2.c
-void 	print_tokens(t_token *tokens);
+//void 	print_tokens(t_token *tokens);
 void	input_handling(char *input, t_token *tokens);
 void	process_input(char *input);
 void	exit_handling(char *input);
@@ -252,7 +252,6 @@ int		ft_exit2(t_shell *type, t_token *tokens, int nbr_args, char *arg);
 int		ft_is_nbr(char *str);
 void	ft_kill(t_shell *type, t_token *tokens, int e_code);
 int		token_counter(t_token *token);
-void	ft_free_shell(t_shell *shell);
 int		exit_args(t_token **token, t_shell *type, int nbr_args, char *arg);
 
 //pwd
@@ -269,7 +268,6 @@ int			handle_digits(char *str, unsigned long long *res, int sign, int *error);
 
 //env
 void 	ft_env(t_shell *type, t_token *command);
-int 	ft_env_extra_args(t_token *command);
 void 	env_back(t_env **lst, t_env *new);
 t_env	*env_lstnew(char *key, char *value, int flag);
 t_env 	*init_shell_env(char **enviroment);
