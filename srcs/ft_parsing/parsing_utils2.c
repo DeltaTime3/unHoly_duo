@@ -36,35 +36,30 @@ void	free_args(char **args)
 // quotes 
 int quote_handling(const char *input, int *i, t_token **tokens, int *expect_command)
 {
-    char quote;
-    size_t start;
-    char *content;
-    t_cat type;
-    
+    char    quote;
+    size_t  start;
+    char    *content;
+    t_cat   type;
+
+    // Detect the opening quote
+    quote = input[*i];
+    (*i)++; // Skip the opening quote
     start = *i;
-    quote = input[(*i)++]; // skip opening quote
+    // Traverse until the closing quote
     while (input[*i] && input[*i] != quote)
         (*i)++;
+    // Handle unmatched quotes
     if (input[*i] != quote)
-        return (handle_quote_error(tokens));
-    (*i)++;
+        return handle_quote_error(tokens);
+    // Extract content inside the quotes
     content = ft_substr(input, start, *i - start);
     if (!content)
-        return (handle_quote_error(tokens));
-    if (!content[0])
-    {
-        free(content);
-        return (0);
-    }
-    if (ft_strlen(content) == 2)
-    {
-        free(content);
-        content = ft_strdup("");
-    }
+        return handle_quote_error(tokens);
+    (*i)++; // Skip the closing quote
     type = determine_token_type(content, expect_command);
     add_token(tokens, create_token(type, content));
     free(content);
-    return (0);
+    return 0;
 }
 
 bool	open_pipe(const char *input, int i)
