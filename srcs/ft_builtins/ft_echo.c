@@ -1,52 +1,52 @@
-
 #include "../../include/minishell.h"
 
-static int print_echo_args(t_token *token, int start_index)
+static int	print_echo_args(t_token *token, int start_index)
 {
-	int first_arg;
-	int print;
-	
+	int	first_arg;
+	int	print;
+
 	first_arg = 1;
 	print = 0;
 	while (token->args && token->args[start_index])
 	{
 		if (token -> args[start_index][0] != '\0' ||
 			(token->args[start_index][0] == '\0' &&
-			token->args[start_index - 1] && token->args[start_index - 1][0] != '\0'))
-			{
-				if (!first_arg)
-					ft_putstr_fd(" ", STDOUT_FILENO);
-				ft_putstr_fd(token->args[start_index], STDOUT_FILENO);
-				first_arg = 0;
-				print = 1;
-			}
-			start_index++;
+			token->args[start_index - 1] && token->args[start_index - 1][0]
+			!= '\0'))
+		{
+			if (!first_arg)
+				ft_putstr_fd(" ", STDOUT_FILENO);
+			ft_putstr_fd(token->args[start_index], STDOUT_FILENO);
+			first_arg = 0;
+			print = 1;
+		}
+		start_index++;
 	}
-	return(print);
+	return (print);
 }
 
-static int skip_n(t_token *token, int *i)
+static int	skip_n(t_token *token, int *i)
 {
-	int flag;
+	int	flag;
 
 	flag = 0;
-	while(token->args && token->args[*i] && n_flag_validator(token->args[*i]))
+	while (token->args && token->args[*i] && n_flag_validator(token->args[*i]))
 	{
 		flag = 1;
 		(*i)++;
 	}
-	return flag;
-}	
+	return (flag);
+}
 
 int	ft_echo(t_token *token)
 {
-	int		flag;
-    int		i;
-	int		print;
+	int	flag;
+	int	i;
+	int	print;
 
-    i = 1;
-    flag = skip_n(token, &i);
-    print = print_echo_args(token, i);
+	i = 1;
+	flag = skip_n(token, &i);
+	print = print_echo_args(token, i);
 	if (!flag || !print)
 		ft_putstr_fd("\n", STDOUT_FILENO);
 	return (0);

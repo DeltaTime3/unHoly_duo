@@ -1,4 +1,3 @@
-
 #include "../../include/minishell.h"
 
 /**
@@ -105,7 +104,7 @@ void	cd_env(t_shell *type)
  * allocates a new env array, copies existing variables,
  * updates shell' env pointer. Print error if allocation fails.
  */
-void add_old_pwd_to_env(t_shell *type)
+void	add_old_pwd_to_env(t_shell *type)
 {
 	t_env	*node;
 
@@ -129,7 +128,7 @@ void add_old_pwd_to_env(t_shell *type)
  */
 int	ct_nodes(t_token *token)
 {
-	int argc;
+	int	argc;
 
 	argc = 0;
 	if (!token || !token->args)

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/14 14:56:24 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/07/07 15:35:23 by afilipe-         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../include/minishell.h"
 
 long long	ft_atoll(char *str, int *error)
@@ -49,7 +37,7 @@ int	handle_digits(char *str, unsigned long long *res, int sign,
 	{
 		*res = *res * 10 + (*str - '0');
 		if ((sign == 1 && *res > LLONG_MAX) || (sign == -1 && *res
-			> (unsigned long long)LLONG_MAX + 1))
+				> (unsigned long long)LLONG_MAX + 1))
 		{
 			*error = 1;
 			return (0);
@@ -61,15 +49,15 @@ int	handle_digits(char *str, unsigned long long *res, int sign,
 
 void	print_export_list(t_env *head)
 {
-	t_env *current;
+	t_env	*current;
 
 	current = head;
-    while (current)
-    {
-        if (current->value)
-            printf("declare -x %s=\"%s\"\n", current->key, current->value);
-        else
-            printf("declare -x %s\n", current->key);
-        current = current->next;
-    }
+	while (current)
+	{
+		if (current->value)
+			printf("declare -x %s=\"%s\"\n", current->key, current->value);
+		else
+			printf("declare -x %s\n", current->key);
+		current = current->next;
+	}
 }

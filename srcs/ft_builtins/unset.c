@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   unset.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/16 10:24:06 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/13 11:51:44 by ppaula-d         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../include/minishell.h"
 
 void	free_unset(t_token *token, t_shell *type)
@@ -20,13 +8,13 @@ void	free_unset(t_token *token, t_shell *type)
 	i = 0;
 	if (!token || !token->args || !type || !type->head)
 	{
-		return;
+		return ;
 	}
-	if(token->args[1] && token->args[1][0] == '-' && token->args[1][1] != '\0')
+	if (token->args[1] && token->args[1][0] == '-' && token->args[1][1] != '\0')
 	{
 		print_error(E_MSH);
 		type->return_code = 2;
-		return;
+		return ;
 	}
 	while (token->args[i])
 	{
@@ -35,5 +23,5 @@ void	free_unset(t_token *token, t_shell *type)
 			free(str);
 		i++;
 	}
-	free(token->args);	
+	free(token->args);
 }

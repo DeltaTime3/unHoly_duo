@@ -20,11 +20,14 @@ SRC				= env_initializer.c \
 				  $(FT_BUILTINS_DIR)/cd_utils2.c \
 				  $(FT_BUILTINS_DIR)/export_utils.c \
 				  $(FT_BUILTINS_DIR)/export_utils2.c \
+				  $(FT_BUILTINS_DIR)/export_utils3.c \
 				  $(FT_BUILTINS_DIR)/ft_cd.c \
 				  $(FT_BUILTINS_DIR)/ft_echo.c \
 				  $(FT_BUILTINS_DIR)/ft_env.c \
 				  $(FT_BUILTINS_DIR)/ft_exit.c \
+				  $(FT_BUILTINS_DIR)/ft_exit2.c \
 				  $(FT_BUILTINS_DIR)/ft_export.c \
+				  $(FT_BUILTINS_DIR)/ft_export2.c \
 				  $(FT_BUILTINS_DIR)/ft_pwd.c \
 				  $(FT_BUILTINS_DIR)/ft_unset.c \
 				  $(FT_BUILTINS_DIR)/unset.c \
