@@ -48,7 +48,6 @@ int	ft_execute(t_shell *shell, t_token *value)
 {
     int	saved_stdout;
     int	saved_stdin;
-	int	result;
 
     saved_stdout = dup(STDOUT_FILENO);
     saved_stdin = dup(STDIN_FILENO);
@@ -58,23 +57,63 @@ int	ft_execute(t_shell *shell, t_token *value)
         return (1);
     }
     expand_tokens(value, shell);
-	if (count_pipes(value) > 0)
-	{
-		result = handle_pipes(value, shell);
+	t_token *cmd = value;
+    while (cmd && cmd->type != COMMAND)
+        cmd = cmd->next;
+    if (!cmd || !cmd->value) {
+    shell->exit_code = 0;
+    dup2(saved_stdout, STDOUT_FILENO);
+    dup2(saved_stdin, STDIN_FILENO);
+    close(saved_stdout);
+    close(saved_stdin);
+    return (0);
+	}
+	if (cmd->value[0] == '\0') {
+		ft_printf_fd(2, "minishell: : command not found\n");
+		shell->exit_code = 127;
 		dup2(saved_stdout, STDOUT_FILENO);
 		dup2(saved_stdin, STDIN_FILENO);
 		close(saved_stdout);
 		close(saved_stdin);
-		return (result);
+		return (127);
+	}
+	if (cmd && cmd->value && ft_strcmp(cmd->value, ".") == 0) 
+	{
+		ft_printf_fd(2, "minishell: .: filename argument required\n");
+		ft_printf_fd(2, ".: usage: . filename [arguments]\n");
+		shell->exit_code = 2;
+		dup2(saved_stdout, STDOUT_FILENO);
+		dup2(saved_stdin, STDIN_FILENO);
+		close(saved_stdout);
+		close(saved_stdin);
+		return (2);
+	}
+	if (cmd && cmd->value && ft_strcmp(cmd->value, "..") == 0) 
+	{
+		ft_printf_fd(2, COMMAND_NOT_FOUND);
+		shell->exit_code = 127;
+		dup2(saved_stdout, STDOUT_FILENO);
+		dup2(saved_stdin, STDIN_FILENO);
+		close(saved_stdout);
+		close(saved_stdin);
+		return (127);
+	}
+	if (count_pipes(value) > 0)
+	{
+		handle_pipes(value, shell);
+		dup2(saved_stdout, STDOUT_FILENO);
+		dup2(saved_stdin, STDIN_FILENO);
+		close(saved_stdout);
+		close(saved_stdin);
+		return (shell->exit_code);
 	}
 	if (redirect_handling(value, shell) == -1)
     {
-        shell->exit_code = 1;
         dup2(saved_stdout, STDOUT_FILENO);
         dup2(saved_stdin, STDIN_FILENO);
         close(saved_stdout);
         close(saved_stdin);
-        return (1);
+        return (shell->exit_code);
     }
     if (is_builtin(value))
         choose_b_in(value, shell);
@@ -125,13 +164,19 @@ int	execute2(t_shell *shell, t_token *token)
 
 void	pid_zero(char *full_path, char **env_array, t_token *token)
 {
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
-	execve(full_path, token->args, env_array);
-	free_env_array(env_array);
-	perror("execve");
-	free(full_path);
-	exit(EXIT_FAILURE);
+    signal(SIGINT, SIG_DFL);
+    signal(SIGQUIT, SIG_DFL);
+    execve(full_path, token->args, env_array);
+    int err = errno;
+    free_env_array(env_array);
+    perror(full_path);
+    free(full_path);
+    if (err == EACCES || err == EISDIR)
+        exit(126);
+    else if (err == ENOENT)
+        exit(127);
+    else
+        exit(1);
 }
 
 int	pid_neg(char *full_path, char **env_array)

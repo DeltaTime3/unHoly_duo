@@ -184,18 +184,19 @@ int handle_pipes(t_token *tokens, t_shell *shell)
                 free_env(shell->head);
                 exit(shell->exit_code);
             }
-            
             // Close the last pipe read end
             if (pipes[(pipe_count-1) % 2][0] >= 0)
                 close(pipes[(pipe_count-1) % 2][0]);
         }
     }
     // Wait for all child processes
-    for (i = 0; i <= pipe_count; i++)
+    i= 0; 
+    while (i <= pipe_count)
     {
         wait(&status);
-        if (WIFEXITED(status) && !is_builtin(current))
+        if (WIFEXITED(status))
             shell->exit_code = WEXITSTATUS(status);
+        i++;
     }
     // Restore original stdin/stdout
     dup2(saved_stdin, STDIN_FILENO);

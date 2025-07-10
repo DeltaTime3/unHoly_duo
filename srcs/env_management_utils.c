@@ -76,15 +76,15 @@ void	free_env(t_env *head)
 {
 	t_env	*temp;
 
-	while (head)
+	while(head)
 	{
-		temp = head;
-		head = head->next;
-		if (temp->key)
-			free(temp->key);
-		if (temp->value)
-			free(temp->value);
-		free(temp);
+		temp = head->next;
+		free(head->key);
+		head->key = NULL;
+		free(head->value);
+		head->value = NULL;
+		free(head);
+		head = temp;
 	}
 }
 

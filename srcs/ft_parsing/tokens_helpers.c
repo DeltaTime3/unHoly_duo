@@ -167,6 +167,7 @@ int redirect_handling(t_token *tokens, t_shell *shell)
                 if (fd_in == -1)
                 {
                     perror(temp->next->value);
+                    shell->exit_code = 1;
                     return (-1);
                 }
                 dup2(fd_in, STDIN_FILENO);
@@ -179,6 +180,7 @@ int redirect_handling(t_token *tokens, t_shell *shell)
                 if (fd_out == -1)
                 {
                     perror(temp->next->value);
+                    shell->exit_code = 1;
                     return (-1);
                 }
                 dup2(fd_out, STDOUT_FILENO);
@@ -191,6 +193,7 @@ int redirect_handling(t_token *tokens, t_shell *shell)
                 if (fd_out == -1)
                 {
                     perror(temp->next->value);
+                    shell->exit_code = 1;
                     return (-1);
                 }
                 dup2(fd_out, STDOUT_FILENO);
@@ -209,6 +212,7 @@ int redirect_handling(t_token *tokens, t_shell *shell)
             if (pipe(heredoc_fd) == -1)
             {
                 free(heredoc_content);
+                shell->exit_code = 1;
                 return (-1);
             }
             write(heredoc_fd[1], heredoc_content, ft_strlen(heredoc_content));
