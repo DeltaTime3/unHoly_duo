@@ -166,7 +166,6 @@ char	*expand_token_value(char *value, t_shell *shell)
         return (ft_strdup(""));
     final_result = remove_all_quotes(expanded_vars);
     free(expanded_vars);
-
     return (final_result);
 }
 

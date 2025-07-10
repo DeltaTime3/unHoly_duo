@@ -77,6 +77,27 @@ int	ft_execute(t_shell *shell, t_token *value)
 		close(saved_stdin);
 		return (127);
 	}
+	if (cmd && cmd->value && ft_strcmp(cmd->value, ".") == 0) 
+	{
+		ft_printf_fd(2, "minishell: .: filename argument required\n");
+		ft_printf_fd(2, ".: usage: . filename [arguments]\n");
+		shell->exit_code = 2;
+		dup2(saved_stdout, STDOUT_FILENO);
+		dup2(saved_stdin, STDIN_FILENO);
+		close(saved_stdout);
+		close(saved_stdin);
+		return (2);
+	}
+	if (cmd && cmd->value && ft_strcmp(cmd->value, "..") == 0) 
+	{
+		ft_printf_fd(2, COMMAND_NOT_FOUND);
+		shell->exit_code = 127;
+		dup2(saved_stdout, STDOUT_FILENO);
+		dup2(saved_stdin, STDIN_FILENO);
+		close(saved_stdout);
+		close(saved_stdin);
+		return (127);
+	}
 	if (count_pipes(value) > 0)
 	{
 		handle_pipes(value, shell);
