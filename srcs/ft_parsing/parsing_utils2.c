@@ -41,21 +41,22 @@ int quote_handling(const char *input, int *i, t_token **tokens, int *expect_comm
     char    *content;
     t_cat   type;
 
-    // Detect the opening quote
     quote = input[*i];
-    (*i)++; // Skip the opening quote
+    (*i)++;
     start = *i;
-    // Traverse until the closing quote
     while (input[*i] && input[*i] != quote)
         (*i)++;
-    // Handle unmatched quotes
     if (input[*i] != quote)
         return handle_quote_error(tokens);
-    // Extract content inside the quotes
     content = ft_substr(input, start, *i - start);
     if (!content)
         return handle_quote_error(tokens);
-    (*i)++; // Skip the closing quote
+    (*i)++;
+    if (ft_strlen(content) == 0)
+    {
+        free(content);
+        return 0;
+    }
     type = determine_token_type(content, expect_command);
     add_token(tokens, create_token(type, content));
     free(content);
