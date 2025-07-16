@@ -70,25 +70,36 @@ t_token	*tokenize_input(const char *input)
 void prep_cmd_args(t_token *head)
 {
     t_token *current = head;
+    t_token *temp;
+    int arg_count;
     
     while (current)
     {
+        // Only process command tokens
         if (current->type == COMMAND)
         {
-            // Count arguments for this command until we hit a pipe or end
-            int arg_count = 1; // Start with 1 for the command itself
-            t_token *temp = current->next;
+            // Free existing args if any
+            if (current->args)
+            {
+                free_args(current->args);
+                current->args = NULL;
+            }
             
+            // Count the number of arguments
+            arg_count = 1; // Start with 1 for the command itself
+            temp = current->next;
             while (temp && temp->type != PIPE)
             {
                 if (temp->type == ARGUMENT || temp->type == FLAG)
                     arg_count++;
                 temp = temp->next;
             }
+            
             // Allocate args array
             current->args = ft_calloc(arg_count + 1, sizeof(char *));
             if (!current->args)
                 return;
+            
             // Fill the args array
             current->args[0] = ft_strdup(current->value);
             int i = 1;

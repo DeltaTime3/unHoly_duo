@@ -27,7 +27,7 @@ extern int	global_sig;
 # define 	LOGICAL_OPERATORS "minishell: syntax error, logical operators \
 not supported according to project's subject\n"
 # define 	UNEXPECTED_TOKEN "minishell: syntax error near unexpected token\n"
-# define 	COMMAND_NOT_FOUND "minishell: Command not found\n"
+# define 	COMMAND_NOT_FOUND "minishell: command not found\n"
 # define 	OPEN_PIPE "minishell: error, open pipes not supported\n"
 # define	STDERR 2
 # define	E_TARG "Too may arguments for cd command.\n"
@@ -102,6 +102,7 @@ typedef struct s_token
 	t_cat			type;
 	char			*content;
 	int				expand_heredoc;
+	int				quote_type; // 0 = unquoted, 1 = single, 2 = double
 } t_token;
  
 typedef struct s_env
@@ -125,6 +126,7 @@ typedef struct s_exp_state
 // PARSING PROTOTYPES
 
 // expansions.c
+void adjust_command_after_expansion(t_token *tokens);
 char 	*expand_env_var(const char *input, t_shell *shell);
 char	*expand_exit_status(const char *input, t_shell *shell);
 char    *remove_quotes(const char *input);

@@ -1,28 +1,28 @@
 #include "../../include/minishell.h"
 
-static int	print_echo_args(t_token *token, int start_index)
+static int print_echo_args(t_token *token, int start_index)
 {
-	int	first_arg;
-	int	print;
-
-	first_arg = 1;
-	print = 0;
-	while (token->args && token->args[start_index])
-	{
-		if (token -> args[start_index][0] != '\0' ||
-			(token->args[start_index][0] == '\0' &&
-			token->args[start_index - 1] && token->args[start_index - 1][0]
-			!= '\0'))
-		{
-			if (!first_arg)
-				ft_putstr_fd(" ", STDOUT_FILENO);
-			ft_putstr_fd(token->args[start_index], STDOUT_FILENO);
-			first_arg = 0;
-			print = 1;
-		}
-		start_index++;
-	}
-	return (print);
+    int first_arg = 1;
+    int print = 0;
+    while (token->args && token->args[start_index])
+    {
+        if (!first_arg)
+            ft_putstr_fd(" ", STDOUT_FILENO);
+        // Print with quotes if needed
+        if (token->quote_type == 1)
+            ft_putstr_fd("'", STDOUT_FILENO);
+        else if (token->quote_type == 2)
+            ft_putstr_fd("\"", STDOUT_FILENO);
+        ft_putstr_fd(token->args[start_index], STDOUT_FILENO);
+        if (token->quote_type == 1)
+            ft_putstr_fd("'", STDOUT_FILENO);
+        else if (token->quote_type == 2)
+            ft_putstr_fd("\"", STDOUT_FILENO);
+        first_arg = 0;
+        print = 1;
+        start_index++;
+    }
+    return print;
 }
 
 static int	skip_n(t_token *token, int *i)

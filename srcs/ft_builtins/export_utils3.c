@@ -42,9 +42,9 @@ static int	append_exp_var(const char *input, int i, char **result,
 {
 	char	*var_value;
 	char	*temp;
-	int		start;
+	//int		start;
 
-	start = i;
+	//start = i;
 	var_value = expand_env_var(&input[i], shell);
 	temp = ft_strjoin(*result, var_value);
 	free(*result);

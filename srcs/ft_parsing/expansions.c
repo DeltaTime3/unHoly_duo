@@ -86,40 +86,71 @@ char    *remove_quotes(const char *input)
     return (result);
 }
 
-void	expand_tokens(t_token *token, t_shell *shell)
+// In expansions.c
+void expand_tokens(t_token *token, t_shell *shell)
 {
-    char	*expanded;
-    char	*old_value;
-    int		i;
-
-    while (token)
+    t_token *current = token;
+    char *expanded;
+    
+    while (current)
     {
-        if (token->value)
+        if (current->value && current->value[0] != '\0')
         {
-            expanded = expand_token_value(token->value, shell);
-            if (expanded)
+            expanded = expand_token_value(current->value, shell);
+            free(current->value);
+            current->value = expanded;
+        }
+        current = current->next;
+    }
+    
+    // After expanding all tokens, handle empty command tokens
+    adjust_command_after_expansion(token);
+}
+
+// Add this new function to handle empty command tokens
+void adjust_command_after_expansion(t_token *tokens)
+{
+    t_token *current = tokens;
+    t_token *next_cmd = NULL;
+    
+    // If the first token is a command and is empty after expansion
+    if (current && current->type == COMMAND && 
+        (!current->value || current->value[0] == '\0'))
+    {
+        // Look for the next non-empty token to promote to command
+        next_cmd = current->next;
+        while (next_cmd && (!next_cmd->value || next_cmd->value[0] == '\0'))
+            next_cmd = next_cmd->next;
+        
+        // If we found a non-empty token and it's not a pipe or redirection
+        if (next_cmd && next_cmd->type != PIPE && next_cmd->type != REDIRECT)
+        {
+            next_cmd->type = COMMAND;
+            
+            // Also update the args array if it exists
+            if (current->args)
             {
-                old_value = token->value;
-                token->value = expanded;
-                free(old_value);
+                free_args(current->args);
+                current->args = NULL;
             }
         }
-        if (token->args)
+    }
+    
+    // Handle commands after pipes
+    while (current)
+    {
+        if (current->type == PIPE && current->next)
         {
-            i = 0;
-            while (token->args[i])
-            {
-                expanded = expand_token_value(token->args[i], shell);
-                if (expanded)
-                {
-                    old_value = token->args[i];
-                    token->args[i] = expanded;
-                    free(old_value);
-                }
-                i++;
-            }
+            // Skip any empty tokens after a pipe
+            next_cmd = current->next;
+            while (next_cmd && (!next_cmd->value || next_cmd->value[0] == '\0'))
+                next_cmd = next_cmd->next;
+            
+            // If we found a non-empty token, make it a command
+            if (next_cmd && next_cmd->type != PIPE && next_cmd->type != REDIRECT)
+                next_cmd->type = COMMAND;
         }
-        token = token->next;
+        current = current->next;
     }
 }
 

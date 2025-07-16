@@ -35,19 +35,27 @@ int handle_pipes(t_token *tokens, t_shell *shell)
     int status;
     int saved_stdin;
     int saved_stdout;
+    pid_t last_pid = -1;
 
     pipes[0][0] = -1; 
     pipes[0][1] = -1;
     pipes[1][0] = -1; 
     pipes[1][1] = -1;
+
     pipe_count = count_pipes(tokens);
     current = tokens;
-    if (!current)
-        return (print_error("No commands to execute\n"), -1);
+    while (current && (!current->value || current->value[0] == '\0'))
+        current = find_next_cmd_after_pipe(current);
+    if (!current) 
+    {
+        shell->exit_code = 0;
+        return 0;
+    }
     saved_stdin = dup(STDIN_FILENO);
     saved_stdout = dup(STDOUT_FILENO);
     if (saved_stdin == -1 || saved_stdout == -1)
         return (print_error("Failed to save file descriptors\n"), -1);
+
     // Create first pipe if needed
     if (pipe_count > 0)
     {
@@ -66,34 +74,27 @@ int handle_pipes(t_token *tokens, t_shell *shell)
             if (pipes[0][0] >= 0) close(pipes[0][0]);
             if (pipes[0][1] >= 0) close(pipes[0][1]);
         }
-        
+        // Redirection: if it fails, print error and exit(1), but don't set shell->exit_code
         if (redirect_handling(current, shell) == -1)
         {
-            free_tokens(tokens);
-            clean_command_resources(shell);
-            free_env(shell->head);
-            exit(shell->exit_code);
-        }        
+            perror("minishell");
+            exit(1);
+        }
         if (is_builtin(current))
             choose_b_in(current, shell);
         else
             execute2(shell, current);
-        free_tokens(tokens);
-        clean_command_resources(shell);
-        free_env(shell->head);
         exit(shell->exit_code);
     }
-    // Parent process continues
     if (pipe_count > 0 && pipes[0][1] >= 0)
         close(pipes[0][1]);
     // Handle middle commands (if any)
     for (i = 1; i < pipe_count; i++)
     {
-        // Find next command after pipe
         current = find_next_cmd_after_pipe(current);
+        while (current && (!current->value || current->value[0] == '\0'))
+            current = find_next_cmd_after_pipe(current);
         if (!current) break;
-        
-        // Create next pipe
         if (pipe(pipes[i % 2]) < 0)
         {
             if (pipes[(i-1) % 2][0] >= 0)
@@ -113,32 +114,23 @@ int handle_pipes(t_token *tokens, t_shell *shell)
         }
         else if (pid == 0) // Child process
         {
-            // Set up stdin from previous pipe
             dup2(pipes[(i-1) % 2][0], STDIN_FILENO);
-            // Set up stdout to next pipe
             dup2(pipes[i % 2][1], STDOUT_FILENO);
-            // Close all pipe fds
             if (pipes[0][0] >= 0) close(pipes[0][0]);
             if (pipes[0][1] >= 0) close(pipes[0][1]);
             if (pipes[1][0] >= 0) close(pipes[1][0]);
             if (pipes[1][1] >= 0) close(pipes[1][1]);
             if (redirect_handling(current, shell) == -1)
             {
-                free_tokens(tokens);
-                clean_command_resources(shell);
-                free_env(shell->head);
-                exit(shell->exit_code);
+                perror("minishell");
+                exit(1);
             }
             if (is_builtin(current))
                 choose_b_in(current, shell);
             else
                 execute2(shell, current);
-            free_tokens(tokens);
-            clean_command_resources(shell);
-            free_env(shell->head);
             exit(shell->exit_code);
         }
-        // Parent: close previous pipe read end and current pipe write end
         if (pipes[(i-1) % 2][0] >= 0)
             close(pipes[(i-1) % 2][0]);
         if (pipes[i % 2][1] >= 0)
@@ -148,6 +140,8 @@ int handle_pipes(t_token *tokens, t_shell *shell)
     if (pipe_count > 0)
     {
         current = find_next_cmd_after_pipe(current);
+        while (current && (!current->value || current->value[0] == '\0'))
+            current = find_next_cmd_after_pipe(current);
         if (current)
         {
             pid = fork();
@@ -159,46 +153,38 @@ int handle_pipes(t_token *tokens, t_shell *shell)
             }
             else if (pid == 0) // Child for last command
             {
-                // Read from last pipe
                 dup2(pipes[(pipe_count-1) % 2][0], STDIN_FILENO);
-                
-                // Close all pipe fds
                 if (pipes[0][0] >= 0) close(pipes[0][0]);
                 if (pipes[0][1] >= 0) close(pipes[0][1]);
                 if (pipes[1][0] >= 0) close(pipes[1][0]);
                 if (pipes[1][1] >= 0) close(pipes[1][1]);
-                
                 if (redirect_handling(current, shell) == -1)
                 {
-                    free_tokens(tokens);
-                    clean_command_resources(shell);
-                    free_env(shell->head);
-                    exit(shell->exit_code);
-                }                
+                    perror("minishell");
+                    exit(1);
+                }
                 if (is_builtin(current))
                     choose_b_in(current, shell);
                 else
                     execute2(shell, current);
-                free_tokens(tokens);
-                clean_command_resources(shell);
-                free_env(shell->head);
                 exit(shell->exit_code);
             }
-            // Close the last pipe read end
+            last_pid = pid;
             if (pipes[(pipe_count-1) % 2][0] >= 0)
                 close(pipes[(pipe_count-1) % 2][0]);
         }
     }
-    // Wait for all child processes
-    i= 0; 
+    // Wait for all child processes, but set exit_code to last command's exit status
+    int last_status = 0;
+    i = 0;
     while (i <= pipe_count)
     {
-        wait(&status);
-        if (WIFEXITED(status))
-            shell->exit_code = WEXITSTATUS(status);
+        pid_t wpid = wait(&status);
+        if (wpid == last_pid && WIFEXITED(status))
+            last_status = WEXITSTATUS(status);
         i++;
     }
-    // Restore original stdin/stdout
+    shell->exit_code = last_status;
     dup2(saved_stdin, STDIN_FILENO);
     dup2(saved_stdout, STDOUT_FILENO);
     close(saved_stdin);

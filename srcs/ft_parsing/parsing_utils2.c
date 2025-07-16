@@ -52,11 +52,11 @@ int quote_handling(const char *input, int *i, t_token **tokens, int *expect_comm
     if (!content)
         return handle_quote_error(tokens);
     (*i)++;
-    if (ft_strlen(content) == 0)
-    {
-        free(content);
-        return 0;
-    }
+    // if (ft_strlen(content) == 0)
+    // {
+    //     free(content);
+    //     return 0;
+    // }
     type = determine_token_type(content, expect_command);
     add_token(tokens, create_token(type, content));
     free(content);

@@ -48,6 +48,7 @@ int	ft_execute(t_shell *shell, t_token *value)
 {
     int	saved_stdout;
     int	saved_stdin;
+    t_token *cmd;
 
     saved_stdout = dup(STDOUT_FILENO);
     saved_stdin = dup(STDIN_FILENO);
@@ -57,57 +58,80 @@ int	ft_execute(t_shell *shell, t_token *value)
         return (1);
     }
     expand_tokens(value, shell);
-	t_token *cmd = value;
-    while (cmd && cmd->type != COMMAND)
+	adjust_command_after_expansion(value);
+    prep_cmd_args(value);
+    // Check if all commands are empty (for cases like $EMPTY or $EMPTY | $EMPTY)
+    cmd = value;
+	int all_empty = 1;
+	t_token *tmp = value;
+	while (tmp) {
+		if (tmp->type == COMMAND && tmp->value && tmp->value[0] != '\0') {
+			all_empty = 0;
+			break;
+		}
+		tmp = tmp->next;
+	}
+	if (all_empty) {
+		shell->exit_code = 0;
+		dup2(saved_stdout, STDOUT_FILENO);
+		dup2(saved_stdin, STDIN_FILENO);
+		close(saved_stdout);
+		close(saved_stdin);
+		return (0);
+	}
+
+    // Find the first command token
+    cmd = value;
+    while (cmd && (cmd->type != COMMAND || !cmd->value || cmd->value[0] == '\0'))
         cmd = cmd->next;
-    if (!cmd || !cmd->value) {
-    shell->exit_code = 0;
-    dup2(saved_stdout, STDOUT_FILENO);
-    dup2(saved_stdin, STDIN_FILENO);
-    close(saved_stdout);
-    close(saved_stdin);
-    return (0);
-	}
-	if (cmd->value[0] == '\0') {
-		ft_printf_fd(2, "minishell: : command not found\n");
-		shell->exit_code = 127;
-		dup2(saved_stdout, STDOUT_FILENO);
-		dup2(saved_stdin, STDIN_FILENO);
-		close(saved_stdout);
-		close(saved_stdin);
-		return (127);
-	}
-	if (cmd && cmd->value && ft_strcmp(cmd->value, ".") == 0) 
-	{
-		ft_printf_fd(2, "minishell: .: filename argument required\n");
-		ft_printf_fd(2, ".: usage: . filename [arguments]\n");
-		shell->exit_code = 2;
-		dup2(saved_stdout, STDOUT_FILENO);
-		dup2(saved_stdin, STDIN_FILENO);
-		close(saved_stdout);
-		close(saved_stdin);
-		return (2);
-	}
-	if (cmd && cmd->value && ft_strcmp(cmd->value, "..") == 0) 
-	{
-		ft_printf_fd(2, COMMAND_NOT_FOUND);
-		shell->exit_code = 127;
-		dup2(saved_stdout, STDOUT_FILENO);
-		dup2(saved_stdin, STDIN_FILENO);
-		close(saved_stdout);
-		close(saved_stdin);
-		return (127);
-	}
-	if (count_pipes(value) > 0)
-	{
-		handle_pipes(value, shell);
-		dup2(saved_stdout, STDOUT_FILENO);
-		dup2(saved_stdin, STDIN_FILENO);
-		close(saved_stdout);
-		close(saved_stdin);
-		return (shell->exit_code);
-	}
-	if (redirect_handling(value, shell) == -1)
+
+    if (!cmd || !cmd->value || cmd->value[0] == '\0')
+    {
+        ft_printf_fd(2, "minishell: command not found\n");
+        shell->exit_code = 127;
+        dup2(saved_stdout, STDOUT_FILENO);
+        dup2(saved_stdin, STDIN_FILENO);
+        close(saved_stdout);
+        close(saved_stdin);
+        return (127);
+    }
+
+    // Special cases for . and ..
+    if (cmd && cmd->value && ft_strcmp(cmd->value, ".") == 0) 
+    {
+        ft_printf_fd(2, "minishell: .: filename argument required\n");
+        ft_printf_fd(2, ".: usage: . filename [arguments]\n");
+        shell->exit_code = 2;
+        dup2(saved_stdout, STDOUT_FILENO);
+        dup2(saved_stdin, STDIN_FILENO);
+        close(saved_stdout);
+        close(saved_stdin);
+        return (2);
+    }
+    if (cmd && cmd->value && ft_strcmp(cmd->value, "..") == 0) 
+    {
+        ft_printf_fd(2, "minishell: ..: command not found\n");
+        shell->exit_code = 127;
+        dup2(saved_stdout, STDOUT_FILENO);
+        dup2(saved_stdin, STDIN_FILENO);
+        close(saved_stdout);
+        close(saved_stdin);
+        return (127);
+    }
+
+    // Handle pipelines
+    if (count_pipes(value) > 0)
+    {
+        handle_pipes(value, shell);
+        dup2(saved_stdout, STDOUT_FILENO);
+        dup2(saved_stdin, STDIN_FILENO);
+        close(saved_stdout);
+        close(saved_stdin);
+        return (shell->exit_code);
+    }
+
+    // Handle redirections
+    if (redirect_handling(value, shell) == -1)
     {
         dup2(saved_stdout, STDOUT_FILENO);
         dup2(saved_stdin, STDIN_FILENO);
@@ -115,10 +139,13 @@ int	ft_execute(t_shell *shell, t_token *value)
         close(saved_stdin);
         return (shell->exit_code);
     }
+
+    // Builtin or external command
     if (is_builtin(value))
         choose_b_in(value, shell);
-	else
-		execute2(shell, value);
+    else
+        execute2(shell, value);
+
     dup2(saved_stdout, STDOUT_FILENO);
     dup2(saved_stdin, STDIN_FILENO);
     close(saved_stdout);
@@ -147,6 +174,13 @@ int	execute2(t_shell *shell, t_token *token)
 		shell->exit_code = 127;
 		return (127);
 	}
+	if (full_path && ft_strcmp(full_path, ":permission_denied:") == 0)
+    {
+        ft_printf_fd(2, "minishell: %s: Permission denied\n", token->value);
+        shell->exit_code = 126;
+        free(full_path);
+        return (126);
+    }
 	env_array = env_list_to_array(shell->head);
 	if (!env_array)
 	{
@@ -207,9 +241,14 @@ char	*get_cmd_path(char *cmd, t_env *env)
 		return (NULL);
 	if (ft_strchr(cmd, '/'))
 	{
-		if (access(cmd, X_OK) == 0)
-			return ft_strdup(cmd);
-		return (NULL);
+		if (access(cmd, F_OK) == 0)
+        {
+            if (access(cmd, X_OK) == 0)
+                return ft_strdup(cmd);
+            else
+                return ft_strdup(":permission_denied:");
+        }
+        return (NULL);
 	}
 	path = get_env_value(env, "PATH");
 	pth_cpy = path;
