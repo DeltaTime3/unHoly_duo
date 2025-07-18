@@ -14,6 +14,7 @@ t_token	*create_token(t_cat type, char *value)
     token->next = NULL;
     token->command = NULL;
     token->expand_heredoc = 0;
+    token->was_expanded = 0;
     return (token);
 }
 
@@ -73,10 +74,15 @@ void prep_cmd_args(t_token *head)
     t_token *temp;
     int arg_count;
     
+    // Skip empty tokens at the beginning
+    while (current && (!current->value || current->value[0] == '\0'))
+        current = current->next;
+    
+    // Find the first command token
     while (current)
     {
         // Only process command tokens
-        if (current->type == COMMAND)
+        if (current->type == COMMAND && current->value && current->value[0] != '\0')
         {
             // Free existing args if any
             if (current->args)

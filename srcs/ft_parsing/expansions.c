@@ -91,14 +91,33 @@ void expand_tokens(t_token *token, t_shell *shell)
 {
     t_token *current = token;
     char *expanded;
+    char *original;
     
     while (current)
     {
         if (current->value && current->value[0] != '\0')
         {
-            expanded = expand_token_value(current->value, shell);
-            free(current->value);
-            current->value = expanded;
+            original = current->value;
+            
+            // Check if the token contains a variable expansion
+            if (ft_strchr(original, '$') != NULL)
+            {
+                expanded = expand_token_value(original, shell);
+                
+                // If the expansion resulted in an empty string, mark it as expanded
+                if (expanded && expanded[0] == '\0')
+                    current->was_expanded = 1;
+                
+                free(current->value);
+                current->value = expanded;
+            }
+            else
+            {
+                // For non-variable tokens, just expand normally
+                expanded = expand_token_value(original, shell);
+                free(current->value);
+                current->value = expanded;
+            }
         }
         current = current->next;
     }
@@ -113,27 +132,31 @@ void adjust_command_after_expansion(t_token *tokens)
     t_token *current = tokens;
     t_token *next_cmd = NULL;
     
-    // If the first token is a command and is empty after expansion
+    // Only adjust if the first token is a command that became empty through expansion
+    // Don't adjust if it was originally an empty string literal like ""
     if (current && current->type == COMMAND && 
         (!current->value || current->value[0] == '\0'))
     {
-        // Look for the next non-empty token to promote to command
-        next_cmd = current->next;
-        while (next_cmd && (!next_cmd->value || next_cmd->value[0] == '\0'))
-            next_cmd = next_cmd->next;
-        
-        // If we found a non-empty token and it's not a pipe or redirection
-        if (next_cmd && next_cmd->type != PIPE && next_cmd->type != REDIRECT)
+        // Check if this was an expansion that resulted in empty (like $EMPTY)
+        // You'll need to add a flag to track this during expansion
+        if (current->was_expanded) // Add this flag to t_token struct
         {
-            next_cmd->type = COMMAND;
+            // Look for the next non-empty token to promote to command
+            next_cmd = current->next;
+            while (next_cmd && (!next_cmd->value || next_cmd->value[0] == '\0'))
+                next_cmd = next_cmd->next;
             
-            // Also update the args array if it exists
-            if (current->args)
+            if (next_cmd && next_cmd->type != PIPE && next_cmd->type != REDIRECT &&
+                next_cmd->type != HERE_DOC && next_cmd->value && next_cmd->value[0] != '\0')
             {
-                free_args(current->args);
-                current->args = NULL;
+                // Promote this token to be the command
+                next_cmd->type = COMMAND;
+                // Mark the empty token so it won't be executed
+                current->type = OTHER;
             }
         }
+        // If it wasn't expanded (was originally ""), leave it as COMMAND
+        // so it will be executed and fail properly
     }
     
     // Handle commands after pipes

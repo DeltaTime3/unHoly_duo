@@ -3,8 +3,14 @@
 
 void	choose_b_in(t_token *token, t_shell *shell)
 {
-	if (!token || !token->value)
+    if (!token || !token->value)
+	{
         return;
+	}
+	if (token->value[0] == '\0')
+	{
+        return;
+	}
 	if (ft_strcmp(token->value, "cd") == 0)
 		ft_cd(token, shell);
 	else if (ft_strcmp(token->value, "exit") == 0)
@@ -46,8 +52,8 @@ int	is_builtin(t_token *token)
 
 int	ft_execute(t_shell *shell, t_token *value)
 {
-    int	saved_stdout;
-    int	saved_stdin;
+    int saved_stdout;
+    int saved_stdin;
     t_token *cmd;
 
     saved_stdout = dup(STDOUT_FILENO);
@@ -58,42 +64,57 @@ int	ft_execute(t_shell *shell, t_token *value)
         return (1);
     }
     expand_tokens(value, shell);
-	adjust_command_after_expansion(value);
     prep_cmd_args(value);
-    // Check if all commands are empty (for cases like $EMPTY or $EMPTY | $EMPTY)
-    cmd = value;
-	int all_empty = 1;
-	t_token *tmp = value;
-	while (tmp) {
-		if (tmp->type == COMMAND && tmp->value && tmp->value[0] != '\0') {
-			all_empty = 0;
-			break;
-		}
-		tmp = tmp->next;
-	}
-	if (all_empty) {
-		shell->exit_code = 0;
-		dup2(saved_stdout, STDOUT_FILENO);
-		dup2(saved_stdin, STDIN_FILENO);
-		close(saved_stdout);
-		close(saved_stdin);
-		return (0);
-	}
-
+    
     // Find the first command token
     cmd = value;
-    while (cmd && (cmd->type != COMMAND || !cmd->value || cmd->value[0] == '\0'))
+    while (cmd && cmd->type != COMMAND)
         cmd = cmd->next;
-
+    
+    // If we have a command token, check if it's empty
+    if (cmd)
+    {
+        if (!cmd->value || cmd->value[0] == '\0')
+        {
+            // Check if this was an expanded empty (like $EMPTY) or original empty ("")
+            if (cmd->was_expanded)
+            {
+                // For $EMPTY alone (no other tokens), just return success
+                if (!cmd->next || cmd->next->type == PIPE)
+                {
+                    dup2(saved_stdout, STDOUT_FILENO);
+                    dup2(saved_stdin, STDIN_FILENO);
+                    close(saved_stdout);
+                    close(saved_stdin);
+                    shell->exit_code = 0;
+                    return (0);
+                }
+                // Otherwise, continue to find the next command
+                // (adjust_command_after_expansion should have promoted it)
+            }
+            else
+            {
+                // For "", try to execute and fail
+                ft_printf_fd(2, "minishell: : command not found\n");
+                shell->exit_code = 127;
+                dup2(saved_stdout, STDOUT_FILENO);
+                dup2(saved_stdin, STDIN_FILENO);
+                close(saved_stdout);
+                close(saved_stdin);
+                return (127);
+            }
+        }
+    }
+    
+    // If no valid command found at all
     if (!cmd || !cmd->value || cmd->value[0] == '\0')
     {
-        ft_printf_fd(2, "minishell: command not found\n");
-        shell->exit_code = 127;
         dup2(saved_stdout, STDOUT_FILENO);
         dup2(saved_stdin, STDIN_FILENO);
         close(saved_stdout);
         close(saved_stdin);
-        return (127);
+        shell->exit_code = 0;
+        return (0);
     }
 
     // Special cases for . and ..
@@ -141,10 +162,10 @@ int	ft_execute(t_shell *shell, t_token *value)
     }
 
     // Builtin or external command
-    if (is_builtin(value))
-        choose_b_in(value, shell);
+    if (is_builtin(cmd))
+        choose_b_in(cmd, shell);
     else
-        execute2(shell, value);
+        execute2(shell, cmd);
 
     dup2(saved_stdout, STDOUT_FILENO);
     dup2(saved_stdin, STDIN_FILENO);
@@ -167,13 +188,23 @@ int	execute2(t_shell *shell, t_token *token)
 	char	**env_array;
 
 	sts = 0;
-	full_path = get_cmd_path(token->value, shell->head);
-	if (!full_path)
-	{
-		ft_printf_fd(2, "minishell: %s: command not found\n", token->value);
-		shell->exit_code = 127;
-		return (127);
-	}
+    if (!token || !token->value)
+    {
+        return 0;
+    }
+	if (token->value[0] == '\0')
+    {
+        ft_printf_fd(2, "minishell: %s: command not found\n", token->value);
+        shell->exit_code = 127;
+        return (127);
+    }
+    full_path = get_cmd_path(token->value, shell->head);
+    if (!full_path)
+    {
+        ft_printf_fd(2, "minishell: %s: command not found\n", token->value);
+        shell->exit_code = 127;
+        return (127);
+    }
 	if (full_path && ft_strcmp(full_path, ":permission_denied:") == 0)
     {
         ft_printf_fd(2, "minishell: %s: Permission denied\n", token->value);
