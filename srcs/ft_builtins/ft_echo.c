@@ -1,23 +1,35 @@
 #include "../../include/minishell.h"
 
+static void print_arg_with_quotes(char *arg, int quote_type)
+{
+    if (!arg)
+        return;
+        
+    // For arguments that need to show quotes in output
+    if (quote_type == 0) // No quotes on this token
+    {
+        // Check if the content has quotes that should be displayed
+        ft_putstr_fd(arg, STDOUT_FILENO);
+    }
+    else
+    {
+        // The token itself was quoted, just print the content
+        ft_putstr_fd(arg, STDOUT_FILENO);
+    }
+}
+
 static int print_echo_args(t_token *token, int start_index)
 {
     int first_arg = 1;
     int print = 0;
+    
     while (token->args && token->args[start_index])
     {
         if (!first_arg)
             ft_putstr_fd(" ", STDOUT_FILENO);
-        // Print with quotes if needed
-        if (token->quote_type == 1)
-            ft_putstr_fd("'", STDOUT_FILENO);
-        else if (token->quote_type == 2)
-            ft_putstr_fd("\"", STDOUT_FILENO);
-        ft_putstr_fd(token->args[start_index], STDOUT_FILENO);
-        if (token->quote_type == 1)
-            ft_putstr_fd("'", STDOUT_FILENO);
-        else if (token->quote_type == 2)
-            ft_putstr_fd("\"", STDOUT_FILENO);
+            
+        print_arg_with_quotes(token->args[start_index], token->quote_type);
+        
         first_arg = 0;
         print = 1;
         start_index++;

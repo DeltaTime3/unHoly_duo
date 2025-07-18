@@ -128,11 +128,14 @@ typedef struct s_exp_state
 
 // expansions.c
 void adjust_command_after_expansion(t_token *tokens);
-char 	*expand_env_var(const char *input, t_shell *shell);
-char	*expand_exit_status(const char *input, t_shell *shell);
-char    *remove_quotes(const char *input);
-void 	expand_tokens(t_token *token, t_shell *shell);
-char 	*expand_token_value(char *value, t_shell *shell);
+char *expand_env_var(const char *input, t_shell *shell);
+char *expand_exit_status(const char *input, t_shell *shell);
+char *remove_quotes(const char *input);
+void expand_tokens(t_token *token, t_shell *shell);
+char *expand_token_value(char *value, t_shell *shell);
+char *expand_variables_in_double_quotes(char *value, t_shell *shell);
+char *expand_variables(char *value, t_shell *shell);
+char *process_quotes(char *input, t_shell *shell);
 
 // here_doc.c
 char    *read_heredoc_input(const char *delimiter, int expand, t_shell *shell);
