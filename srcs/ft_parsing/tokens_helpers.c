@@ -24,7 +24,7 @@ int file_handling(const char *input, int *i, t_token **tokens)
     if (!value)
         return (1);
     // loop until next whitespace
-    while (input[*i] && !ft_isspace(input[*i]))
+    while (input[*i] && !ft_isspace(input[*i]) && input[*i] != '|' && input[*i] != '<' && input[*i] != '>')
     {
         if (input[*i] == '"' || input[*i] == '\'')
         {
@@ -40,7 +40,8 @@ int file_handling(const char *input, int *i, t_token **tokens)
         {
             start = *i;
             while (input[*i] && !ft_isspace(input[*i])
-                   && input[*i] != '"' && input[*i] != '\'')
+                   && input[*i] != '"' && input[*i] != '\'' 
+                   && input[*i] != '|' && input[*i] != '<' && input[*i] != '>')
                 (*i)++;
             tmp = ft_substr(input, start, *i - start);
         }
