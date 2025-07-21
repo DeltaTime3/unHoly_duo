@@ -70,7 +70,7 @@ int handle_pipes(t_token *tokens, t_shell *shell)
         // Redirection: if it fails, exit with 0 so pipeline continues
         if (redirect_handling(current, shell) == -1)
         {
-            exit(0);
+            exit(1);
         }
         
         if (is_builtin(current))
@@ -119,7 +119,7 @@ int handle_pipes(t_token *tokens, t_shell *shell)
             // Redirection: if it fails, exit with 0
             if (redirect_handling(current, shell) == -1)
             {
-                exit(0);
+                exit(1);
             }
             
             if (is_builtin(current))

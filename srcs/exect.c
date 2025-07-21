@@ -234,14 +234,24 @@ void	pid_zero(char *full_path, char **env_array, t_token *token)
     execve(full_path, token->args, env_array);
     int err = errno;
     free_env_array(env_array);
-    perror(full_path);
-    free(full_path);
     if (err == EACCES || err == EISDIR)
-        exit(126);
+    {
+        ft_printf_fd(2, " Is a directory\n");
+        exit (126);
+    }
     else if (err == ENOENT)
-        exit(127);
+    {
+        if (ft_strchr(token->value, '/'))
+            ft_printf_fd(2, "minishell: No such file or directory\n");
+        else
+            ft_printf_fd(2, "minishell: command not found\n");
+        exit (127);
+    }
     else
-        exit(1);
+    {
+        perror(token->value);
+        exit (1);
+    }
 }
 
 int	pid_neg(char *full_path, char **env_array)
