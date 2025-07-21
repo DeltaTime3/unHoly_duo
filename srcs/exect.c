@@ -201,8 +201,16 @@ int	execute2(t_shell *shell, t_token *token)
     full_path = get_cmd_path(token->value, shell->head);
     if (!full_path)
     {
-        ft_printf_fd(2, "minishell: %s: command not found\n", token->value);
-        shell->exit_code = 127;
+        if (ft_strchr(token->value, '/'))
+        {
+            ft_printf_fd(2, "minishell: %s: No such file or directory\n", token->value);
+            shell->exit_code = 127;
+        }
+        else
+        {
+            ft_printf_fd(2, "minishell: %s: command not found\n", token->value);
+            shell->exit_code = 127;
+        }
         return (127);
     }
 	if (full_path && ft_strcmp(full_path, ":permission_denied:") == 0)
@@ -231,6 +239,7 @@ void	pid_zero(char *full_path, char **env_array, t_token *token)
 {
     signal(SIGINT, SIG_DFL);
     signal(SIGQUIT, SIG_DFL);
+    signal(SIGPIPE, handle_sig_pipe);
     execve(full_path, token->args, env_array);
     int err = errno;
     free_env_array(env_array);

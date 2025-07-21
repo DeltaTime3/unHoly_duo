@@ -176,15 +176,14 @@ int handle_pipes(t_token *tokens, t_shell *shell)
     }
     
     // Wait for all children and track the last one's status
-    pid_t wpid;
+    pid_t wpid = 0;
     int last_status = 0;
     while ((wpid = wait(&status)) > 0)
     {
         if (wpid == last_pid)
             last_status = status;
     }
-    
-    // Set exit status from last command
+    // Set exit status from last command (bash behavior)
     if (last_pid > 0)
     {
         if (WIFEXITED(last_status))
@@ -192,7 +191,6 @@ int handle_pipes(t_token *tokens, t_shell *shell)
         else if (WIFSIGNALED(last_status))
             shell->exit_code = 128 + WTERMSIG(last_status);
     }
-    
     // Restore stdin/stdout
     dup2(saved_stdin, STDIN_FILENO);
     dup2(saved_stdout, STDOUT_FILENO);
