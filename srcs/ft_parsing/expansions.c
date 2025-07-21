@@ -206,7 +206,21 @@ char *expand_token_value(char *value, t_shell *shell)
             return (ft_strjoin(home, value + 1));
         return (ft_strdup(value));
     }
-    
+    // Check if the value contains quotes
+    // If it starts and ends with single quotes, it might be from "'$VAR'" input
+    // In this case, we need to expand the content but preserve the quotes
+    if (value[0] == '\'' && value[strlen(value) - 1] == '\'')
+    {
+        // This is a string like '$USER' that came from double quotes
+        // We need to expand it but keep the single quotes
+        char *inner = ft_substr(value, 1, strlen(value) - 2);
+        char *expanded = expand_variables(inner, shell);
+        char *result = ft_calloc(strlen(expanded) + 3, sizeof(char));
+        sprintf(result, "'%s'", expanded);
+        free(inner);
+        free(expanded);
+        return result;
+    }
     // Process quotes and expansions
     return process_quotes(value, shell);
 }
