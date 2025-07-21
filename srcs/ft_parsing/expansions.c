@@ -271,7 +271,8 @@ char *process_quotes(char *input, t_shell *shell)
 }
 
 // Helper to preserve quotes inside quotes
-char *expand_variables_in_double_quotes(char *value, t_shell *shell)
+// ...existing code...
+char *expand_variables(char *value, t_shell *shell)
 {
     char *result = ft_calloc(1, sizeof(char));
     int i = 0;
@@ -283,16 +284,6 @@ char *expand_variables_in_double_quotes(char *value, t_shell *shell)
     {
         if (value[i] == '$' && value[i + 1] && !ft_isspace(value[i + 1]))
         {
-            // Append text before $
-            if (i > 0)
-            {
-                char *before = ft_substr(value, 0, i);
-                char *temp = ft_strjoin(result, before);
-                free(result);
-                free(before);
-                result = temp;
-            }
-            
             if (value[i + 1] == '?')
             {
                 // Handle $?
@@ -301,20 +292,17 @@ char *expand_variables_in_double_quotes(char *value, t_shell *shell)
                 free(result);
                 free(exit_str);
                 result = temp;
-                
-                // Skip $?
-                value += (i + 2);
-                i = 0;
+                i += 2;  // Skip $?
             }
             else if (ft_isalnum(value[i + 1]) || value[i + 1] == '_')
             {
                 // Handle $VAR
                 int start = i + 1;
-                i++;
-                while (value[i] && (ft_isalnum(value[i]) || value[i] == '_'))
-                    i++;
+                int j = start;
+                while (value[j] && (ft_isalnum(value[j]) || value[j] == '_'))
+                    j++;
                 
-                char *var_name = ft_substr(value, start, i - start);
+                char *var_name = ft_substr(value, start, j - start);
                 char *var_value = get_env_value(shell->head, var_name);
                 if (!var_value)
                     var_value = "";
@@ -324,9 +312,7 @@ char *expand_variables_in_double_quotes(char *value, t_shell *shell)
                 free(var_name);
                 result = temp;
                 
-                // Skip processed variable
-                value += i;
-                i = 0;
+                i = j;  // Move to end of variable
             }
             else
             {
@@ -334,18 +320,8 @@ char *expand_variables_in_double_quotes(char *value, t_shell *shell)
                 char *temp = ft_strjoin(result, "$");
                 free(result);
                 result = temp;
-                value++;
-                i = 0;
+                i++;
             }
-        }
-        else if (value[i] == '\'' || value[i] == '"')
-        {
-            // Preserve quotes as literal characters
-            char quote_str[2] = {value[i], '\0'};
-            char *temp = ft_strjoin(result, quote_str);
-            free(result);
-            result = temp;
-            i++;
         }
         else
         {
@@ -362,7 +338,8 @@ char *expand_variables_in_double_quotes(char *value, t_shell *shell)
 }
 
 // For unquoted segments
-char *expand_variables(char *value, t_shell *shell)
+// ...existing code...
+char *expand_variables_in_double_quotes(char *value, t_shell *shell)
 {
     char *result = ft_calloc(1, sizeof(char));
     int i = 0;
@@ -374,16 +351,6 @@ char *expand_variables(char *value, t_shell *shell)
     {
         if (value[i] == '$' && value[i + 1] && !ft_isspace(value[i + 1]))
         {
-            // Append text before $
-            if (i > 0)
-            {
-                char *before = ft_substr(value, 0, i);
-                char *temp = ft_strjoin(result, before);
-                free(result);
-                free(before);
-                result = temp;
-            }
-            
             if (value[i + 1] == '?')
             {
                 // Handle $?
@@ -392,20 +359,17 @@ char *expand_variables(char *value, t_shell *shell)
                 free(result);
                 free(exit_str);
                 result = temp;
-                
-                // Skip $?
-                value += (i + 2);
-                i = 0;
+                i += 2;  // Skip $?
             }
             else if (ft_isalnum(value[i + 1]) || value[i + 1] == '_')
             {
                 // Handle $VAR
                 int start = i + 1;
-                i++;
-                while (value[i] && (ft_isalnum(value[i]) || value[i] == '_'))
-                    i++;
+                int j = start;
+                while (value[j] && (ft_isalnum(value[j]) || value[j] == '_'))
+                    j++;
                 
-                char *var_name = ft_substr(value, start, i - start);
+                char *var_name = ft_substr(value, start, j - start);
                 char *var_value = get_env_value(shell->head, var_name);
                 if (!var_value)
                     var_value = "";
@@ -415,9 +379,7 @@ char *expand_variables(char *value, t_shell *shell)
                 free(var_name);
                 result = temp;
                 
-                // Skip processed variable
-                value += i;
-                i = 0;
+                i = j;  // Move to end of variable
             }
             else
             {
@@ -425,13 +387,12 @@ char *expand_variables(char *value, t_shell *shell)
                 char *temp = ft_strjoin(result, "$");
                 free(result);
                 result = temp;
-                value++;
-                i = 0;
+                i++;
             }
         }
         else
         {
-            // Regular character
+            // Regular character (including quotes inside double quotes)
             char char_str[2] = {value[i], '\0'};
             char *temp = ft_strjoin(result, char_str);
             free(result);
