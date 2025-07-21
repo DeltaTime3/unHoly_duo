@@ -7,6 +7,21 @@ char	*expand_variables(char *value, t_shell *shell);
 //static char	*append_bfr_dolar(char *value, int start, int i, char *result);
 //static char	*append_aft_last(char *value, int start, int i, char *result);
 
+// static void debug_print_tokens(t_token *tokens)
+// {
+//     t_token *current = tokens;
+//     int i = 0;
+    
+//     printf("=== TOKEN DEBUG ===\n");
+//     while (current)
+//     {
+//         printf("Token %d: type=%d, value=\"%s\", in_single_quotes=%d\n", 
+//                i++, current->type, current->value, current->in_single_quotes);
+//         current = current->next;
+//     }
+//     printf("==================\n");
+// }
+
 char    *remove_all_quotes(const char *input)
 {
     int len;
@@ -93,35 +108,36 @@ void expand_tokens(t_token *token, t_shell *shell)
     char *expanded;
     char *original;
     
+    //debug_print_tokens(token);
     while (current)
     {
         if (current->value && current->value[0] != '\0')
         {
             original = current->value;
             
-            // Check if the token contains a variable expansion
-            if (ft_strchr(original, '$') != NULL)
+            // Check if token was in single quotes - if so, don't expand
+            if (current->in_single_quotes)
             {
-                expanded = expand_token_value(original, shell);
-                
-                // If the expansion resulted in an empty string, mark it as expanded
-                if (expanded && expanded[0] == '\0')
-                    current->was_expanded = 1;
-                
-                free(current->value);
-                current->value = expanded;
+                // Just copy the value without any expansion
+                expanded = ft_strdup(original);
             }
             else
             {
-                // For non-variable tokens, just expand normally
+                // Process through expand_token_value to handle quotes properly
                 expanded = expand_token_value(original, shell);
-                free(current->value);
-                current->value = expanded;
             }
+            
+            // Check if the expansion resulted in an empty string
+            if (expanded && expanded[0] == '\0' && ft_strchr(original, '$') != NULL)
+                current->was_expanded = 1;
+            
+            free(current->value);
+            current->value = expanded;
         }
         current = current->next;
     }
-    
+    // printf("After expansion:\n");
+    // debug_print_tokens(token);
     // After expanding all tokens, handle empty command tokens
     adjust_command_after_expansion(token);
 }
@@ -196,54 +212,53 @@ char *expand_token_value(char *value, t_shell *shell)
 }
 
 // New comprehensive quote handling function
+// ...existing code...
 char *process_quotes(char *input, t_shell *shell)
 {
     char *result = ft_calloc(1, sizeof(char));
     int i = 0;
-    char current_quote = 0;
     
     if (!result || !input)
         return (NULL);
     
     while (input[i])
     {
-        // Starting a quoted section
-        if ((input[i] == '\'' || input[i] == '"') && current_quote == 0)
+        // Check for quotes
+        if (input[i] == '\'' || input[i] == '"')
         {
-            current_quote = input[i];
+            char quote_type = input[i];
             i++; // Skip the opening quote
             
             // Find the closing quote
             int start = i;
-            while (input[i] && input[i] != current_quote)
+            while (input[i] && input[i] != quote_type)
                 i++;
             
-            if (input[i] == current_quote) // Found closing quote
+            if (input[i] == quote_type) // Found closing quote
             {
-                if (current_quote == '\'')
+                char *segment = ft_substr(input, start, i - start);
+                char *processed;
+                
+                if (quote_type == '\'')
                 {
-                    // Single quotes - preserve literally, no expansion
-                    char *segment = ft_substr(input, start, i - start);
-                    char *new_result = ft_strjoin(result, segment);
-                    free(result);
-                    free(segment);
-                    result = new_result;
+                    // Single quotes - preserve everything literally, NO expansion
+                    processed = segment;
                 }
                 else // Double quotes
                 {
-                    // Expand variables inside double quotes
-                    char *segment = ft_substr(input, start, i - start);
-                    char *expanded = expand_variables_in_double_quotes(segment, shell);
-                    char *new_result = ft_strjoin(result, expanded);
-                    free(result);
+                    // Double quotes - expand variables but preserve other quotes
+                    processed = expand_variables_in_double_quotes(segment, shell);
                     free(segment);
-                    free(expanded);
-                    result = new_result;
                 }
+                
+                char *new_result = ft_strjoin(result, processed);
+                free(result);
+                free(processed);
+                result = new_result;
+                
                 i++; // Skip the closing quote
-                current_quote = 0;
             }
-            else // No closing quote found - should not happen with validated input
+            else // No closing quote found
             {
                 free(result);
                 return (ft_strdup(input));
@@ -269,6 +284,7 @@ char *process_quotes(char *input, t_shell *shell)
     
     return result;
 }
+// ...existing code...
 
 // Helper to preserve quotes inside quotes
 // ...existing code...

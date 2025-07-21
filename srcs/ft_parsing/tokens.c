@@ -15,6 +15,7 @@ t_token	*create_token(t_cat type, char *value)
     token->command = NULL;
     token->expand_heredoc = 0;
     token->was_expanded = 0;
+    token->in_single_quotes = 0;
     return (token);
 }
 

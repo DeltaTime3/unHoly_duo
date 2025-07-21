@@ -40,6 +40,7 @@ int quote_handling(const char *input, int *i, t_token **tokens, int *expect_comm
     size_t  start;
     char    *content;
     t_cat   type;
+    t_token *new_token;
 
     quote = input[*i];
     (*i)++;
@@ -52,13 +53,16 @@ int quote_handling(const char *input, int *i, t_token **tokens, int *expect_comm
     if (!content)
         return handle_quote_error(tokens);
     (*i)++;
-    // if (ft_strlen(content) == 0)
-    // {
-    //     free(content);
-    //     return 0;
-    // }
     type = determine_token_type(content, expect_command);
-    add_token(tokens, create_token(type, content));
+    
+    // Create the token
+    new_token = create_token(type, content);
+    
+    // Set the in_single_quotes flag if this was a single-quoted string
+    if (quote == '\'')
+        new_token->in_single_quotes = 1;
+    
+    add_token(tokens, new_token);
     free(content);
     return 0;
 }

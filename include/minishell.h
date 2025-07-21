@@ -104,6 +104,7 @@ typedef struct s_token
 	int				expand_heredoc;
 	int				quote_type; // 0 = unquoted, 1 = single, 2 = double
 	int				was_expanded;
+	int				in_single_quotes;
 } t_token;
  
 typedef struct s_env
