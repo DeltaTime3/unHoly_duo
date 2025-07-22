@@ -50,6 +50,7 @@ int	is_builtin(t_token *token)
     return (0);
 }
 
+// In exect.c
 int	ft_execute(t_shell *shell, t_token *value)
 {
     int saved_stdout;
@@ -64,59 +65,43 @@ int	ft_execute(t_shell *shell, t_token *value)
         return (1);
     }
     expand_tokens(value, shell);
-    prep_cmd_args(value);
-    
-    // Find the first command token
+    prep_cmd_args(value); // This call will now correctly filter arguments
+
+    // Find the first command token that is NOT an empty-expanded token
     cmd = value;
-    while (cmd && cmd->type != COMMAND)
+    while (cmd && (cmd->type != COMMAND || (cmd->value && cmd->value[0] == '\0' && cmd->was_expanded))) // MODIFIED CONDITION
         cmd = cmd->next;
     
     // If we have a command token, check if it's empty
     if (cmd)
     {
-        if (!cmd->value || cmd->value[0] == '\0')
+        // The prep_cmd_args should have already filtered out empty-expanded commands.
+        // So, if cmd->value is empty here, it means it was originally ""
+        if (!cmd->value || cmd->value[0] == '\0') // This now only catches original "" commands
         {
-            // Check if this was an expanded empty (like $EMPTY) or original empty ("")
-            if (cmd->was_expanded)
-            {
-                // For $EMPTY alone (no other tokens), just return success
-                if (!cmd->next || cmd->next->type == PIPE)
-                {
-                    dup2(saved_stdout, STDOUT_FILENO);
-                    dup2(saved_stdin, STDIN_FILENO);
-                    close(saved_stdout);
-                    close(saved_stdin);
-                    shell->exit_code = 0;
-                    return (0);
-                }
-                // Otherwise, continue to find the next command
-                // (adjust_command_after_expansion should have promoted it)
-            }
-            else
-            {
-                // For "", try to execute and fail
-                ft_printf_fd(2, "minishell: : command not found\n");
-                shell->exit_code = 127;
-                dup2(saved_stdout, STDOUT_FILENO);
-                dup2(saved_stdin, STDIN_FILENO);
-                close(saved_stdout);
-                close(saved_stdin);
-                return (127);
-            }
+            // For "", try to execute and fail
+            ft_printf_fd(2, "minishell: : command not found\n");
+            shell->exit_code = 127;
+            dup2(saved_stdout, STDOUT_FILENO);
+            dup2(saved_stdin, STDIN_FILENO);
+            close(saved_stdout);
+            close(saved_stdin);
+            return (127);
         }
     }
     
-    // If no valid command found at all
-    if (!cmd || !cmd->value || cmd->value[0] == '\0')
+    // If no valid command found at all (i.e., all commands were empty-expanded or no commands)
+    if (!cmd || !cmd->value || cmd->value[0] == '\0') // This condition should now primarily catch cases where all commands were empty-expanded
     {
         dup2(saved_stdout, STDOUT_FILENO);
         dup2(saved_stdin, STDIN_FILENO);
         close(saved_stdout);
         close(saved_stdin);
-        shell->exit_code = 0;
+        shell->exit_code = 0; // Bash returns 0 for "$UNSET_VAR"
         return (0);
     }
 
+    // ... rest of ft_execute remains the same ...
     // Special cases for . and ..
     if (cmd && cmd->value && ft_strcmp(cmd->value, ".") == 0) 
     {

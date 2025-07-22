@@ -87,6 +87,12 @@ int	op_handling(const char *input, int *i, t_token **tokens)
 }
 
 // words
+// MODIFIED: Ensure word_handling consumes the entire word, including '$'
+// ... (rest of the file) ...
+
+// words
+// MODIFIED: Ensure word_handling consumes the entire word, including '$'
+// words
 int	word_handling(const char *input, int *i, t_token **tokens,
 	int *expect_command)
 {
@@ -97,32 +103,55 @@ int	word_handling(const char *input, int *i, t_token **tokens,
 
     start = *i;
     quote_char = 0;
+
     while (input[*i])
     {
-        if (quote_char)
+        if (quote_char) // If currently inside a quote
         {
-            if (input[*i] == quote_char)
+            if (input[*i] == quote_char) // Found closing quote
+            {
                 quote_char = 0;
+            }
         }
-        else
+        else // If outside quotes
         {
-            if (input[*i] == '\'' || input[*i] == '"')
+            if (input[*i] == '\'' || input[*i] == '"') // Found opening quote
+            {
                 quote_char = input[*i];
+            }
+            // IMPORTANT: Only break on actual word delimiters (space, pipe, redirect)
+            // '$' is NOT a word delimiter. It's part of the word for expansion.
             else if (ft_isspace(input[*i]) || input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
-                break ;
+            {
+                break ; // Break the loop, word ends here
+            }
         }
-        (*i)++;
+        (*i)++; // Move to the next character
     }
-    if (quote_char)
-        return (handle_quote_error(tokens));
+    
+    // Ensure we capture the entire word including special characters
     content = ft_substr(input, start, *i - start);
     if (!content)
+    {
         return (1);
+    }
+
+    // Check if the content is empty or invalid
+    if (ft_strlen(content) == 0)
+    {
+        free(content);
+        return (1);
+    }
+
     type = determine_token_type(content, expect_command);
     add_token(tokens, create_token(type, content));
-    free (content);
+    free(content);
     return (0);
 }
+
+
+// ... (rest of the file) ...
+
 
 // pipes
 int	pipe_handling(const char *input, int *i, t_token **tokens)
@@ -266,15 +295,26 @@ int	heredoc_handling(const char *input, int *i, t_token **tokens)
 }
 
 // token handling
+// NO CHANGE NEEDED HERE, as word_handling should now correctly consume the full word.
+// ... (rest of the file) ...
+
+// token handling
+// NO CHANGE NEEDED HERE, as word_handling should now correctly consume the full word.
 int	token_handling(const char *input, int *i, t_token **tokens,
         int *expect_command)
 {
+
     if (!input || !input[*i])
+    {
         return (1);
+    }
     while (input[*i] && !ft_isspace(input[*i]))
     {
+
         if (!input[*i])
+        {
             break ;
+        }
         if (input[*i] == '\'' || input[*i] == '"')
         {
             if (quote_handling(input, i, tokens, expect_command))
@@ -288,9 +328,13 @@ int	token_handling(const char *input, int *i, t_token **tokens,
             *expect_command = 1;
         }
         else if (input[*i] == '<' || input[*i] == '>')
+        {
             special_tokens_handling(input, i, tokens, expect_command);
+        }
         else if (input[*i] == '#')
+        {
             return (2);
+        }
         else if (ft_isprint(input[*i]))
         {
             if (*expect_command && !ft_isdigit(input[*i]))
@@ -303,12 +347,17 @@ int	token_handling(const char *input, int *i, t_token **tokens,
                 if (word_handling(input, i, tokens, expect_command))
                     return (1);
             }
-            break; // Added break to exit inner loop after processing a word
+            break; // This break is correct: word_handling processes one full word.
         }
         else
+        {
             (*i)++;
+        }
         if (input[*i] && ft_isspace(input[*i]))
+        {
             break ;
+        }
     }
     return (0);
 }
+

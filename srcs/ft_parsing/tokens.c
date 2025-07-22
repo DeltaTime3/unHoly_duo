@@ -69,58 +69,44 @@ t_token	*tokenize_input(const char *input)
 	return (final_tokens);
 }
 
-void prep_cmd_args(t_token *head)
-{
+// In tokens.c
+// In tokens.c
+void prep_cmd_args(t_token *head) {
     t_token *current = head;
-    t_token *temp;
-    int arg_count;
-    
-    // Skip empty tokens at the beginning
-    while (current && (!current->value || current->value[0] == '\0'))
-        current = current->next;
-    
-    // Find the first command token
-    while (current)
-    {
-        // Only process command tokens
-        if (current->type == COMMAND && current->value && current->value[0] != '\0')
-        {
-            // Free existing args if any
+    while (current) {
+        if (current->type == COMMAND && current->value && current->value[0] != '\0' && !current->was_expanded) {
+            // Free old args if they exist
             if (current->args)
-            {
                 free_args(current->args);
-                current->args = NULL;
-            }
             
-            // Count the number of arguments
-            arg_count = 1; // Start with 1 for the command itself
-            temp = current->next;
-            while (temp && temp->type != PIPE)
-            {
-                if (temp->type == ARGUMENT || temp->type == FLAG)
+            // Count valid arguments (skip empty-expanded tokens)
+            int arg_count = 1; // For the command itself
+            t_token *temp = current->next;
+            while (temp && temp->type != PIPE) {
+                if ((temp->type == ARGUMENT || temp->type == FLAG) && 
+                    temp->value && !(temp->value[0] == '\0' && temp->was_expanded))
                     arg_count++;
                 temp = temp->next;
             }
             
-            // Allocate args array
-            current->args = ft_calloc(arg_count + 1, sizeof(char *));
-            if (!current->args)
-                return;
+            // Allocate args (arg_count + 1 for NULL terminator)
+            current->args = (char **)ft_calloc(arg_count + 1, sizeof(char *));
+            if (!current->args) return;
             
-            // Fill the args array
-            current->args[0] = ft_strdup(current->value);
+            // Copy command name
+            current->args[0] = ft_strdup(current->value); // "grep"
+            
+            // Copy arguments (NO SPLITTING! Preserve token->value)
             int i = 1;
             temp = current->next;
-            while (temp && temp->type != PIPE && i < arg_count)
-            {
-                if (temp->type == ARGUMENT || temp->type == FLAG)
-                {
-                    current->args[i] = ft_strdup(temp->value);
+            while (temp && temp->type != PIPE && i < arg_count) {
+                if ((temp->type == ARGUMENT || temp->type == FLAG) && 
+                    temp->value && !(temp->value[0] == '\0' && temp->was_expanded)) {
+                    current->args[i] = ft_strdup(temp->value); // ");$" (single string)
                     i++;
                 }
                 temp = temp->next;
             }
-            current->args[i] = NULL; // Null terminate
         }
         current = current->next;
     }

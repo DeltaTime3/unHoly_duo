@@ -72,7 +72,7 @@ int	is_sp_expantion(t_token *token)
 	{
 		if (value[1] == '{')
 		{
-			end = strchr(value + 2, '}');
+			end = ft_strchr(value + 2, '}');
 			if (end && end[1] == '\0')
 				return (1);
 		}

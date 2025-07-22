@@ -209,14 +209,14 @@ char *expand_token_value(char *value, t_shell *shell)
     // Check if the value contains quotes
     // If it starts and ends with single quotes, it might be from "'$VAR'" input
     // In this case, we need to expand the content but preserve the quotes
-    if (value[0] == '\'' && value[strlen(value) - 1] == '\'')
+    if (value[0] == '\'' && value[ft_strlen(value) - 1] == '\'')
     {
         // This is a string like '$USER' that came from double quotes
         // We need to expand it but keep the single quotes
-        char *inner = ft_substr(value, 1, strlen(value) - 2);
+        char *inner = ft_substr(value, 1, ft_strlen(value) - 2);
         char *expanded = expand_variables(inner, shell);
-        char *result = ft_calloc(strlen(expanded) + 3, sizeof(char));
-        sprintf(result, "'%s'", expanded);
+        char *result = ft_calloc(ft_strlen(expanded) + 3, sizeof(char));
+        ft_printf(result, "'%s'", expanded);
         free(inner);
         free(expanded);
         return result;
@@ -234,7 +234,6 @@ char *process_quotes(char *input, t_shell *shell)
     
     if (!result || !input)
         return (NULL);
-    
     while (input[i])
     {
         // Check for quotes
@@ -295,7 +294,6 @@ char *process_quotes(char *input, t_shell *shell)
             result = new_result;
         }
     }
-    
     return result;
 }
 // ...existing code...
@@ -312,8 +310,9 @@ char *expand_variables(char *value, t_shell *shell)
     
     while (value[i])
     {
-        if (value[i] == '$' && value[i + 1] && !ft_isspace(value[i + 1]))
+        if (value[i] == '$')
         {
+            // Check if the next character is valid for a variable name
             if (value[i + 1] == '?')
             {
                 // Handle $?
@@ -346,11 +345,12 @@ char *expand_variables(char *value, t_shell *shell)
             }
             else
             {
-                // Just a literal $
+                // Just a literal $ (not followed by a valid variable name)
+                // This block is already correct for handling literal '$'
                 char *temp = ft_strjoin(result, "$");
                 free(result);
                 result = temp;
-                i++;
+                i++; // Move to the next character
             }
         }
         else
@@ -362,10 +362,12 @@ char *expand_variables(char *value, t_shell *shell)
             result = temp;
             i++;
         }
+        // Debug output to track expansion
     }
     
     return result;
 }
+
 
 // For unquoted segments
 // ...existing code...
@@ -433,115 +435,3 @@ char *expand_variables_in_double_quotes(char *value, t_shell *shell)
     
     return result;
 }
-
-// char	*append_bfr_dolar(char *value, int start, int i, char *result)
-// {
-// 	char	*temp;
-// 	char	*join;
-
-// 	temp = ft_substr(value, start, i - start);
-// 	join = ft_strjoin(result, temp);
-// 	if (!join)
-// 	{
-// 		free(join);
-// 		return(NULL);
-// 	}
-// 	if (!temp)
-// 		return(NULL);
-// 	free(result);
-// 	result = join;
-// 	free(temp);
-// 	return(result);
-// }
-
-// char	*append_aft_last(char *value, int start, int i, char *result)
-// {
-// 	char	*temp;
-// 	char	*join;
-
-// 	temp = ft_substr(value, start, i - start);
-// 	join = ft_strjoin(result, temp);
-// 	if (!join)
-// 	{
-// 		free(join);
-// 		return(NULL);
-// 	}
-// 	if (!temp)
-// 		return(NULL);
-// 	free(result);
-// 	result = join;
-// 	free(temp);
-// 	return (result);
-// }
-
-// static char	*append_norm(char *value, t_exp_state *state)
-// {
-//     char	*temp;
-//     char	*join;
-//     char	*val;
-
-//     temp = ft_substr(value, state->start, state->i - state->start);
-//     val = get_env_value(state->shell->head, temp);
-//     if (!val)
-//         val = "";
-//     join = ft_strjoin(state->result, val);
-//     free(state->result);
-//     free(temp);
-//     state->start = state->i;
-//     return (join);
-// }
-
-// 
-
-// static char	*append_qst(char *value, t_exp_state *state)
-// {
-//     char	*code;
-//     char	*join;
-
-//     if (state->i > state->start)
-//         state->result = append_bfr_dolar(value, state->start,
-//                 state->i, state->result);
-//     state->i += 2;
-//     code = ft_itoa(state->shell->exit_code);
-//     join = ft_strjoin(state->result, code);
-//     free(state->result);
-//     free(code);
-//     state->start = state->i;
-//     return (join);
-// }
-//static void	expand_token_va_aux(char *value, t_exp_state *state)
-// {
-//     if (value[state->i] == '\'' || value[state->i] == '"')
-//     {
-//         if (state->in_quote == 0)
-//             state->in_quote = value[state->i];
-//         else if (state->in_quote == value[state->i])
-//             state->in_quote = 0;
-//     }
-//     // check for variable expansion only if not inside single quotes
-//     if (value[state->i] == '$' && state->in_quote != '\'')
-//     {
-//         if (value[state->i + 1] == '?')
-//         {
-//             state->result = append_qst(value, state);
-//         }
-//         else if (ft_isalnum(value[state->i + 1]) || value[state->i + 1] == '_')
-//         {
-//             if (state->i > state->start)
-//                 state->result = append_bfr_dolar(value, state->start, state->i, state->result);
-//             (state->i)++;
-//             state->start = state->i;
-//             while (value[state->i] && (ft_isalnum(value[state->i]) || value[state->i] == '_'))
-//                 (state->i)++;
-//             state->result = append_norm(value, state);
-//         }
-//         else
-//         {
-//             (state->i)++;
-//         }
-//     }
-//     else
-//     {
-//         (state->i)++;
-//     }
-// }
