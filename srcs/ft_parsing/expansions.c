@@ -211,12 +211,18 @@ char *expand_token_value(char *value, t_shell *shell)
     // In this case, we need to expand the content but preserve the quotes
     if (value[0] == '\'' && value[ft_strlen(value) - 1] == '\'')
     {
-        // This is a string like '$USER' that came from double quotes
-        // We need to expand it but keep the single quotes
         char *inner = ft_substr(value, 1, ft_strlen(value) - 2);
         char *expanded = expand_variables(inner, shell);
-        char *result = ft_calloc(ft_strlen(expanded) + 3, sizeof(char));
-        ft_printf(result, "'%s'", expanded);
+        // Allocate space for: opening quote + expanded + closing quote + null terminator
+        size_t len = ft_strlen(expanded);
+        char *result = ft_calloc(len + 3, sizeof(char));
+        if (result)
+        {
+            result[0] = '\'';
+            ft_strcpy(result + 1, expanded);
+            result[len + 1] = '\'';
+            result[len + 2] = '\0';
+        }
         free(inner);
         free(expanded);
         return result;
