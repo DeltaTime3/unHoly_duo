@@ -69,8 +69,6 @@ t_token	*tokenize_input(const char *input)
 	return (final_tokens);
 }
 
-// In tokens.c
-// In tokens.c
 void prep_cmd_args(t_token *head) {
     t_token *current = head;
     while (current) {

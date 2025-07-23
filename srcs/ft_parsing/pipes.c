@@ -25,177 +25,98 @@ int count_pipes(t_token *tokens)
     return (count);
 }
 
-int handle_pipes(t_token *tokens, t_shell *shell)
+static void	child_process_exit(t_shell *shell, t_token *tokens, int exit_code)
 {
-    int pipe_count;
-    int pipes[2][2];
-    pid_t pid;
-    t_token *current;
-    int i;
-    int status;
-    int saved_stdin;
-    int saved_stdout;
-    pid_t last_pid = -1;
+	int	code;
 
-    pipes[0][0] = -1; 
-    pipes[0][1] = -1;
-    pipes[1][0] = -1; 
-    pipes[1][1] = -1;
-    pipe_count = count_pipes(tokens);
-    if (pipe_count == 0)
-        return (0);
-    saved_stdin = dup(STDIN_FILENO);
-    saved_stdout = dup(STDOUT_FILENO);
-    if (saved_stdin == -1 || saved_stdout == -1)
-        return (-1);
-    current = tokens;
-    
-    // First command in pipeline
-    if (pipe(pipes[0]) < 0)
-        return (print_error("Pipe creation failed\n"), -1);
-    
-    pid = fork();
-    if (pid < 0)
-    {
-        close(pipes[0][0]);
-        close(pipes[0][1]);
-        return (print_error("Fork failed\n"), -1);
-    }
-    else if (pid == 0) // Child for first command
-    {
-        dup2(pipes[0][1], STDOUT_FILENO);
-        close(pipes[0][0]);
-        close(pipes[0][1]);
-        
-        // Redirection: if it fails, exit with 0 so pipeline continues
-        if (redirect_handling(current, shell) == -1)
-        {
-            exit(1);
-        }
-        
-        if (is_builtin(current))
-            choose_b_in(current, shell);
-        else
-            execute2(shell, current);
-        exit(shell->exit_code);
-    }
-    
-    // Parent: close write end of first pipe
-    close(pipes[0][1]);
-    
-    // Middle commands
-    for (i = 0; i < pipe_count - 1; i++)
-    {
-        current = find_next_cmd_after_pipe(current);
-        while (current && (!current->value || current->value[0] == '\0'))
-            current = find_next_cmd_after_pipe(current);
-        if (!current) break;
-        if (pipe(pipes[(i + 1) % 2]) < 0)
-        {
-            if (pipes[i % 2][0] >= 0)
-                close(pipes[i % 2][0]);
-            return (print_error("Pipe creation failed\n"), -1);
-        }
-        pid = fork();
-        if (pid < 0)
-        {
-            if (pipes[i % 2][0] >= 0)
-                close(pipes[i % 2][0]);
-            if (pipes[(i + 1) % 2][0] >= 0)
-                close(pipes[(i + 1) % 2][0]);
-            if (pipes[(i + 1) % 2][1] >= 0)
-                close(pipes[(i + 1) % 2][1]);
-            return (print_error("Fork failed\n"), -1);
-        }
-        else if (pid == 0) // Child process
-        {
-            dup2(pipes[i % 2][0], STDIN_FILENO);
-            dup2(pipes[(i + 1) % 2][1], STDOUT_FILENO);
-            if (pipes[0][0] >= 0) close(pipes[0][0]);
-            if (pipes[0][1] >= 0) close(pipes[0][1]);
-            if (pipes[1][0] >= 0) close(pipes[1][0]);
-            if (pipes[1][1] >= 0) close(pipes[1][1]);
-            
-            // Redirection: if it fails, exit with 0
-            if (redirect_handling(current, shell) == -1)
-            {
-                exit(1);
-            }
-            
-            if (is_builtin(current))
-                choose_b_in(current, shell);
-            else
-                execute2(shell, current);
-            exit(shell->exit_code);
-        }
-        // Parent: close read end of current pipe
-        if (pipes[i % 2][0] >= 0)
-            close(pipes[i % 2][0]);
-        // Parent: close write end of new pipe
-        if (pipes[(i + 1) % 2][1] >= 0)
-            close(pipes[(i + 1) % 2][1]);
-    }
-    
-    // Handle last command
-    if (pipe_count > 0)
-    {
-        current = find_next_cmd_after_pipe(current);
-        while (current && (!current->value || current->value[0] == '\0'))
-            current = find_next_cmd_after_pipe(current);
-        if (current)
-        {
-            pid = fork();
-            if (pid < 0)
-            {
-                if (pipes[(pipe_count-1) % 2][0] >= 0)
-                    close(pipes[(pipe_count-1) % 2][0]);
-                return (print_error("Fork failed\n"), -1);
-            }
-            else if (pid == 0) // Child for last command
-            {
-                dup2(pipes[(pipe_count-1) % 2][0], STDIN_FILENO);
-                close(pipes[(pipe_count-1) % 2][0]);
-                
-                // Redirection: if it fails, exit with 0
-                if (redirect_handling(current, shell) == -1)
-                {
-                    exit(1);
-                }
-                
-                if (is_builtin(current))
-                    choose_b_in(current, shell);
-                else
-                    execute2(shell, current);
-                exit(shell->exit_code);
-            }
-            last_pid = pid;
-        }
-        // Parent: close read end of last pipe
-        if (pipes[(pipe_count-1) % 2][0] >= 0)
-            close(pipes[(pipe_count-1) % 2][0]);
-    }
-    
-    // Wait for all children and track the last one's status
-    pid_t wpid = 0;
-    int last_status = 0;
-    while ((wpid = wait(&status)) > 0)
-    {
-        if (wpid == last_pid)
-            last_status = status;
-    }
-    // Set exit status from last command (bash behavior)
-    if (last_pid > 0)
-    {
-        if (WIFEXITED(last_status))
-            shell->exit_code = WEXITSTATUS(last_status);
-        else if (WIFSIGNALED(last_status))
-            shell->exit_code = 128 + WTERMSIG(last_status);
-    }
-    // Restore stdin/stdout
-    dup2(saved_stdin, STDIN_FILENO);
-    dup2(saved_stdout, STDOUT_FILENO);
-    close(saved_stdin);
-    close(saved_stdout);
-    
-    return (0);
+	code = exit_code;
+	if (shell)
+	{
+		code = shell->exit_code;
+		clean_all_resources(shell);
+	}
+	if (tokens)
+		free_tokens(tokens);
+	exit(code);
+}
+
+int	handle_pipes(t_token *tokens, t_shell *shell)
+{
+	int		pipe_count;
+	int		pipe_fd[2];
+	int		in_fd;
+	pid_t	pid;
+	t_token	*current;
+	int		i;
+	int		status;
+	int		saved_fds[2];
+	pid_t	last_pid;
+
+	pipe_count = count_pipes(tokens);
+	saved_fds[0] = dup(STDIN_FILENO);
+	saved_fds[1] = dup(STDOUT_FILENO);
+	in_fd = saved_fds[0];
+	current = tokens;
+	i = 0;
+	last_pid = -1;
+	while (i <= pipe_count)
+	{
+		if (i < pipe_count)
+		{
+			if (pipe(pipe_fd) < 0)
+				return (print_error("Pipe creation failed\n"), -1);
+		}
+		pid = fork();
+		if (pid < 0)
+			return (print_error("Fork failed\n"), -1);
+		else if (pid == 0) // Child process
+		{
+			if (i > 0) // Not the first command, redirect stdin from previous pipe
+			{
+				dup2(in_fd, STDIN_FILENO);
+				close(in_fd);
+			}
+			if (i < pipe_count) // Not the last command, redirect stdout to current pipe
+			{
+				close(pipe_fd[0]);
+				dup2(pipe_fd[1], STDOUT_FILENO);
+				close(pipe_fd[1]);
+			}
+			if (redirect_handling(current, shell) == -1)
+				child_process_exit(shell, tokens, 1);
+			if (is_builtin(current))
+				choose_b_in(current, shell);
+			else
+				execute2(shell, current);
+			child_process_exit(shell, tokens, shell->exit_code);
+		}
+		// Parent process
+		if (i > 0)
+			close(in_fd); // Close read end of the previous pipe
+		if (i < pipe_count)
+		{
+			close(pipe_fd[1]); // Close write end of the current pipe
+			in_fd = pipe_fd[0]; // Save read end for the next child
+		}
+		last_pid = pid;
+		if (i < pipe_count)
+			current = find_next_cmd_after_pipe(current);
+		i++;
+	}
+	int last_status = 0;
+	pid_t wpid;
+	while ((wpid = wait(&status)) > 0)
+	{
+		if (wpid == last_pid)
+			last_status = status;
+	}
+	if (WIFEXITED(last_status))
+		shell->exit_code = WEXITSTATUS(last_status);
+	else if (WIFSIGNALED(last_status))
+		shell->exit_code = 128 + WTERMSIG(last_status);
+	dup2(saved_fds[0], STDIN_FILENO);
+	dup2(saved_fds[1], STDOUT_FILENO);
+	close(saved_fds[0]);
+	close(saved_fds[1]);
+	return (0);
 }
