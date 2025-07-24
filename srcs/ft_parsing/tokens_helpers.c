@@ -86,13 +86,6 @@ int	op_handling(const char *input, int *i, t_token **tokens)
 	return (0);
 }
 
-// words
-// MODIFIED: Ensure word_handling consumes the entire word, including '$'
-// ... (rest of the file) ...
-
-// words
-// MODIFIED: Ensure word_handling consumes the entire word, including '$'
-// words
 int	word_handling(const char *input, int *i, t_token **tokens,
 	int *expect_command)
 {
@@ -149,10 +142,6 @@ int	word_handling(const char *input, int *i, t_token **tokens,
     return (0);
 }
 
-
-// ... (rest of the file) ...
-
-
 // pipes
 int	pipe_handling(const char *input, int *i, t_token **tokens)
 {
@@ -178,82 +167,97 @@ int	pipe_handling(const char *input, int *i, t_token **tokens)
 	return (0);
 }
 
-
 int redirect_handling(t_token *tokens, t_shell *shell)
 {
-    int fd_out = -1;
-    int fd_in = -1;
     t_token *temp = tokens;
-    int heredoc_fd[2];
-    char *heredoc_content = NULL;
-    
+    int fd_in = -1;
+    int fd_out = -1;
+    char *heredoc_content;
+
     while (temp && temp->type != PIPE)
     {
         if (temp->type == REDIRECT && temp->next && temp->next->type == FILES)
         {
             if (ft_strcmp(temp->value, "<") == 0)
             {
+                if (fd_in != -1)
+                    close(fd_in);
                 fd_in = open(temp->next->value, O_RDONLY);
                 if (fd_in == -1)
                 {
                     perror(temp->next->value);
                     shell->exit_code = 1;
+                    if (fd_out != -1) close(fd_out);
                     return (-1);
                 }
-                dup2(fd_in, STDIN_FILENO);
-                close(fd_in);
             }
-            else if (ft_strcmp(temp->value, ">") == 0)
+            else if (ft_strcmp(temp->value, ">") == 0 || ft_strcmp(temp->value, ">>") == 0)
             {
-                // Output redirection
-                fd_out = open(temp->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+                if (fd_out != -1)
+                    close(fd_out);
+                int flags = O_WRONLY | O_CREAT;
+                flags |= (ft_strcmp(temp->value, ">>") == 0) ? O_APPEND : O_TRUNC;
+                fd_out = open(temp->next->value, flags, 0644);
                 if (fd_out == -1)
                 {
                     perror(temp->next->value);
                     shell->exit_code = 1;
+                    if (fd_in != -1) close(fd_in);
                     return (-1);
                 }
-                dup2(fd_out, STDOUT_FILENO);
-                close(fd_out);
-            }
-            else if (ft_strcmp(temp->value, ">>") == 0)
-            {
-                // Append redirection
-                fd_out = open(temp->next->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
-                if (fd_out == -1)
-                {
-                    perror(temp->next->value);
-                    shell->exit_code = 1;
-                    return (-1);
-                }
-                dup2(fd_out, STDOUT_FILENO);
-                close(fd_out);
             }
             temp = temp->next; // Skip the filename token
         }
         else if (temp->type == HERE_DOC && temp->next && temp->next->type == DELIMETER)
         {
-            char *delimiter = temp->next->value;
-            int expand = temp->next->expand_heredoc;
-            
-            heredoc_content = read_heredoc_input(delimiter, expand, shell);
+            if (fd_in != -1)
+                close(fd_in);
+            heredoc_content = read_heredoc_input(temp->next->value, temp->next->expand_heredoc, shell);
             if (!heredoc_content)
+            {
+                shell->exit_code = 130; // Standard exit code for SIGINT
+                if (fd_out != -1) close(fd_out);
                 return (-1);
+            }
+            int heredoc_fd[2];
             if (pipe(heredoc_fd) == -1)
             {
                 free(heredoc_content);
+                perror("pipe");
                 shell->exit_code = 1;
+                if (fd_out != -1) close(fd_out);
                 return (-1);
             }
             write(heredoc_fd[1], heredoc_content, ft_strlen(heredoc_content));
             close(heredoc_fd[1]);
-            dup2(heredoc_fd[0], STDIN_FILENO);
-            close(heredoc_fd[0]);
             free(heredoc_content);
-            
+            fd_in = heredoc_fd[0];
             temp = temp->next; // Skip the delimiter token
         }
-        temp = temp->next;
+        if (temp)
+            temp = temp->next;
+    }
+
+    if (fd_in != -1)
+    {
+        if (dup2(fd_in, STDIN_FILENO) == -1)
+        {
+            perror("dup2 for stdin");
+            close(fd_in);
+            if (fd_out != -1) close(fd_out);
+            return (-1);
+        }
+        close(fd_in);
+    }
+    if (fd_out != -1)
+    {
+        if (dup2(fd_out, STDOUT_FILENO) == -1)
+        {
+            perror("dup2 for stdout");
+            close(fd_out);
+            return (-1);
+        }
+        close(fd_out);
     }
     return (0);
 }

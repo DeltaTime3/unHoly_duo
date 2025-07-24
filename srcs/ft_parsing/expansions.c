@@ -1,26 +1,6 @@
 #include "minishell.h"
 
 char	*expand_variables(char *value, t_shell *shell);
-//static void	expand_token_va_aux(char *value, t_exp_state *state);
-//static char	*append_qst(char *value, t_exp_state *state);
-//static char	*append_norm(char *value, t_exp_state *state);
-//static char	*append_bfr_dolar(char *value, int start, int i, char *result);
-//static char	*append_aft_last(char *value, int start, int i, char *result);
-
-// static void debug_print_tokens(t_token *tokens)
-// {
-//     t_token *current = tokens;
-//     int i = 0;
-    
-//     printf("=== TOKEN DEBUG ===\n");
-//     while (current)
-//     {
-//         printf("Token %d: type=%d, value=\"%s\", in_single_quotes=%d\n", 
-//                i++, current->type, current->value, current->in_single_quotes);
-//         current = current->next;
-//     }
-//     printf("==================\n");
-// }
 
 char    *remove_all_quotes(const char *input)
 {
