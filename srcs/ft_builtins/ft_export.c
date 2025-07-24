@@ -3,9 +3,7 @@
 int	ft_export(t_shell *type, char **args)
 {
 	int		status;
-	//int		i;
 
-	//i = 1;
 	status = 0;
 	if (!args[1])
 	{

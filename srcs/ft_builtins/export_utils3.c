@@ -42,9 +42,7 @@ static int	append_exp_var(const char *input, int i, char **result,
 {
 	char	*var_value;
 	char	*temp;
-	//int		start;
 
-	//start = i;
 	var_value = expand_env_var(&input[i], shell);
 	temp = ft_strjoin(*result, var_value);
 	free(*result);
@@ -78,4 +76,21 @@ char	*expand_command_arg(const char *input, t_shell *shell)
 		}
 	}
 	return (result);
+}
+
+char	*fallback(char *cmd)
+{
+	char	cwd[_PC_PATH_MAX];
+	char	*full_path;
+
+	full_path = NULL;
+	if (!cmd || !*cmd)
+		return (NULL);
+	if (getcwd(cwd, sizeof(cwd)) == NULL)
+		return (NULL);
+	full_path = build_cmb_path(cwd, cmd);
+	if (full_path && access(full_path, X_OK) == 0)
+		return (full_path);
+	free(full_path);
+	return (NULL);
 }

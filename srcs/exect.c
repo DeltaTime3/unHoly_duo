@@ -268,36 +268,40 @@ int	pid_else(char *full_path, char **env_array, t_shell *shell, pid_t pid, int s
 
 char	*get_cmd_path(char *cmd, t_env *env)
 {
-	char		*path;
-	char		*pth_cpy;
-	char		*res;
+	char	*path;
+	char	*pth_cpy;
+	char	*res;
 
 	if (!cmd || !*cmd)
 		return (NULL);
 	if (ft_strchr(cmd, '/'))
 	{
 		if (access(cmd, F_OK) == 0)
-        {
-            if (access(cmd, X_OK) == 0)
-                return ft_strdup(cmd);
-            else
-                return ft_strdup(":permission_denied:");
-        }
-        return (NULL);
+		{
+			if (access(cmd, X_OK) == 0)
+				return ft_strdup(cmd);
+			else
+				return ft_strdup(":permission_denied:");
+		}
+		return (NULL);
 	}
 	path = get_env_value(env, "PATH");
-	pth_cpy = path;
 	if (!path || path[0] == '\0')
 	{
-		if (pth_cpy)
-			free(pth_cpy);
-		return (NULL);
-	}		
+		char *fallback_path = fallback(cmd);
+		if (fallback_path)
+			return fallback_path;
+		if (access(cmd, X_OK) == 0)
+			return ft_strdup(cmd);
+		
+		return NULL;
+	}
 	pth_cpy = ft_strdup(path);
 	if (!pth_cpy)
 		return (NULL);
 	res = check_path_dir(pth_cpy, cmd);
-	return(free(pth_cpy), res);	
+	free(pth_cpy);
+	return res;
 }
 
 char	*check_path_dir(char *pth_cpy, char *cmd)
