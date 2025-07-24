@@ -120,3 +120,35 @@ int	handle_pipes(t_token *tokens, t_shell *shell)
 	close(saved_fds[1]);
 	return (0);
 }
+
+int	apply_lonely_redirs(t_token *tokens, t_shell *shell)
+{
+	t_token	*curr = tokens;
+	int		fd;
+
+	while (curr)
+	{
+		if ((curr->type == REDIR_OUT || curr->type == REDIR_APPEND ||
+		     curr->type == REDIR_IN) &&
+		    curr->next && curr->next->type == FILENAME)
+		{
+			if (curr->type == REDIR_OUT)
+				fd = open(curr->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			else if (curr->type == REDIR_APPEND)
+				fd = open(curr->next->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			else if (curr->type == REDIR_IN)
+				fd = open(curr->next->value, O_RDONLY);
+			else
+				fd = -1;
+			if (fd == -1)
+			{
+				ft_printf_fd(2, "minishell: %s: %s\n", curr->next->value, strerror(errno));
+				shell->exit_code = 1;
+				return (-1);
+			}
+			close(fd);
+		}
+		curr = curr->next;
+	}
+	return (0);
+}

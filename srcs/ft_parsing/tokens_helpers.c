@@ -1,6 +1,7 @@
 #include "minishell.h"
 
 // files
+
 static char *ft_strjoin_free(char *s1, char *s2)
 {
     char *res = ft_strjoin(s1, s2);
@@ -85,42 +86,72 @@ int	op_handling(const char *input, int *i, t_token **tokens)
 	return (0);
 }
 
-int	word_handling(const char *input, int *i, t_token **tokens,
-		int *expect_command)
-{
-	int		start;
-	char	quote_char;
-	char	*content;
-	t_cat	type;
+// words
+// MODIFIED: Ensure word_handling consumes the entire word, including '$'
+// ... (rest of the file) ...
 
-	start = *i;
-	quote_char = 0;
-	while (input[*i])
-	{
-		if (quote_char)
-		{
-			if (input[*i] == quote_char)
-				quote_char = 0; // Found closing quote
-		}
-		else
-		{
-			if (input[*i] == '\'' || input[*i] == '"')
-				quote_char = input[*i]; // Found opening quote
-			// Break if we hit a metacharacter or whitespace NOT inside quotes
-			else if (ft_isspace(input[*i]) || input[*i] == '|'
-				|| input[*i] == '<' || input[*i] == '>')
-				break ;
-		}
-		(*i)++;
-	}
-	content = ft_substr(input, start, *i - start);
-	if (!content)
-		return (1); // Malloc failure
-	type = determine_token_type(content, expect_command);
-	add_token(tokens, create_token(type, content));
-	free(content);
-	return (0);
+// words
+// MODIFIED: Ensure word_handling consumes the entire word, including '$'
+// words
+int	word_handling(const char *input, int *i, t_token **tokens,
+	int *expect_command)
+{
+	int start;
+    char    quote_char;
+    char    *content;
+    t_cat   type;
+
+    start = *i;
+    quote_char = 0;
+
+    while (input[*i])
+    {
+        if (quote_char) // If currently inside a quote
+        {
+            if (input[*i] == quote_char) // Found closing quote
+            {
+                quote_char = 0;
+            }
+        }
+        else // If outside quotes
+        {
+            if (input[*i] == '\'' || input[*i] == '"') // Found opening quote
+            {
+                quote_char = input[*i];
+            }
+            // IMPORTANT: Only break on actual word delimiters (space, pipe, redirect)
+            // '$' is NOT a word delimiter. It's part of the word for expansion.
+            else if (ft_isspace(input[*i]) || input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
+            {
+                break ; // Break the loop, word ends here
+            }
+        }
+        (*i)++; // Move to the next character
+    }
+    
+    // Ensure we capture the entire word including special characters
+    content = ft_substr(input, start, *i - start);
+    if (!content)
+    {
+        return (1);
+    }
+
+    // Check if the content is empty or invalid
+    if (ft_strlen(content) == 0)
+    {
+        free(content);
+        return (1);
+    }
+
+    type = determine_token_type(content, expect_command);
+    add_token(tokens, create_token(type, content));
+    free(content);
+    return (0);
 }
+
+
+// ... (rest of the file) ...
+
 
 // pipes
 int	pipe_handling(const char *input, int *i, t_token **tokens)
@@ -147,97 +178,82 @@ int	pipe_handling(const char *input, int *i, t_token **tokens)
 	return (0);
 }
 
+
 int redirect_handling(t_token *tokens, t_shell *shell)
 {
-    t_token *temp = tokens;
-    int fd_in = -1;
     int fd_out = -1;
-    char *heredoc_content;
-
+    int fd_in = -1;
+    t_token *temp = tokens;
+    int heredoc_fd[2];
+    char *heredoc_content = NULL;
+    
     while (temp && temp->type != PIPE)
     {
         if (temp->type == REDIRECT && temp->next && temp->next->type == FILES)
         {
             if (ft_strcmp(temp->value, "<") == 0)
             {
-                if (fd_in != -1)
-                    close(fd_in);
                 fd_in = open(temp->next->value, O_RDONLY);
                 if (fd_in == -1)
                 {
                     perror(temp->next->value);
                     shell->exit_code = 1;
-                    if (fd_out != -1) close(fd_out);
                     return (-1);
                 }
+                dup2(fd_in, STDIN_FILENO);
+                close(fd_in);
             }
-            else if (ft_strcmp(temp->value, ">") == 0 || ft_strcmp(temp->value, ">>") == 0)
+            else if (ft_strcmp(temp->value, ">") == 0)
             {
-                if (fd_out != -1)
-                    close(fd_out);
-                int flags = O_WRONLY | O_CREAT;
-                flags |= (ft_strcmp(temp->value, ">>") == 0) ? O_APPEND : O_TRUNC;
-                fd_out = open(temp->next->value, flags, 0644);
+                // Output redirection
+                fd_out = open(temp->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
                 if (fd_out == -1)
                 {
                     perror(temp->next->value);
                     shell->exit_code = 1;
-                    if (fd_in != -1) close(fd_in);
                     return (-1);
                 }
+                dup2(fd_out, STDOUT_FILENO);
+                close(fd_out);
+            }
+            else if (ft_strcmp(temp->value, ">>") == 0)
+            {
+                // Append redirection
+                fd_out = open(temp->next->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
+                if (fd_out == -1)
+                {
+                    perror(temp->next->value);
+                    shell->exit_code = 1;
+                    return (-1);
+                }
+                dup2(fd_out, STDOUT_FILENO);
+                close(fd_out);
             }
             temp = temp->next; // Skip the filename token
         }
         else if (temp->type == HERE_DOC && temp->next && temp->next->type == DELIMETER)
         {
-            if (fd_in != -1)
-                close(fd_in);
-            heredoc_content = read_heredoc_input(temp->next->value, temp->next->expand_heredoc, shell);
+            char *delimiter = temp->next->value;
+            int expand = temp->next->expand_heredoc;
+            
+            heredoc_content = read_heredoc_input(delimiter, expand, shell);
             if (!heredoc_content)
-            {
-                shell->exit_code = 130; // Standard exit code for SIGINT
-                if (fd_out != -1) close(fd_out);
                 return (-1);
-            }
-            int heredoc_fd[2];
             if (pipe(heredoc_fd) == -1)
             {
                 free(heredoc_content);
-                perror("pipe");
                 shell->exit_code = 1;
-                if (fd_out != -1) close(fd_out);
                 return (-1);
             }
             write(heredoc_fd[1], heredoc_content, ft_strlen(heredoc_content));
             close(heredoc_fd[1]);
+            dup2(heredoc_fd[0], STDIN_FILENO);
+            close(heredoc_fd[0]);
             free(heredoc_content);
-            fd_in = heredoc_fd[0];
+            
             temp = temp->next; // Skip the delimiter token
         }
-        if (temp)
-            temp = temp->next;
-    }
-
-    if (fd_in != -1)
-    {
-        if (dup2(fd_in, STDIN_FILENO) == -1)
-        {
-            perror("dup2 for stdin");
-            close(fd_in);
-            if (fd_out != -1) close(fd_out);
-            return (-1);
-        }
-        close(fd_in);
-    }
-    if (fd_out != -1)
-    {
-        if (dup2(fd_out, STDOUT_FILENO) == -1)
-        {
-            perror("dup2 for stdout");
-            close(fd_out);
-            return (-1);
-        }
-        close(fd_out);
+        temp = temp->next;
     }
     return (0);
 }
@@ -278,32 +294,70 @@ int	heredoc_handling(const char *input, int *i, t_token **tokens)
     return (0);
 }
 
+// token handling
+// NO CHANGE NEEDED HERE, as word_handling should now correctly consume the full word.
+// ... (rest of the file) ...
+
+// token handling
+// NO CHANGE NEEDED HERE, as word_handling should now correctly consume the full word.
 int	token_handling(const char *input, int *i, t_token **tokens,
-		int *expect_command)
+        int *expect_command)
 {
-	if (!input || !input[*i])
-		return (1); // End of input
-	if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
-	{
-		if (special_tokens_handling(input, i, tokens, expect_command))
-			return (1);
-		if (input[*i - 1] == '|')
-			*expect_command = 1;
-	}
-	else if (input[*i] == '#')
-	{
-		while (input[*i] && input[*i] != '\n')
-			(*i)++;
-	}
-	else if (ft_isprint(input[*i]) && !ft_isspace(input[*i]))
-	{
-		if (word_handling(input, i, tokens, expect_command))
-			return (1);
-	}
-	else
-	{
-		(*i)++; // Skip whitespace or other non-handled characters
-	}
-	return (0);
+
+    if (!input || !input[*i])
+    {
+        return (1);
+    }
+    while (input[*i] && !ft_isspace(input[*i]))
+    {
+
+        if (!input[*i])
+        {
+            break ;
+        }
+        if (input[*i] == '\'' || input[*i] == '"')
+        {
+            if (quote_handling(input, i, tokens, expect_command))
+                return (1);
+            break;
+        }
+        if (input[*i] == '|')
+        {
+            if (special_tokens_handling(input, i, tokens, expect_command))
+                return (1);
+            *expect_command = 1;
+        }
+        else if (input[*i] == '<' || input[*i] == '>')
+        {
+            special_tokens_handling(input, i, tokens, expect_command);
+        }
+        else if (input[*i] == '#')
+        {
+            return (2);
+        }
+        else if (ft_isprint(input[*i]))
+        {
+            if (*expect_command && !ft_isdigit(input[*i]))
+            {
+                if (word_handling(input, i, tokens, expect_command))
+                    return (1);
+            }
+            else
+            {
+                if (word_handling(input, i, tokens, expect_command))
+                    return (1);
+            }
+            break; // This break is correct: word_handling processes one full word.
+        }
+        else
+        {
+            (*i)++;
+        }
+        if (input[*i] && ft_isspace(input[*i]))
+        {
+            break ;
+        }
+    }
+    return (0);
 }
 

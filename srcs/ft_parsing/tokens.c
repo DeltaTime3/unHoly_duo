@@ -76,6 +76,7 @@ void prep_cmd_args(t_token *head) {
             // Free old args if they exist
             if (current->args)
                 free_args(current->args);
+            
             // Count valid arguments (skip empty-expanded tokens)
             int arg_count = 1; // For the command itself
             t_token *temp = current->next;
@@ -85,11 +86,14 @@ void prep_cmd_args(t_token *head) {
                     arg_count++;
                 temp = temp->next;
             }
+            
             // Allocate args (arg_count + 1 for NULL terminator)
             current->args = (char **)ft_calloc(arg_count + 1, sizeof(char *));
             if (!current->args) return;
+            
             // Copy command name
             current->args[0] = ft_strdup(current->value); // "grep"
+            
             // Copy arguments (NO SPLITTING! Preserve token->value)
             int i = 1;
             temp = current->next;
