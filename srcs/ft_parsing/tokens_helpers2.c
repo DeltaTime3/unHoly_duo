@@ -60,3 +60,27 @@ void	add_token(t_token **head, t_token *new_token)
 		current = current->next;
 	current->next = new_token;
 }
+
+// int	syntax_err_handling(char *value, t_list **tokens)
+// {
+// 	ft_printf_fd(UNEXPECTED_TOKEN, 2);
+// 	if (tokens)
+// 	{
+// 		free_tokens(*tokens);
+// 		free(value);
+// 		*tokens = NULL;
+// 	}
+// 	return (1);
+// }
+
+// int	command_err_handling(char *value, t_list **tokens)
+// {
+// 	ft_printf_fd(COMMAND_NOT_FOUND, 2);
+// 	if (tokens)
+// 	{
+// 		free_tokens(*tokens);
+// 		free(value);
+// 		*tokens = NULL;
+// 	}
+// 	return (1);
+// }

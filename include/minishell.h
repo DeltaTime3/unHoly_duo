@@ -56,7 +56,11 @@ typedef enum s_cat
 	FLAG,
 	FILES,
 	OTHER,
-	COMMENT
+	COMMENT,
+	REDIR_OUT,
+	REDIR_IN,
+	REDIR_APPEND,
+	FILENAME
 }	t_cat;
 
 
@@ -191,6 +195,7 @@ bool	open_pipe(const char *input, int i);
 void	free_tokens(t_token *tokens);
 void	free_args(char **args);
 int		check_token_sequence(const char *input);
+int		apply_lonely_redirs(t_token *tokens, t_shell *shell);
 
 
 // BUILT-INS PROTOTYPES
@@ -250,6 +255,8 @@ void	print_export_token(t_env *head);
 char    *expand_token_arg_to_value(char *value, t_shell *shell);
 char	*expand_command_arg(const char *imput, t_shell *shell);
 int		export_while_args(t_shell *type, char **args);
+char	*fallback(char *cmd);
+
 //unset
 int 	ft_unset(t_shell *shell, t_token *args);
 int 	validate_unset_args(char *args);
@@ -261,6 +268,7 @@ int		ft_is_nbr(char *str);
 void	ft_kill(t_shell *type, t_token *tokens, int e_code);
 int		token_counter(t_token *token);
 int		exit_args(t_token **token, t_shell *type, int nbr_args, char *arg);
+int		is_valid_exit_arg(char *arg);
 
 //pwd
 int		ft_pwd(t_shell *type);
@@ -316,8 +324,6 @@ int		pid_neg(char *full_path, char **env_array);
 int		pid_else(char *full_path, char **env_array, t_shell *shell, pid_t pid, int sts);
 void 	free_env_array(char **env);
 int		is_sp_expantion(t_token *token);
-char	*fallback(char *cmd);
-int	is_valid_exit_arg(char *arg);
 
 //signals
 void	ft_signals(void);

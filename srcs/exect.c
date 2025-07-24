@@ -66,7 +66,14 @@ int	ft_execute(t_shell *shell, t_token *value)
     }
     expand_tokens(value, shell);
     prep_cmd_args(value); // This call will now correctly filter arguments
-
+	if (apply_lonely_redirs(value, shell) == -1)
+	{
+		dup2(saved_stdout, STDOUT_FILENO);
+		dup2(saved_stdin, STDIN_FILENO);
+		close(saved_stdout);
+		close(saved_stdin);
+		return (1);
+	}
     // Find the first command token that is NOT an empty-expanded token
     cmd = value;
     while (cmd && (cmd->type != COMMAND || (cmd->value && cmd->value[0] == '\0' && cmd->was_expanded))) // MODIFIED CONDITION
@@ -303,6 +310,7 @@ char	*get_cmd_path(char *cmd, t_env *env)
 	free(pth_cpy);
 	return res;
 }
+
 
 char	*check_path_dir(char *pth_cpy, char *cmd)
 {
