@@ -40,6 +40,32 @@ static void	child_process_exit(t_shell *shell, t_token *tokens, int exit_code)
 	exit(code);
 }
 
+t_token *find_command_start(t_token *tokens)
+{
+    t_token *current;
+
+    current = tokens;
+    while (current && current->type != PIPE)
+    {
+        if (current->type == REDIRECT || current->type == HERE_DOC)
+        {
+            // A redirection token is followed by a file/delimiter token.
+            // We need to skip both.
+            if (current->next)
+                current = current->next->next;
+            else
+                return (NULL); // Malformed command (e.g., trailing '>')
+        }
+        else
+        {
+            // Found the first non-redirection token. This is the command.
+            return (current);
+        }
+    }
+    // Reached the end of the command segment without finding a command.
+    return (NULL);
+}
+
 int	handle_pipes(t_token *tokens, t_shell *shell)
 {
 	int		pipe_count;
@@ -71,6 +97,7 @@ int	handle_pipes(t_token *tokens, t_shell *shell)
 			return (print_error("Fork failed\n"), -1);
 		else if (pid == 0) // Child process
 		{
+			t_token *command_start;
 			if (i > 0) // Not the first command, redirect stdin from previous pipe
 			{
 				dup2(in_fd, STDIN_FILENO);
@@ -83,12 +110,16 @@ int	handle_pipes(t_token *tokens, t_shell *shell)
 				close(pipe_fd[1]);
 			}
 			if (redirect_handling(current, shell) == -1)
-				child_process_exit(shell, tokens, 1);
-			if (is_builtin(current))
-				choose_b_in(current, shell);
-			else
-				execute2(shell, current);
-			child_process_exit(shell, tokens, shell->exit_code);
+				child_process_exit(shell, tokens, 1); // Pass tokens to be freed
+			command_start = find_command_start(current);
+			if (command_start)
+			{
+				if (is_builtin(command_start))
+					choose_b_in(command_start, shell);
+				else
+					execute2(shell, command_start);
+			}
+			child_process_exit(shell, tokens, shell->exit_code); // Pass tokens to be freed
 		}
 		// Parent process
 		if (i > 0)

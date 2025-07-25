@@ -140,7 +140,7 @@ char *process_quotes(char *input, t_shell *shell);
 
 // here_doc.c
 char    *read_heredoc_input(const char *delimiter, int expand, t_shell *shell);
-
+t_token *find_command_start(t_token *tokens);
 // refractors.c
 int		operator_type(const char *input, int *i, t_cat *type);
 int		special_tokens_handling(const char *input, int *i, t_token **tokens,
