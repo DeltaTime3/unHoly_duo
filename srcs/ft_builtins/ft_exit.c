@@ -28,9 +28,7 @@ int	exit_args(t_token **token, t_shell *type, int nbr_args, char *arg)
 	if (arg == NULL || !ft_is_nbr(arg))
 	{
 		if (arg)
-			ft_printf_fd(2, "exit1: %s: numeric argument required\n", arg);
-		else
-			ft_printf_fd(2, "%s numeric argument required\n");
+			ft_printf_fd(2, "exit: %s: numeric argument required\n", arg);
 		ft_kill(type, *token, 2);
 	}
 	if (nbr_args > 2)
