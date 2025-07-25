@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   ft_uitoa.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 15:03:01 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/02 15:10:03 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:51:50 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char *ft_uitoa(unsigned int n)
+char	*ft_uitoa(unsigned int n)
 {
-	unsigned int    len;
-	unsigned int    temp;
-	char            *str;
+	unsigned int	len;
+	unsigned int	temp;
+	char			*str;
 
 	len = 1;
 	temp = n;

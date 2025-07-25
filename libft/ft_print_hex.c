@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_print_hex.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 13:11:38 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/06/02 14:58:11 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:54:59 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,4 +20,3 @@ int	ft_print_hex(unsigned int nb, const char form)
 		return (ft_put_hex(nb, form));
 	return (0);
 }
-

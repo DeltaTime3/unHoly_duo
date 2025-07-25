@@ -9,7 +9,7 @@ char    *read_heredoc_input(const char *delimiter, int expand, t_shell *shell)
     char    *content;
     char    *temp;
     
-	global_sig = 0;
+	g_global_sig = 0;
 	signal(SIGINT, handle_sig_heredoc);
     content = ft_strdup("");
     if (!content)
@@ -20,7 +20,7 @@ char    *read_heredoc_input(const char *delimiter, int expand, t_shell *shell)
     while (1)
     {
 		line = readline("> ");
-        if (!line || global_sig	== 1)
+        if (!line || g_global_sig	== 1)
         {
 			free(line);
 			free(content);

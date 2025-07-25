@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_put_hex.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 14:59:05 by afilipe-          #+#    #+#             */
-/*   Updated: 2025/06/02 15:00:15 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:49:56 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ int	ft_put_hex(unsigned int nb, const char form)
 	else if (form == 'X')
 		hex_digits = "0123456789ABCDEF";
 	else
-		return 0;
+		return (0);
 	if (nb >= 16)
 		length += ft_put_hex(nb / 16, form);
 	length += ft_printc(hex_digits[nb % 16]);
-	return length;
+	return (length);
 }

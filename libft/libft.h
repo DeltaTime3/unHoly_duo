@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:21:20 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/06/17 11:59:56 by afilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:50:54 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int			ft_isnumeric(char *str);
 int			ft_isprint(int c);
 bool		ft_isspace(char c);
 char		*ft_itoa(int n);
-void    	ft_lstadd_back(t_list **lst, t_list *new);
+void		ft_lstadd_back(t_list **lst, t_list *new);
 t_list		*ft_lstnew(void *content);
 void		*ft_memchr(const void *s, int c, size_t n);
 int			ft_memcmp(const void *s1, const void *s2, size_t n);
@@ -56,7 +56,7 @@ void		*ft_memmove(void *dest, const void *src, size_t n);
 void		*ft_memset(void *s, int c, size_t n);
 int			ft_printc(int c);
 int			ft_printf(const char *format, ...);
-void 		ft_printf_fd(int fd, const char *format, ...);
+void		ft_printf_fd(int fd, const char *format, ...);
 int			ft_printnbr(int nb);
 int			ft_print_pointer(unsigned long pointer);
 int			ft_printstr(char *str);
