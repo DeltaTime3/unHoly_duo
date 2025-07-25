@@ -57,6 +57,7 @@ int	ft_execute(t_shell *shell, t_token *value)
     int saved_stdin;
     t_token *cmd;
 
+    shell->head_tokens = value; // Store head of token list for cleanup
     saved_stdout = dup(STDOUT_FILENO);
     saved_stdin = dup(STDIN_FILENO);
     if (saved_stdout == -1 || saved_stdin == -1)

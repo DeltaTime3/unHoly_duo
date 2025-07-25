@@ -89,6 +89,7 @@ typedef struct s_shell
 	int				heredoc_fd;
 	struct s_shell	*next;
 	int	r_code;
+	t_token			*head_tokens;
 }	t_shell;
 
 

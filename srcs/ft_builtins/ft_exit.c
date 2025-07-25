@@ -85,9 +85,11 @@ int	ft_is_nbr(char *str)
 
 void	ft_kill(t_shell *type, t_token *tokens, int e_code)
 {
-	free_tokens(tokens);
-	clean_all_resources(type);
-	rl_clear_history();
-	rl_cleanup_after_signal();
-	exit(e_code);
+    (void)tokens;
+    if (type->head_tokens)
+        free_tokens(type->head_tokens);
+    clean_all_resources(type);
+    rl_clear_history();
+    rl_cleanup_after_signal();
+    exit(e_code);
 }
