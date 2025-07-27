@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
+/*   Updated: 2025/07/27 14:38:33 by ppaula-d         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -45,6 +57,43 @@ typedef struct s_token	t_token;
 typedef struct s_shell	t_shell;
 
 extern int				g_global_sig;
+
+typedef struct s_quote_handler_args
+{
+	const char	*input;
+	int			*i;
+	t_token		**tokens;
+	int			*expect_command;
+}	t_quote_handler_args;
+
+typedef struct s_token_handler_args
+{
+	int			cond;
+	int			(*handler)(const char*, int*, t_token**);
+	const char	*input;
+	int			*i;
+	t_token		**tokens;
+	int			*expect_command;
+	int			expect_val;
+}	t_token_handler_args;
+
+typedef struct s_token_args
+{
+	const char	*quoted_content;
+	const char	*unquoted_suffix;
+	char		quote;
+	t_token		**tokens;
+	int			*expect_command;
+}	t_token_args;
+
+typedef struct s_token_create_args
+{
+	char		*quoted_content;
+	char		*unquoted_suffix;
+	char		quote;
+	t_token		**tokens;
+	int			*expect_command;
+}	t_token_create_args;
 
 typedef enum s_cat
 {
@@ -122,27 +171,74 @@ typedef struct s_exp_state
 	t_shell			*shell;
 }	t_exp_state;
 
+typedef struct s_pipe_data
+{
+	int				pipe_count;
+	int				pipe_fd[2];
+	int				in_fd;
+	pid_t			pid;
+	t_token			*current;
+	int				i;
+	pid_t			last_pid;
+	t_shell			*shell;
+	int				saved_fds[2];
+	t_token			*tokens;
+}	t_pipe_data;
+
 // PARSING PROTOTYPES
 
 // expansions.c
+void		append_str(char **dest, const char *src);
 void		adjust_command_after_expansion(t_token *tokens);
 char		*expand_env_var(const char *input, t_shell *shell);
 char		*expand_exit_status(const char *input, t_shell *shell);
+int			skip_quotes(const char *input, int i, char *result, int *j);
 char		*remove_quotes(const char *input);
 void		expand_tokens(t_token *token, t_shell *shell);
 char		*expand_token_value(char *value, t_shell *shell);
-char		*expand_variables_in_double_quotes(char *value, t_shell *shell);
+char		*exp_vars_dbl_quotes(char *value, t_shell *shell);
+void		handle_expansion(const char *value, int *i, char **result,
+				t_shell *shell);
+void		promote_next_command_if_expanded_empty(t_token *current);
 char		*expand_variables(char *value, t_shell *shell);
+char		*expand_single_quoted_value(char *value, t_shell *shell);
 char		*process_quotes(char *input, t_shell *shell);
+char		*process_quoted_segment(const char *input, int *i, char quote_type,
+				t_shell *shell);
+char		*process_unquoted_segment(const char *input, int *i,
+				t_shell *shell);
+char		*join_and_free(char *s1, char *s2);
+void		handle_exit_code_expansion(char **result, t_shell *shell, int *i);
+char		*handle_quoted(const char *input, int *i, t_shell *shell,
+				char **result);
+void		handle_single_quotes(const char *value, int *i, char **result);
+void		handle_double_quotes(const char *value, int *i, char **result,
+				t_shell *shell);
+int			handle_env_var(const char *value, int i, char **result,
+				t_shell *shell);
+int			handle_dbl_quote_var(const char *value, int i, char **result,
+				t_shell *shell);
 
 // here_doc.c
 char		*read_heredoc_input(const char *delimiter, int expand,
 				t_shell *shell);
+int			join_and_check(char **content, const char *to_add, char *line);
+int			read_heredoc_loop(char **content, const char *delimiter, int expand,
+				t_shell *shell);
+int			handle_heredoc_interrupt(char *line, char **content);
+int			is_dollar_expansion(const char *value);
 t_token		*find_command_start(t_token *tokens);
 // refractors.c
+int			handle_quote_helper(t_quote_handler_args *args);
 int			operator_type(const char *input, int *i, t_cat *type);
 int			special_tokens_handling(const char *input, int *i, t_token **tokens,
 				int *expect_command);
+int			handle_pipe_case(const char *input, int *i, t_token **tokens,
+				int *expect_command);
+int			handle_heredoc_case(const char *input, int *i, t_token **tokens,
+				int *expect_command);
+int			handle_redirect_case(const char *input, int *i, t_token **tokens);
+int			handle_token_helper(t_token_handler_args *args);
 int			token_helper(const char *input, int *i, t_token **tokens,
 				int *expect_command);
 void		skip_special_chars(const char *input, int *i);
@@ -152,16 +248,41 @@ t_cat		determine_token_type(const char *value, int *expect_command);
 t_token		*create_token(t_cat type, char *value);
 t_token		*tokenize_input(const char *input);
 void		prep_cmd_args(t_token *head);
+int			init_tokenize_vars(const char *input, t_token ***tokens,
+				int *i, int *expect_command);
+int			tokenize_loop(const char *input, int *i, t_token **tokens,
+				int *expect_command);
+int			count_cmd_args(t_token *current);
+void		fill_cmd_args(t_token *current, int arg_count);
 
 // tokens_helpers.c
+char		*parse_token_part(const char *input, int *i);
 int			file_handling(const char *input, int *i, t_token **tokens);
 int			op_handling(const char *input, int *i, t_token **tokens);
+void		scan_word_with_quotes(const char *input, int *i);
 int			word_handling(const char *input, int *i, t_token **tokens,
 				int *expect_command);
 int			pipe_handling(const char *input, int *i, t_token **tokens);
+char		*parse_heredoc_delimiter(const char *input, int *i, int *expand);
 int			heredoc_handling(const char *input, int *i, t_token **tokens);
 int			token_handling(const char *input, int *i, t_token **tokens,
 				int *expect_command);
+int			dup2_and_close(int fd, int target_fd, int *other_fd);
+int			handle_pipe_error(char *heredoc_content, int fd_out,
+				t_shell *shell);
+int			handle_heredoc_redirect(t_token *temp, int *fd_in, int fd_out,
+				t_shell *shell);
+int			open_redirect_file(const char *filename, int *fd, int flags,
+				t_shell *shell);
+int			handle_redirect_file(const char *filename, int *fd, int flags,
+				t_shell *shell);
+int			handle_redirection(t_token *temp, int *fd, int flags,
+				t_shell *shell);
+int			close_and_return(int *fd, int ret);
+int			process_redirect_token(t_token *temp, int *fd_in, int *fd_out,
+				t_shell *shell);
+int			process_redirects_loop(t_token *tokens, int *fd_in, int *fd_out,
+				t_shell *shell);
 int			redirect_handling(t_token *tokens, t_shell *shell);
 
 // tokens_helpers2.c
@@ -186,6 +307,32 @@ bool		open_pipe(const char *input, int i);
 void		free_tokens(t_token *tokens);
 void		free_args(char **args);
 int			check_token_sequence(const char *input);
+
+int			get_quoted_content(const char *input, int *i, char quote,
+				char **quoted_content);
+int			get_unquoted_suffix(const char *input, int *i,
+				char **unquoted_suffix);
+size_t		get_unquoted_len(const char *input, int i);
+int			create_and_add_token_struct(t_token_create_args *args);
+int			init_quote_args(const char *input, int *i, char **quoted_content,
+				char **unquoted_suffix);
+
+void		child_process_exit(t_shell *shell, t_token *tokens, int exit_code);
+void		child_process_logic(t_pipe_data *data);
+void		parent_process_logic(t_pipe_data *data);
+int			execute_pipe_command(t_pipe_data *data);
+int			wait_for_children(pid_t last_pid);
+void		set_exit_code(t_shell *shell, int last_status);
+void		restore_and_close_stdio(int saved_fds[2]);
+void		init_pipe_data(t_pipe_data *data, t_token *tokens, t_shell *shell);
+t_token		*find_next_cmd_after_pipe(t_token *current);
+int			execute_all_pipes(t_pipe_data *data, int *last_status, int *err);
+
+void		init_shell_struct(t_shell *shell, char **envp);
+void		handle_input(t_shell *shell, char *input);
+int			handle_eof(char *input);
+void		main_loop(t_shell *shell);
+void		cleanup_shell(t_shell *shell);
 
 // BUILT-INS PROTOTYPES
 int			print_error(char *msg);

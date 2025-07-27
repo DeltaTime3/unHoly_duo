@@ -1,58 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/26 15:53:03 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/26 15:56:32 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_signals(void)
+void	free_unset(t_token *token, t_shell *type)
 {
-	signal(SIGINT, handle_sig_int);
-	signal(SIGQUIT, SIG_IGN);
-}
+	char	*str;
+	int		i;
 
-void	handle_sig_int(int sig)
-{
-	if (sig == SIGINT)
+	i = 0;
+	if (!token || !token->args || !type || !type->head)
 	{
-		write(STDOUT_FILENO, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-		g_global_sig = 130;
+		return ;
 	}
-}
-
-void	handle_sig_heredoc(int sig)
-{
-	if (sig == SIGINT)
+	if (token->args[1] && token->args[1][0] == '-' && token->args[1][1] != '\0')
 	{
-		close(STDIN_FILENO);
-		write(STDOUT_FILENO, "\n", 1);
-		g_global_sig = 1;
+		print_error(E_MSH);
+		type->return_code = 2;
+		return ;
 	}
-}
-
-void	signal_process(t_shell *shell)
-{
-	if (g_global_sig == 130)
+	while (token->args[i])
 	{
-		shell->exit_code = 130;
-		g_global_sig = 0;
+		str = token->args[i];
+		if (str)
+			free(str);
+		i++;
 	}
-}
-
-void	clean_exit(char *input)
-{
-	if (input)
-		free(input);
-	rl_clear_history();
-	exit(0);
+	free(token->args);
 }

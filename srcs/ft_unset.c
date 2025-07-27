@@ -1,58 +1,54 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/26 15:53:03 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:00:25 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_signals(void)
+int	ft_unset(t_shell *shell, t_token *args)
 {
-	signal(SIGINT, handle_sig_int);
-	signal(SIGQUIT, SIG_IGN);
-}
+	int		error_code;
+	t_token	*curr;
 
-void	handle_sig_int(int sig)
-{
-	if (sig == SIGINT)
+	error_code = 0;
+	curr = args;
+	while (curr)
 	{
-		write(STDOUT_FILENO, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-		g_global_sig = 130;
+		if (!validate_unset_args(curr->value))
+		{
+			error_code = 0;
+		}
+		else
+		{
+			env_remove(&shell->head, curr->value);
+		}
+		curr = curr->next;
 	}
+	shell->return_code = error_code;
+	return (error_code);
 }
 
-void	handle_sig_heredoc(int sig)
+int	validate_unset_args(char *args)
 {
-	if (sig == SIGINT)
+	int	i;
+
+	if (!args || !*args)
+		return (0);
+	if (!ft_isalpha(args[0]) && args[0] != '_')
+		return (0);
+	i = 1;
+	while (args[i])
 	{
-		close(STDIN_FILENO);
-		write(STDOUT_FILENO, "\n", 1);
-		g_global_sig = 1;
+		if (!ft_isalnum(args[i]) && args[i] != '_')
+			return (0);
+		i++;
 	}
-}
-
-void	signal_process(t_shell *shell)
-{
-	if (g_global_sig == 130)
-	{
-		shell->exit_code = 130;
-		g_global_sig = 0;
-	}
-}
-
-void	clean_exit(char *input)
-{
-	if (input)
-		free(input);
-	rl_clear_history();
-	exit(0);
+	return (1);
 }

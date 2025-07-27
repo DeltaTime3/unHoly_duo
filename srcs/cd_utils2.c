@@ -1,58 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   cd_utils2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/26 15:53:03 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/26 15:59:43 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_signals(void)
+char	*get_env_value(t_env *head, const char *key)
 {
-	signal(SIGINT, handle_sig_int);
-	signal(SIGQUIT, SIG_IGN);
-}
+	t_env	*curr;
 
-void	handle_sig_int(int sig)
-{
-	if (sig == SIGINT)
+	curr = head;
+	while (curr)
 	{
-		write(STDOUT_FILENO, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-		g_global_sig = 130;
+		if (ft_strcmp(curr->key, key) == 0)
+		{
+			return (curr->value);
+		}
+		curr = curr->next;
 	}
+	return (NULL);
 }
 
-void	handle_sig_heredoc(int sig)
+void	change_dir(char *new_dir, t_shell *type)
 {
-	if (sig == SIGINT)
+	if (chdir(new_dir) != 0)
 	{
-		close(STDIN_FILENO);
-		write(STDOUT_FILENO, "\n", 1);
-		g_global_sig = 1;
+		free(new_dir);
+		new_dir = NULL;
+		print_error(E_CD);
+		type->r_code = 1;
 	}
-}
-
-void	signal_process(t_shell *shell)
-{
-	if (g_global_sig == 130)
-	{
-		shell->exit_code = 130;
-		g_global_sig = 0;
-	}
-}
-
-void	clean_exit(char *input)
-{
-	if (input)
-		free(input);
-	rl_clear_history();
-	exit(0);
+	else
+		ft_cd_2(type, new_dir);
 }

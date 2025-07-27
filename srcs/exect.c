@@ -6,11 +6,11 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/25 18:12:32 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/26 15:52:22 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "minishell.h"
 
 void	choose_b_in(t_token *token, t_shell *shell)
 {
@@ -61,89 +61,6 @@ int	is_builtin(t_token *token)
 	return (0);
 }
 
-void	restore_fds(int saved_stdout, int saved_stdin)
-{
-	dup2(saved_stdout, STDOUT_FILENO);
-	dup2(saved_stdin, STDIN_FILENO);
-	close(saved_stdout);
-	close(saved_stdin);
-}
-
-t_token	*find_valid_cmd(t_token *cmd)
-{
-	while (cmd && (cmd->type != COMMAND
-			|| (cmd->value && cmd->value[0] == '\0' && cmd->was_expanded)))
-		cmd = cmd->next;
-	return (cmd);
-}
-
-int	handle_special_cmds(t_shell *shell, t_token *cmd, int out, int in)
-{
-	if (cmd && (!cmd->value || cmd->value[0] == '\0'))
-		return (handle_empty_cmd(shell, out, in));
-	if (!cmd || !cmd->value || cmd->value[0] == '\0')
-	{
-		restore_fds(out, in);
-		shell->exit_code = 0;
-		return (0);
-	}
-	if (ft_strcmp(cmd->value, ".") == 0)
-		return (handle_dot_cmd(shell, out, in));
-	if (ft_strcmp(cmd->value, "..") == 0)
-		return (handle_dotdot_cmd(shell, out, in));
-	return (-1);
-}
-
-int	handle_empty_cmd(t_shell *shell, int saved_stdout, int saved_stdin)
-{
-	ft_printf_fd(2, "minishell: : command not found\n");
-	shell->exit_code = 127;
-	restore_fds(saved_stdout, saved_stdin);
-	return (127);
-}
-
-int	handle_dot_cmd(t_shell *shell, int saved_stdout, int saved_stdin)
-{
-	ft_printf_fd(2, "minishell: .: filename argument required\n");
-	ft_printf_fd(2, ".: usage: . filename [arguments]\n");
-	shell->exit_code = 2;
-	restore_fds(saved_stdout, saved_stdin);
-	return (2);
-}
-
-int	handle_dotdot_cmd(t_shell *shell, int saved_stdout, int saved_stdin)
-{
-	ft_printf_fd(2, "minishell: ..: command not found\n");
-	shell->exit_code = 127;
-	restore_fds(saved_stdout, saved_stdin);
-	return (127);
-}
-
-int	handle_pipes_n_restore(t_token *value, t_shell *shell, int out, int in)
-{
-	handle_pipes(value, shell);
-	restore_fds(out, in);
-	return (shell->exit_code);
-}
-
-int	handle_red_n_restore(t_token *value, t_shell *shell, int out, int in)
-{
-	if (redirect_handling(value, shell) == -1)
-	{
-		restore_fds(out, in);
-		return (shell->exit_code);
-	}
-	return (0);
-}
-
-void	exec_cmd_or_b_in(t_shell *shell, t_token *cmd)
-{
-	if (is_builtin(cmd))
-		choose_b_in(cmd, shell);
-	else
-		execute2(shell, cmd);
-}
-
 int	ft_execute(t_shell *shell, t_token *value)
 {
 	int		out;
@@ -169,39 +86,6 @@ int	ft_execute(t_shell *shell, t_token *value)
 	exec_cmd_or_b_in(shell, cmd);
 	restore_fds(out, in);
 	return (shell->exit_code);
-}
-
-int	print_cmd_not_found(t_shell *shell, t_token *token)
-{
-	ft_printf_fd(2, "minishell: %s: command not found\n", token->value);
-	shell->exit_code = 127;
-	return (127);
-}
-
-int	handle_exe2_err(t_shell *shell, t_token *token, char *full_path)
-{
-	if (!token || !token->value)
-		return (0);
-	if (token->value[0] == '\0')
-		return (print_cmd_not_found(shell, token));
-	if (!full_path)
-	{
-		if (ft_strchr(token->value, '/'))
-			ft_printf_fd(2, "minishell: %s: No such file or directory\n",
-				token->value);
-		else
-			ft_printf_fd(2, "minishell: %s: command not found\n", token->value);
-		shell->exit_code = 127;
-		return (127);
-	}
-	if (ft_strcmp(full_path, ":permission_denied:") == 0)
-	{
-		ft_printf_fd(2, "minishell: %s: Permission denied\n", token->value);
-		shell->exit_code = 126;
-		free(full_path);
-		return (126);
-	}
-	return (-1);
 }
 
 int	execute2(t_shell *shell, t_token *token)
@@ -230,81 +114,6 @@ int	execute2(t_shell *shell, t_token *token)
 		return (pid_else(full_path, env_array, shell, pid));
 }
 
-void	handle_exec_error(int err, t_token *token)
-{
-	if (err == EACCES || err == EISDIR)
-	{
-		ft_printf_fd(2, " Is a directory\n");
-		exit (126);
-	}
-	if (err == ENOENT)
-	{
-		if (ft_strchr(token->value, '/'))
-			ft_printf_fd(2, "minishell: No such file of directory\n");
-		else
-			ft_printf_fd(2, "minishell: command not found\n");
-		exit(127);
-	}
-	perror(token->value);
-	exit(1);
-}
-
-void	pid_zero(char *full_path, char **env_array, t_token *token)
-{
-	int	err;
-
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
-	execve(full_path, token->args, env_array);
-	err = errno;
-	free_env_array(env_array);
-	handle_exec_error(err, token);
-}
-
-int	pid_neg(char *full_path, char **env_array)
-{
-	perror("fork");
-	free(full_path);
-	free_env_array(env_array);
-	return (-1);
-}
-
-int	pid_else(char *full_path, char **env_array, t_shell *shell, pid_t pid)
-{
-	int	sts;
-
-	wait(&sts);
-	waitpid(pid, &sts, 0);
-	shell->exit_code = WEXITSTATUS(sts);
-	free(full_path);
-	free_env_array(env_array);
-	return (0);
-}
-
-char	*handle_cmd_slash(char *cmd)
-{
-	if (access(cmd, F_OK) == 0)
-	{
-		if (access(cmd, X_OK) == 0)
-			return (ft_strdup(cmd));
-		else
-			return (ft_strdup(":permission_denied:"));
-	}
-	return (NULL);
-}
-
-char	*handle_no_path(char *cmd)
-{
-	char	*fallback_path;
-
-	fallback_path = fallback(cmd);
-	if (fallback_path)
-		return (fallback_path);
-	if (access(cmd, X_OK) == 0)
-		return (ft_strdup(cmd));
-	return (NULL);
-}
-
 char	*get_cmd_path(char *cmd, t_env *env)
 {
 	char	*path;
@@ -324,81 +133,4 @@ char	*get_cmd_path(char *cmd, t_env *env)
 	res = check_path_dir(pth_cpy, cmd);
 	free(pth_cpy);
 	return (res);
-}
-
-char	*check_path_dir(char *pth_cpy, char *cmd)
-{
-	char	*dir;
-	char	*full_path;
-	char	*res;
-
-	res = NULL;
-	dir = get_next_path(&pth_cpy);
-	while (dir)
-	{
-		full_path = build_cmb_path(dir, cmd);
-		free(dir);
-		if (full_path && access(full_path, X_OK) == 0)
-		{
-			res = full_path;
-			break ;
-		}
-		free(full_path);
-		dir = get_next_path(&pth_cpy);
-	}
-	return (res);
-}
-
-char	*get_next_path(char **path_temp)
-{
-	char	*start;
-	char	*end;
-	char	*dir;
-	int		len;
-
-	start = *path_temp;
-	if (!start || !*start)
-		return (NULL);
-	end = ft_strchr(start, ':');
-	if (end != NULL)
-		len = end - start;
-	else
-		len = ft_strlen(start);
-	dir = malloc(len + 1);
-	if (!dir)
-		return (NULL);
-	ft_strlcpy(dir, start, len + 1);
-	dir[len] = '\0';
-	if (end)
-		*path_temp = end + 1;
-	else
-		*path_temp = start + len;
-	return (dir);
-}
-
-char	*build_cmb_path(char *dir, char *cmd)
-{
-	char	*full_path;
-	size_t	dir_len;
-	size_t	cmd_len;
-	size_t	total_len;
-
-	dir_len = ft_strlen(dir);
-	cmd_len = ft_strlen(cmd);
-	if (!dir[0])
-		total_len = cmd_len + 3;
-	else
-		total_len = dir_len + cmd_len + 2;
-	full_path = ft_calloc(1, total_len);
-	if (!full_path)
-		return (NULL);
-	if (!dir[0])
-		ft_strlcpy(full_path, "./", 3);
-	else
-	{
-		ft_strlcpy(full_path, dir, total_len);
-		ft_strlcat(full_path, "/", total_len);
-	}
-	ft_strlcat(full_path, cmd, total_len);
-	return (full_path);
 }

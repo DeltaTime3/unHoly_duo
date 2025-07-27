@@ -11,37 +11,59 @@ LIBFT_DIR		= ../libft
 
 # Source files
 SRC				= env_initializer.c \
+				  env_initializer_helpers.c \
 				  env_management.c \
 				  env_management_utils.c \
+				  env_management_utils2.c \
+				  env_management_utils3.c \
 				  errors.c \
 				  exect.c \
+				  exect_helpers.c \
+				  exect_helpers2.c \
+				  exect_helpers3.c \
+				  exect_helpers4.c \
 				  signal.c \
-				  $(FT_BUILTINS_DIR)/cd_utils.c \
-				  $(FT_BUILTINS_DIR)/cd_utils2.c \
-				  $(FT_BUILTINS_DIR)/export_utils.c \
-				  $(FT_BUILTINS_DIR)/export_utils2.c \
-				  $(FT_BUILTINS_DIR)/export_utils3.c \
-				  $(FT_BUILTINS_DIR)/ft_cd.c \
-				  $(FT_BUILTINS_DIR)/ft_echo.c \
-				  $(FT_BUILTINS_DIR)/ft_env.c \
-				  $(FT_BUILTINS_DIR)/ft_exit.c \
-				  $(FT_BUILTINS_DIR)/ft_exit2.c \
-				  $(FT_BUILTINS_DIR)/ft_export.c \
-				  $(FT_BUILTINS_DIR)/ft_export2.c \
-				  $(FT_BUILTINS_DIR)/ft_pwd.c \
-				  $(FT_BUILTINS_DIR)/ft_unset.c \
-				  $(FT_BUILTINS_DIR)/unset.c \
-				  $(FT_BUILTINS_DIR)/utils.c \
-				  $(FT_PARSING_DIR)/expansions.c \
-				  $(FT_PARSING_DIR)/here_doc.c \
-				  $(FT_PARSING_DIR)/main.c \
-				  $(FT_PARSING_DIR)/parsing_utils.c \
-				  $(FT_PARSING_DIR)/parsing_utils2.c \
-				  $(FT_PARSING_DIR)/pipes.c \
-				  $(FT_PARSING_DIR)/refractors.c \
-				  $(FT_PARSING_DIR)/tokens_helpers.c \
-				  $(FT_PARSING_DIR)/tokens_helpers2.c \
-				  $(FT_PARSING_DIR)/tokens.c \
+				  cd_utils.c \
+				  cd_utils2.c \
+				  export_utils.c \
+				  export_utils2.c \
+				  export_utils3.c \
+				  ft_cd.c \
+				  ft_echo.c \
+				  ft_env.c \
+				  ft_exit.c \
+				  ft_exit2.c \
+				  ft_export.c \
+				  ft_export2.c \
+				  ft_pwd.c \
+				  ft_unset.c \
+				  unset.c \
+				  utils.c \
+				  expansions.c \
+				  expansions_helpers.c \
+				  expansions_helpers2.c \
+				  expansions_helpers3.c \
+				  expansions_helpers4.c \
+				  here_doc.c \
+				  here_doc_helpers.c \
+				  main.c \
+				  main_helpers.c \
+				  parsing_utils.c \
+				  parsing_utils2.c \
+				  parsing_utils3.c \
+				  parsing_utils4.c \
+				  pipes.c \
+				  pipes_handlers.c \
+				  pipes_handlers2.c \
+				  refractors.c \
+				  refractors_helpers.c \
+				  tokens_helpers.c \
+				  tokens_helpers2.c \
+				  tokens_helpers3.c \
+				  tokens_helpers4.c \
+				  tokens_helpers5.c \
+				  tokens_helpers6.c \
+				  tokens.c \
 
 OBJS			= $(SRC:.c=.o)
 

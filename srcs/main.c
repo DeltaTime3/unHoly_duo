@@ -1,24 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   errors.c                                           :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/26 15:53:41 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/27 14:39:08 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	print_error(char *msg)
-{
-	ft_putstr_fd(msg, 2);
-	return (1);
-}
+int	g_global_sig;
 
-void	ft_putstr_fd(char *str, int fd)
+int	main(int ac, char **av, char **envp)
 {
-	write (fd, str, ft_strlen(str));
+	t_shell	shell;
+	char	**orig_envp;
+
+	(void)ac;
+	(void)av;
+	orig_envp = envp;
+	init_shell_struct(&shell, orig_envp);
+	ft_signals();
+	main_loop(&shell);
+	cleanup_shell(&shell);
+	return (shell.exit_code);
 }

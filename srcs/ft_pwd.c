@@ -1,58 +1,47 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   ft_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/26 15:53:03 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/26 15:56:45 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_signals(void)
+int	ft_pwd(t_shell *type)
 {
-	signal(SIGINT, handle_sig_int);
-	signal(SIGQUIT, SIG_IGN);
-}
+	char	cwd[MAX_PATH];
 
-void	handle_sig_int(int sig)
-{
-	if (sig == SIGINT)
+	if (!type)
+		return (1);
+	if (type->pwd)
 	{
-		write(STDOUT_FILENO, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-		g_global_sig = 130;
+		printf("%s\n", type->pwd);
+		type->exit_code = 0;
+		return (0);
+	}
+	else
+	{
+		return (pwd_ut(cwd, type));
 	}
 }
 
-void	handle_sig_heredoc(int sig)
+int	pwd_ut(char cwd[MAX_PATH], t_shell *type)
 {
-	if (sig == SIGINT)
+	if (getcwd(cwd, MAX_PATH))
 	{
-		close(STDIN_FILENO);
-		write(STDOUT_FILENO, "\n", 1);
-		g_global_sig = 1;
+		printf("%s\n", cwd);
+		type->exit_code = 0;
+		return (0);
 	}
-}
-
-void	signal_process(t_shell *shell)
-{
-	if (g_global_sig == 130)
+	else
 	{
-		shell->exit_code = 130;
-		g_global_sig = 0;
+		perror("pwd error: directory not set.\n");
+		type->exit_code = 1;
+		return (1);
 	}
-}
-
-void	clean_exit(char *input)
-{
-	if (input)
-		free(input);
-	rl_clear_history();
-	exit(0);
 }
