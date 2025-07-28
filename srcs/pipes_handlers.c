@@ -34,6 +34,7 @@ int	execute_pipe_command(t_pipe_data *data)
 			return (print_error("Pipe creation failed\n"), -1);
 	}
 	data->pid = fork();
+	signal(SIGINT, handle_sig_int);
 	if (data->pid < 0)
 		return (print_error("Fork failed\n"), -1);
 	else if (data->pid == 0)

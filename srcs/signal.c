@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/26 15:53:03 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/28 11:38:27 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,9 @@ void	handle_sig_heredoc(int sig)
 {
 	if (sig == SIGINT)
 	{
-		close(STDIN_FILENO);
 		write(STDOUT_FILENO, "\n", 1);
 		g_global_sig = 1;
+		close(STDIN_FILENO);
 	}
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/27 14:38:33 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/28 10:55:46 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # include <unistd.h>
 
 # define MAX_PATH 4096
+# define BUFFER_SIZE 1024
 
 // ERROR MESSAGES
 # define UNMATCHED_QUOTES "minishell: syntax error, unmatched quotes\n"
@@ -222,12 +223,17 @@ int			handle_dbl_quote_var(const char *value, int i, char **result,
 // here_doc.c
 char		*read_heredoc_input(const char *delimiter, int expand,
 				t_shell *shell);
-int			join_and_check(char **content, const char *to_add, char *line);
+int			join_and_check(char **content, const char *to_add);
 int			read_heredoc_loop(char **content, const char *delimiter, int expand,
 				t_shell *shell);
 int			handle_heredoc_interrupt(char *line, char **content);
 int			is_dollar_expansion(const char *value);
 t_token		*find_command_start(t_token *tokens);
+char		*prompt_and_read_line(void);
+int			is_interrupt_or_delimiter(char *line, const char *delimiter);
+char		*maybe_expand_line(char *line, int expand, t_shell *shell);
+int			append_line_to_content(char **content, char *line);
+
 // refractors.c
 int			handle_quote_helper(t_quote_handler_args *args);
 int			operator_type(const char *input, int *i, t_cat *type);
@@ -481,8 +487,10 @@ int			is_valid_exit_arg(char *arg);
 //signals
 void		ft_signals(void);
 void		handle_sig_int(int sig);
+void		handle_sigint2(int sig);
 void		handle_sig_heredoc(int sig);
 void		signal_process(t_shell *shell);
 void		clean_exit(char *input);
+char		*read_line(void);
 
 #endif

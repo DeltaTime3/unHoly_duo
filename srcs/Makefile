@@ -46,6 +46,7 @@ SRC				= env_initializer.c \
 				  expansions_helpers4.c \
 				  here_doc.c \
 				  here_doc_helpers.c \
+				  here_doc_helpers2.c \
 				  main.c \
 				  main_helpers.c \
 				  parsing_utils.c \
