@@ -34,33 +34,6 @@ int	redirect_handling(t_token *tokens, t_shell *shell)
 	return (0);
 }
 
-char	*parse_heredoc_delimiter(const char *input, int *i, int *expand)
-{
-	int		start;
-	char	*delimiter;
-	char	*temp;
-
-	while (input[*i] && ft_isspace(input[*i]))
-		(*i)++;
-	start = *i;
-	while (input[*i] && !ft_isspace(input[*i]) && input[*i] != '|'
-		&& input[*i] != '<' && input[*i] != '>')
-		(*i)++;
-	delimiter = ft_substr(input, start, *i - start);
-	if (!delimiter)
-		return (NULL);
-	*expand = 1;
-	if ((delimiter[0] == '\'' && delimiter[ft_strlen(delimiter) - 1] == '\'')
-		|| (delimiter[0] == '"' && delimiter[ft_strlen(delimiter) - 1] == '"'))
-	{
-		temp = ft_strtrim(delimiter, "\'\"");
-		free(delimiter);
-		delimiter = temp;
-		*expand = 0;
-	}
-	return (delimiter);
-}
-
 int	heredoc_handling(const char *input, int *i, t_token **tokens)
 {
 	char	*delimiter;

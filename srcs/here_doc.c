@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+#include "minishell.h"
+
 int	handle_heredoc_interrupt(char *line, char **content)
 {
 	free(line);
@@ -45,7 +47,7 @@ char	*maybe_expand_line(char *line, int expand, t_shell *shell)
 
 	if (expand)
 	{
-		expanded_line = expand_token_value(line, shell);
+		expanded_line = expand_variables(line, shell);
 		free(line);
 		return (expanded_line);
 	}
