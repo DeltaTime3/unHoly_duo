@@ -1,0 +1,22 @@
+graph TD
+    A[User Input] --> B[Lexer/Scanner]
+    B --> C[Tokenization]
+    C --> D[Parser]
+    D --> E[Abstract Syntax Tree]
+    E --> F[Expander]
+    F --> G[Environment Variable Expansion]
+    F --> H[Wildcard Expansion]
+    F --> I[Quote Removal]
+    G --> J[Executor]
+    H --> J
+    I --> J
+    J --> K{Builtin?}
+    K -->|Yes| L[Execute Builtin Command]
+    K -->|No| M[Fork Process]
+    M --> N[Pipe Setup]
+    N --> O[Redirection Handling]
+    O --> P[Execve Execution]
+    L --> Q[Output Handling]
+    P --> Q
+    Q --> R[Signal Handling]
+    R --> S[Prompt Refresh]

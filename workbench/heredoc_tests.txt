@@ -1,0 +1,310 @@
+Here-doc Test Cases for read_heredoc_input
+
+1. Basic single-line						DONE
+   Input:
+     command << DELIM
+     hello
+     DELIM
+   Expectation: “hello\n” is sent to stdin of command.
+
+2. Multi-line content                                           DONE
+   Input:
+     cat << EOF
+     line1
+     line2
+     EOF
+   Expectation: “line1\nline2\n”.
+
+3. Empty here-doc                                               DONE
+   Input:
+     cmd << X
+     X
+   Expectation: An empty string (“”).
+
+4. No matching delimiter (EOF)                                  DONE
+   Input ends with Ctrl-D before delimiter.
+   Expectation: Function returns NULL; shell handles gracefully.
+
+5. Delimiter vs. similar string                                 DONE
+   Input:
+     sh << D
+     D  
+     D1
+     D
+   Expectation: Stops only on exact “D”; “D1” is treated as content.
+
+6. Leading/trailing whitespace                                  DONE
+   Input:
+     echo << END
+       indented
+     END 
+   Expectation: Only a line matching exactly “END” (no spaces) stops input.
+
+7. Special characters in content                                DONE
+   Input:
+     cat << EOF
+     $HOME and `pwd`
+     EOF
+   Expectation: Literal “$HOME and `pwd`” (no expansion).
+
+8. Quoted delimiter (no stripping)                              DONE
+   Input:
+     cmd << "DELIM"
+     foo
+     DELIM
+   Expectation: Only a line equal to “DELIM” ends input.
+
+9. Interrupt signal (Ctrl-C)
+   During prompt (“> ”), press Ctrl-C.
+   Expectation: Signal handler invoked; function returns NULL.
+
+10. Integration with pipes & redirects				DONE
+    Input:
+      grep foo << E | wc -l > out.txt
+      foo
+      bar
+      E
+    Expectation: Only “foo\n” is piped to wc -l; result written to out.txt.
+
+
+
+
+
+# Heredoc Test Cases and Expected Outputs
+
+## Test 1: Basic Heredoc					DONE
+Input:
+cat << EOF
+Hello, World!
+This is a basic heredoc test.
+EOF
+
+Expected Output:
+Hello, World!
+This is a basic heredoc test.
+
+## Test 2: Heredoc with Variables
+Input:
+NAME="Alice"
+cat << EOF
+Hello, $NAME!
+Today is $(date +%A)
+EOF
+
+Expected Output:
+Hello, Alice!
+Today is Monday
+
+## Test 3: Quoted Heredoc (No Variable Expansion)
+Input:
+NAME="Bob"
+cat << 'EOF'
+Hello, $NAME!
+Today is $(date +%A)
+EOF
+
+Expected Output:
+Hello, $NAME!
+Today is $(date +%A)
+
+## Test 4: Heredoc with Indentation (<<-)			
+Input:
+if true; then
+    cat <<-EOF
+    This line is indented
+        This line is more indented
+    Back to first level
+    EOF
+fi
+
+Expected Output:
+This line is indented
+    This line is more indented
+Back to first level
+
+## Test 5: Heredoc to Variable
+Input:
+MESSAGE=$(cat << EOF
+This is a multi-line
+message stored in
+a variable.
+EOF
+)
+echo "$MESSAGE"
+
+Expected Output:
+This is a multi-line
+message stored in
+a variable.
+
+## Test 6: Heredoc with Special Characters			DONE
+Input:
+cat << EOF
+Special characters: !@#$%^&*()
+Quotes: "double" and 'single'
+Backslashes: \ \\ \\\
+EOF
+
+Expected Output:
+Special characters: !@#$%^&*()
+Quotes: "double" and 'single'
+Backslashes: \ \\ \\\
+
+## Test 7: Heredoc in Function
+Input:
+print_info() {
+    cat << EOF
+Function: ${FUNCNAME[0]}
+Arguments: $@
+Working Directory: $(pwd)
+EOF
+}
+print_info arg1 arg2
+
+Expected Output:
+Function: print_info
+Arguments: arg1 arg2
+Working Directory: /current/working/directory
+
+## Test 8: Multiple Heredocs					DONE
+Input:
+cat << FIRST
+This is the first heredoc.
+FIRST
+echo "Between heredocs"
+cat << SECOND
+This is the second heredoc.
+SECOND
+
+Expected Output:
+This is the first heredoc.
+Between heredocs
+This is the second heredoc.
+
+## Test 9: Heredoc with Command Substitution
+Input:
+cat << EOF
+Current user: $(whoami)
+System info: $(uname -s)
+Process count: $(ps aux | wc -l)
+EOF
+
+Expected Output:
+Current user: username
+System info: Linux
+Process count: 150
+
+## Test 10: Heredoc Redirect to File
+Input:
+cat << EOF > output.txt
+This content goes to a file.
+Line 2 of the file.
+EOF
+cat output.txt
+
+Expected Output:
+This content goes to a file.
+Line 2 of the file.
+
+## Test 11: Heredoc with Escaped Characters
+Input:
+cat << EOF
+Escaped newline: \n (literal)
+Escaped tab: \t (literal)
+Escaped dollar: \$USER
+EOF
+
+Expected Output:
+Escaped newline: \n (literal)
+Escaped tab: \t (literal)
+Escaped dollar: $USER
+
+## Test 12: Heredoc with Arrays
+Input:
+FRUITS=("apple" "banana" "cherry")
+cat << EOF
+Fruits list:
+${FRUITS[@]}
+First fruit: ${FRUITS[0]}
+EOF
+
+Expected Output:
+Fruits list:
+apple banana cherry
+First fruit: apple
+
+## Test 13: Heredoc Error Cases
+Input:
+# Missing delimiter
+cat << EOF
+This heredoc is not properly closed
+
+Expected Output:
+bash: warning: here-document at line X delimited by end-of-file (wanted `EOF')
+
+## Test 14: Heredoc with Pipes
+Input:
+cat << EOF | grep "line"
+This is line one
+This is line two
+This is not a match
+EOF
+
+Expected Output:
+This is line one
+This is line two
+
+## Test 15: Nested Quotes in Heredoc
+Input:
+cat << EOF
+He said, "She replied, 'This is nested quoting.'"
+Another example: "It's working correctly."
+EOF
+
+Expected Output:
+He said, "She replied, 'This is nested quoting.'"
+Another example: "It's working correctly."
+
+## Test 16: Heredoc with Different Delimiters
+Input:
+cat << DELIMITER
+Using a custom delimiter name.
+DELIMITER
+
+cat << 123
+Using numbers as delimiter.
+123
+
+Expected Output:
+Using a custom delimiter name.
+Using numbers as delimiter.
+
+## Test 17: Heredoc in Conditional
+Input:
+if [ "$USER" ]; then
+    cat << EOF
+User is set: $USER
+EOF
+else
+    cat << EOF
+User is not set
+EOF
+fi
+
+Expected Output:
+User is set: actual_username
+
+## Test 18: Heredoc with Mathematical Operations
+Input:
+NUM1=10
+NUM2=5
+cat << EOF
+Addition: $((NUM1 + NUM2))
+Subtraction: $((NUM1 - NUM2))
+Multiplication: $((NUM1 * NUM2))
+EOF
+
+Expected Output:
+Addition: 15
+Subtraction: 5
+Multiplication: 50

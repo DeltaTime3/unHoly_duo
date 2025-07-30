@@ -1,0 +1,186 @@
+1. Process Execution
+
+    fork() and execve()
+
+        Child process handles command execution.
+        	
+	    Use fork() to create child process
+
+	    Immediately check for fork failures (pid == -1)
+
+	    Handle resource cleanup in parent if fork fails
+
+        Parent process waits for completion with waitpid().
+
+        Handle PATH resolution (e.g., /bin/ls vs ls).        	
+
+	    Check if command contains '/' → treat as absolute/relative path
+
+	    Iterate through PATH environment variable components
+
+	    Test each $PATH_COMPONENT/command combination
+
+	    Use access(full_path, X_OK) to verify executable exists
+	    
+	Use waitpid(pid, &status, 0) to await completion
+
+    Command Validation
+
+        Check if the command exists (use access() or stat()).
+        	
+        	Validate command exists before fork
+        	Verify execute permissions with X_OK flag
+
+        Gracefully handle "command not found" errors.
+
+2. Redirections
+
+    Input Redirection (<)
+
+        Open file with O_RDONLY.
+
+        Redirect stdin using dup2(fd, STDIN_FILENO).
+
+        Close unused file descriptors.
+
+    Output Redirection (>, >>)
+
+        Open file with O_WRONLY | O_CREAT | O_TRUNC (for >) or O_APPEND (for >>).
+
+        Redirect stdout using dup2(fd, STDOUT_FILENO).
+
+    Here Documents (<<)
+
+        Read input until delimiter is entered.
+
+        Use a temporary file or pipe to store input.
+        
+        
+
+3. Pipes
+
+    Single Pipe (cmd1 | cmd2)
+
+        Create a pipe with pipe(fd).
+
+        Redirect cmd1’s stdout to fd.
+
+        Redirect cmd2’s stdin to fd.
+
+        Close pipe ends in both processes.
+
+    Multiple Pipes (cmd1 | cmd2 | cmd3)
+
+        Chain pipes by reusing pipe() for each command.
+
+        Ensure all unused pipe ends are closed.
+
+4. Built-in Commands
+
+    Direct Execution
+
+        Execute built-ins (e.g., cd, exit, export) in the parent process.
+
+    cd
+
+        Handle chdir() and update PWD/OLDPWD environment variables.
+
+    exit
+
+        Terminate the shell with an optional exit code (e.g., exit 42).
+
+    export/unset
+
+        Modify the environment variable list.
+
+    echo
+
+        Handle -n flag to suppress newlines.
+
+5. Error Handling
+
+    File Descriptor Leaks
+
+        Close all unused file descriptors (e.g., unused pipe ends).
+
+    Command Failures
+
+        Print descriptive errors (e.g., No such file or directory).
+
+        Set $? (exit status) appropriately.
+
+    Permission Errors
+
+        Handle EACCES (e.g., non-executable files).
+
+6. Signal Management
+
+    Foreground Processes
+
+        Propagate SIGINT (Ctrl-C) to child processes.
+
+        Restore the prompt after interruption.
+
+    Parent Process
+
+        Ignore SIGQUIT (Ctrl-$$ and SIGINT during child execution.
+
+7. Environment Variables
+
+    Expansion
+
+        Replace $VAR with its value (e.g., echo $HOME → /Users/user).
+
+        Handle edge cases (e.g., undefined variables).
+
+    Special Variables
+
+        Update $? after each command.
+
+        Track $$ (shell PID).
+
+8. Edge Cases
+
+    Empty Commands
+
+        Handle input like "" or (spaces).
+
+    Nested Redirections
+
+        Resolve conflicts (e.g., cmd < file1 > file2).
+
+    Syntax Errors
+
+        Reject invalid commands (e.g., ls > or | grep).
+
+9. Testing
+
+    Basic Commands
+
+        Test ls, echo, and pwd.
+
+    Redirections
+
+        Verify cat < file.txt, ls > out.txt, and echo hi >> out.txt.
+
+    Pipes
+
+        Test ls | wc -l and cat file.txt | grep "text" | wc -c.
+
+    Built-ins
+
+        Confirm cd, exit, and export behave as expected.
+
+    Error Cases
+
+        Test invalid commands, missing files, and permission errors.
+
+10. Memory Management
+
+    Leak Prevention
+
+        Free all allocated memory (e.g., command paths, tokens).
+
+    File Descriptors
+
+        Close all open FDs after use (use valgrind --track-fds=yes).

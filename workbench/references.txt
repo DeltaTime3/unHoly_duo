@@ -1,0 +1,17 @@
+https://42-cursus.gitbook.io/guide/rank-03/minishell
+
+https://m4nnb3ll.medium.com/minishell-building-a-mini-bash-a-42-project-b55a10598218
+
+https://medium.com/@zouhairlrs/minishell-building-a-mini-bash-a-42-project-5dc20d671fbb
+
+https://www.youtube.com/watch?v=yTR00r8vBH8
+
+https://ganivetj.github.io/minishell/
+
+https://www.emertxe.com/embedded-systems/embedded-linux-on-arm/elarm-projects/embedded-linux-minishell-project/
+
+https://brennan.io/2015/01/16/write-a-shell-in-c/
+
+https://minishell.org/index.html
+
+https://appinha.notion.site/Shell-Bash-6e0f0290a0304dad93a1d25ba15d92fe

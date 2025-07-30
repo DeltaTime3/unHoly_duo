@@ -12,11 +12,6 @@
 
 #include "minishell.h"
 
-<<<<<<< HEAD
-=======
-#include "minishell.h"
-
->>>>>>> 9420e9937aaad08a295e33abf2bfb30333432d20
 static void	process_delimiter_quotes(char *raw_delimiter, char *final_delimiter,
 		int *expand)
 {
@@ -68,7 +63,6 @@ char	*parse_heredoc_delimiter(const char *input, int *i, int *expand)
 	free(raw_delimiter);
 	return (final_delimiter);
 }
-<<<<<<< HEAD
 
 static int	handle_heredoc_token(t_token *token, t_shell *shell)
 {
@@ -110,5 +104,3 @@ int	process_heredocs(t_token **tokens, t_shell *shell)
 	}
 	return (0);
 }
-=======
->>>>>>> 9420e9937aaad08a295e33abf2bfb30333432d20

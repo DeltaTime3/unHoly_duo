@@ -1,0 +1,137 @@
+Workspace
+In the context of the 42 Minishell project, expansion refers to processing and replacing specific patterns in the user input with their corresponding values before executing the command. This step happens after parsing and tokenization but before execution. Here's a breakdown of what expansions are and how to handle them:
+
+Types of Expansions
+Environment Variable Expansion ($VAR)
+
+Replace $VAR with the value of the environment variable VAR.
+If the variable does not exist, replace it with an empty string.
+Example:
+Input: echo $HOME
+Expansion: echo /home/user
+Exit Status Expansion ($?)
+
+Replace $? with the exit status of the last executed command.
+Example:
+Input: echo $?
+Expansion: echo 0 (if the last command succeeded).
+Tilde Expansion (~)
+
+Replace ~ with the value of the HOME environment variable.
+Example:
+Input: cd ~
+Expansion: cd /home/user
+Quote Removal
+
+Remove quotes (' or ") after processing their content.
+Single quotes (') preserve the literal value of the enclosed text.
+Double quotes (") allow expansions (e.g., $VAR) but preserve spaces.
+Example:
+Input: echo "Hello $USER"
+Expansion: echo Hello user
+Steps to Handle Expansions
+1. Identify Tokens for Expansion
+During parsing, identify tokens that may require expansion (e.g., arguments, quotes).
+Use the token type (e.g., ARGUMENT, QUOTE) to determine if expansion is needed.
+2. Environment Variable Expansion
+Search for $ followed by a valid variable name.
+Use a helper function like get_env_value to retrieve the value of the variable from the environment.
+Replace $VAR with the retrieved value or an empty string if the variable does not exist.
+Example implementation:
+
+char *expand_env_var(const char *input, t_shell *shell)
+{
+    char *var_name;
+    char *value;
+    size_t len;
+
+    if (!input || input[0] != '$')
+        return (ft_strdup(input));
+    var_name = ft_substr(input, 1, ft_strlen(input) - 1); // Extract variable name
+    value = get_env_value(shell, var_name); // Retrieve value from environment
+    free(var_name);
+    return (value ? ft_strdup(value) : ft_strdup(""));
+}
+
+3. Exit Status Expansion
+Replace $? with the value of shell->exit_code (or a similar variable tracking the last command's exit status).
+Example:
+
+char *expand_exit_status(const char *input, t_shell *shell)
+{
+    if (ft_strcmp(input, "$?") == 0)
+        return (ft_itoa(shell->exit_code)); // Convert exit code to string
+    return (ft_strdup(input));
+}
+
+4. Tilde Expansion
+Replace ~ with the value of the HOME environment variable.
+Only expand ~ if it appears at the start of a token.
+Example:
+
+char *expand_tilde(const char *input, t_shell *shell)
+{
+    if (input[0] == '~' && (input[1] == '\0' || input[1] == '/'))
+        return (ft_strjoin(get_env_value(shell, "HOME"), input + 1));
+    return (ft_strdup(input));
+}
+
+5. Handle Quotes
+Single quotes (') prevent any expansion. Remove the quotes but keep the content as-is.
+Double quotes (") allow expansions but preserve spaces.
+Example:
+
+char *remove_quotes(const char *input)
+{
+    size_t len = ft_strlen(input);
+    if ((input[0] == '\'' && input[len - 1] == '\'') ||
+        (input[0] == '"' && input[len - 1] == '"'))
+        return (ft_substr(input, 1, len - 2)); // Remove surrounding quotes
+    return (ft_strdup(input));
+}
+
+6. Integrate Expansions
+Iterate through the token list and apply the appropriate expansion functions to each token's content.
+Replace the token's content with the expanded value.
+Example:
+
+void expand_tokens(t_list *tokens, t_shell *shell)
+{
+    t_token *token;
+
+    while (tokens)
+    {
+        token = (t_token *)tokens->content;
+        if (token->type == ARGUMENT || token->type == QUOTE)
+        {
+            char *expanded = expand_env_var(token->content, shell);
+            char *final = remove_quotes(expanded);
+            free(token->content);
+            free(expanded);
+            token->content = final;
+        }
+        tokens = tokens->next;
+    }
+}
+
+Testing Expansions
+Test Cases
+Environment Variables
+Input: echo $USER
+Expected: echo user
+
+Exit Status
+Input: echo $?
+Expected: echo 0
+
+Tilde Expansion
+Input: cd ~
+Expected: cd /home/user
+
+Quotes
+Input: echo "Hello $USER"
+Expected: echo Hello user
+
+Mixed Expansions
+Input: echo "$HOME/$USER"
+Expected: echo /home/user/user

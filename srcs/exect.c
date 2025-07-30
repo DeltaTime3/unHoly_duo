@@ -107,7 +107,6 @@ int	execute2(t_shell *shell, t_token *token)
 		return (-1);
 	}
 	pid = fork();
-	signal(SIGINT, handle_sig_int);
 	if (pid == 0)
 		return (pid_zero(full_path, env_array, token, shell), 0);
 	else if (pid < 0)

@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-<<<<<<< HEAD
 /*   Updated: 2025/07/30 16:12:27 by ppaula-d         ###   ########.fr       */
-=======
-/*   Updated: 2025/07/28 10:55:46 by afilipe-         ###   ########.fr       */
->>>>>>> 9420e9937aaad08a295e33abf2bfb30333432d20
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -502,10 +498,7 @@ void		handle_sig_heredoc(int sig);
 void		signal_process(t_shell *shell);
 void		clean_exit(char *input);
 char		*read_line(void);
-<<<<<<< HEAD
 void		kill_exit(t_shell *shell, int exit_code);
 void		ft_rl_cleanup_after_signal(void);
-=======
->>>>>>> 9420e9937aaad08a295e33abf2bfb30333432d20
 
 #endif
