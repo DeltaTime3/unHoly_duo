@@ -23,7 +23,10 @@ SRC				= $(SRCS_DIR)/env_initializer.c \
 				  $(SRCS_DIR)/exect_helpers3.c \
 				  $(SRCS_DIR)/exect_helpers4.c \
 				  $(SRCS_DIR)/signal.c \
+<<<<<<< HEAD
 				  $(SRCS_DIR)/signal2.c \
+=======
+>>>>>>> 9420e9937aaad08a295e33abf2bfb30333432d20
 				  $(SRCS_DIR)/cd_utils.c \
 				  $(SRCS_DIR)/cd_utils2.c \
 				  $(SRCS_DIR)/export_utils.c \
