@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/27 14:38:33 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/30 16:12:27 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,10 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
+# include <termios.h>
 
 # define MAX_PATH 4096
+# define BUFFER_SIZE 1024
 
 // ERROR MESSAGES
 # define UNMATCHED_QUOTES "minishell: syntax error, unmatched quotes\n"
@@ -152,6 +154,7 @@ typedef struct s_token
 	int				quote_type; // 0 = unquoted, 1 = single, 2 = double
 	int				was_expanded;
 	int				in_single_quotes;
+	int				heredoc_fd;
 }	t_token;
 
 typedef struct s_env
@@ -220,14 +223,21 @@ int			handle_dbl_quote_var(const char *value, int i, char **result,
 				t_shell *shell);
 
 // here_doc.c
+int			write_heredoc_to_pipe(const char *content);
+int			process_heredocs(t_token **tokens, t_shell *shell);
 char		*read_heredoc_input(const char *delimiter, int expand,
 				t_shell *shell);
-int			join_and_check(char **content, const char *to_add, char *line);
+int			join_and_check(char **content, const char *to_add);
 int			read_heredoc_loop(char **content, const char *delimiter, int expand,
 				t_shell *shell);
 int			handle_heredoc_interrupt(char *line, char **content);
 int			is_dollar_expansion(const char *value);
 t_token		*find_command_start(t_token *tokens);
+char		*prompt_and_read_line(void);
+int			is_interrupt_or_delimiter(char *line, const char *delimiter);
+char		*maybe_expand_line(char *line, int expand, t_shell *shell);
+int			append_line_to_content(char **content, char *line);
+
 // refractors.c
 int			handle_quote_helper(t_quote_handler_args *args);
 int			operator_type(const char *input, int *i, t_cat *type);
@@ -333,6 +343,7 @@ void		handle_input(t_shell *shell, char *input);
 int			handle_eof(char *input);
 void		main_loop(t_shell *shell);
 void		cleanup_shell(t_shell *shell);
+int			check_inv_red(const char *input);
 
 // BUILT-INS PROTOTYPES
 int			print_error(char *msg);
@@ -459,7 +470,7 @@ int			handle_red_n_restore(t_token *value, t_shell *shell, int out,
 				int in);
 void		exec_cmd_or_b_in(t_shell *shell, t_token *cmd);
 int			ft_execute(t_shell *shell, t_token *value);
-void		handle_exec_error(int err, t_token *token);
+void		handle_exec_error(int err, t_token *token, t_shell *shell);
 int			print_cmd_not_found(t_shell *shell, t_token *token);
 int			handle_exe2_err(t_shell *shell, t_token *token, char *full_path);
 int			execute2(t_shell *shell, t_token *token);
@@ -469,7 +480,8 @@ char		*get_cmd_path(char *cmd, t_env *env);
 char		*check_path_dir(char *pth_cpy, char *cmd);
 char		*get_next_path(char **path_temp);
 char		*build_cmb_path(char *dir, char *cmd);
-void		pid_zero(char *full_path, char **env_array, t_token *token);
+void		pid_zero(char *full_path, char **env_array, t_token *token,
+				t_shell *shell);
 int			pid_neg(char *full_path, char **env_array);
 int			pid_else(char *full_path, char **env_array, t_shell *shell,
 				pid_t pid);
@@ -481,8 +493,12 @@ int			is_valid_exit_arg(char *arg);
 //signals
 void		ft_signals(void);
 void		handle_sig_int(int sig);
+void		handle_sigint2(int sig);
 void		handle_sig_heredoc(int sig);
 void		signal_process(t_shell *shell);
 void		clean_exit(char *input);
+char		*read_line(void);
+void		kill_exit(t_shell *shell, int exit_code);
+void		ft_rl_cleanup_after_signal(void);
 
 #endif

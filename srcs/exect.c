@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/26 15:52:22 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/30 17:16:45 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ int	execute2(t_shell *shell, t_token *token)
 	char	*full_path;
 	char	**env_array;
 	int		err;
+	int		ret;
 
 	full_path = get_cmd_path(token->value, shell->head);
 	err = handle_exe2_err(shell, token, full_path);
@@ -107,11 +108,17 @@ int	execute2(t_shell *shell, t_token *token)
 	}
 	pid = fork();
 	if (pid == 0)
-		return (pid_zero(full_path, env_array, token), 0);
+		return (pid_zero(full_path, env_array, token, shell), 0);
 	else if (pid < 0)
 		return (pid_neg(full_path, env_array), -1);
 	else
-		return (pid_else(full_path, env_array, shell, pid));
+	{
+		signal(SIGINT, SIG_IGN);
+		signal(SIGQUIT, SIG_IGN);
+		ret = pid_else(full_path, env_array, shell, pid);
+		ft_signals();
+		return (ret);
+	}
 }
 
 char	*get_cmd_path(char *cmd, t_env *env)

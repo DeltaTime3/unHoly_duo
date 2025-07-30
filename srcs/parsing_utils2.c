@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_utils2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/27 14:08:26 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/29 11:47:06 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ void	free_tokens(t_token *tokens)
 			free_args(current->args);
 		if (current->content)
 			free(current->content);
-		free(current);
+		if (current)
+			free(current);
 		current = next;
 	}
 }

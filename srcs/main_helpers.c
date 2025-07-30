@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/27 14:38:58 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/30 16:32:19 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,14 @@ void	handle_input(t_shell *shell, char *input)
 	t_token	*tokens;
 
 	tokens = NULL;
-	add_history(input);
 	if (!validate_input(input))
 	{
 		tokens = tokenize_input(input);
+		if (process_heredocs(&tokens, shell))
+		{
+			free_tokens(tokens);
+			return ;
+		}
 		if (tokens)
 		{
 			ft_execute(shell, tokens);

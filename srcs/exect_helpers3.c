@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exect_helpers3.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/26 15:07:49 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/29 12:13:20 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,12 @@ int	handle_exe2_err(t_shell *shell, t_token *token, char *full_path)
 	return (-1);
 }
 
-void	handle_exec_error(int err, t_token *token)
+void	handle_exec_error(int err, t_token *token, t_shell *shell )
 {
 	if (err == EACCES || err == EISDIR)
 	{
 		ft_printf_fd(2, " Is a directory\n");
-		exit (126);
+		kill_exit(shell, 126);
 	}
 	if (err == ENOENT)
 	{
@@ -51,10 +51,10 @@ void	handle_exec_error(int err, t_token *token)
 			ft_printf_fd(2, "minishell: No such file of directory\n");
 		else
 			ft_printf_fd(2, "minishell: command not found\n");
-		exit(127);
+		kill_exit(shell, 127);
 	}
 	perror(token->value);
-	exit(1);
+	kill_exit(shell, 1);
 }
 
 char	*handle_cmd_slash(char *cmd)

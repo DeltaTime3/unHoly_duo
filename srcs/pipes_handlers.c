@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/27 14:29:52 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/30 16:12:34 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ int	execute_pipe_command(t_pipe_data *data)
 			return (print_error("Pipe creation failed\n"), -1);
 	}
 	data->pid = fork();
+	signal(SIGINT, handle_sig_int);
 	if (data->pid < 0)
 		return (print_error("Fork failed\n"), -1);
 	else if (data->pid == 0)

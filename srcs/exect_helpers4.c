@@ -3,25 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   exect_helpers4.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: afilipe- <afilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/26 15:09:03 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/29 13:58:37 by afilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	pid_zero(char *full_path, char **env_array, t_token *token)
+void	pid_zero(char *full_path, char **env_array, t_token *token,
+	t_shell *shell)
 {
 	int	err;
 
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	execve(full_path, token->args, env_array);
+	free(full_path);
 	err = errno;
 	free_env_array(env_array);
-	handle_exec_error(err, token);
+	handle_exec_error(err, token, shell);
 }
 
 int	pid_neg(char *full_path, char **env_array)
@@ -36,9 +38,21 @@ int	pid_else(char *full_path, char **env_array, t_shell *shell, pid_t pid)
 {
 	int	sts;
 
-	wait(&sts);
+	(void)full_path;
 	waitpid(pid, &sts, 0);
-	shell->exit_code = WEXITSTATUS(sts);
+	if (WIFSIGNALED(sts))
+	{
+		if (WTERMSIG(sts) == SIGINT)
+			shell->exit_code = 130;
+		else if (WTERMSIG(sts) == SIGQUIT)
+		{
+			ft_putstr_fd("Quit (core dumped)", 2);
+			shell->exit_code = 131;
+		}
+		ft_putstr_fd("\n", 2);
+	}
+	else
+		shell->exit_code = WEXITSTATUS(sts);
 	free(full_path);
 	free_env_array(env_array);
 	return (0);

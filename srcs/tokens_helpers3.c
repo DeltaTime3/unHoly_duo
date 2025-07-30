@@ -66,26 +66,12 @@ int	handle_pipe_error(char *heredoc_content, int fd_out, t_shell *shell)
 int	handle_heredoc_redirect(t_token *temp, int *fd_in, int fd_out,
 	t_shell *shell)
 {
-	char	*heredoc_content;
-	int		heredoc_fd[2];
-
+	(void)fd_out;
+	(void)shell;
 	if (*fd_in != -1)
 		close(*fd_in);
-	heredoc_content = read_heredoc_input(temp->next->value,
-			temp->next->expand_heredoc, shell);
-	if (!heredoc_content)
-	{
-		shell->exit_code = 130;
-		if (fd_out != -1)
-			close(fd_out);
-		return (-1);
-	}
-	if (pipe(heredoc_fd) == -1)
-		return (handle_pipe_error(heredoc_content, fd_out, shell));
-	write(heredoc_fd[1], heredoc_content, ft_strlen(heredoc_content));
-	close(heredoc_fd[1]);
-	free(heredoc_content);
-	*fd_in = heredoc_fd[0];
+	*fd_in = temp->heredoc_fd;
+	temp->heredoc_fd = -1;
 	return (0);
 }
 

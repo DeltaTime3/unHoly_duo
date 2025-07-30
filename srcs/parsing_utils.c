@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/26 17:15:06 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/30 15:34:00 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,8 @@ int	validate_input(const char *input)
 	if (input[i] == '\n' || ft_isspace(input[i]))
 		printf("\n");
 	if (check_unmatched_quotes(input))
+		return (1);
+	if (check_inv_red(input))
 		return (1);
 	if (check_logical_operators(input))
 		return (1);
