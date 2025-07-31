@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/27 14:18:30 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/31 17:41:18 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ int	count_cmd_args(t_token *current)
 	while (temp && temp->type != PIPE)
 	{
 		if ((temp->type == ARGUMENT || temp->type == FLAG)
-			&& temp->value && !(temp->value[0] == '\0' && temp->was_expanded))
+			&& temp->value
+			&& (temp->value[0] != '\0' || temp->was_expanded))
 			arg_count++;
 		temp = temp->next;
 	}
@@ -43,7 +44,8 @@ void	fill_cmd_args(t_token *current, int arg_count)
 	while (temp && temp->type != PIPE && i < arg_count)
 	{
 		if ((temp->type == ARGUMENT || temp->type == FLAG)
-			&& temp->value && !(temp->value[0] == '\0' && temp->was_expanded))
+			&& (temp->value
+				&& (temp->value[0] != '\0' || temp->was_expanded)))
 		{
 			current->args[i] = ft_strdup(temp->value);
 			i++;

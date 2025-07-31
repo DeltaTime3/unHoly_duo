@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/26 18:13:49 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/31 18:08:33 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ void	handle_expansion(const char *value, int *i, char **result,
 	free(var_name);
 	if (var_value)
 		append_str(result, var_value);
+	else
+		append_str(result, "");
 }
 
 void	handle_single_quotes(const char *value, int *i, char **result)
@@ -78,9 +80,10 @@ void	handle_double_quotes(const char *value, int *i, char **result,
 			handle_expansion(value, i, result, shell);
 		else
 		{
-			to_add[0] = value[(*i)++];
+			to_add[0] = value[(*i)];
 			to_add[1] = '\0';
 			append_str(result, to_add);
+			(*i)++;
 		}
 	}
 	if (value[*i] == '"')

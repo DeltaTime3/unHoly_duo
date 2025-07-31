@@ -29,6 +29,7 @@ SRC				= $(SRCS_DIR)/env_initializer.c \
 				  $(SRCS_DIR)/export_utils.c \
 				  $(SRCS_DIR)/export_utils2.c \
 				  $(SRCS_DIR)/export_utils3.c \
+				  $(SRCS_DIR)/export_utils4.c \
 				  $(SRCS_DIR)/ft_cd.c \
 				  $(SRCS_DIR)/ft_echo.c \
 				  $(SRCS_DIR)/ft_env.c \
@@ -49,8 +50,10 @@ SRC				= $(SRCS_DIR)/env_initializer.c \
 				  $(SRCS_DIR)/here_doc_helpers.c \
 				  $(SRCS_DIR)/here_doc_helpers2.c \
 				  $(SRCS_DIR)/here_doc_helpers3.c \
+				  $(SRCS_DIR)/here_doc_helpers4.c \
 				  $(SRCS_DIR)/main.c \
 				  $(SRCS_DIR)/main_helpers.c \
+				  $(SRCS_DIR)/main_helpers2.c \
 				  $(SRCS_DIR)/parsing_utils.c \
 				  $(SRCS_DIR)/parsing_utils2.c \
 				  $(SRCS_DIR)/parsing_utils3.c \

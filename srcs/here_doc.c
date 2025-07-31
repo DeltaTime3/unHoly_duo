@@ -6,11 +6,9 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/30 17:17:08 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/31 23:38:44 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "minishell.h"
 
 #include "minishell.h"
 
@@ -62,45 +60,21 @@ int	append_line_to_content(char **content, char *line)
 	return (1);
 }
 
-int	read_heredoc_loop(char **content, const char *delimiter, int expand,
-		t_shell *shell)
+int	process_heredocs(t_token **tokens, t_shell *shell)
 {
-	char	*line;
-	int		check;
+	t_token	*current;
 
-	signal(SIGINT, handle_sig_heredoc);
-	while (1)
+	current = *tokens;
+	while (current)
 	{
-		line = prompt_and_read_line();
-		if (!line)
+		if (current->type == HERE_DOC)
 		{
-			if (g_global_sig != 130)
-				ft_putstr_fd("minishell: warning: here-document "
-					"delimited by end-of-file\n", 2);
-			break ;
+			if (!current->next || current->next->type != DELIMETER)
+				return (1);
+			if (handle_heredoc_token(current, shell))
+				return (1);
 		}
-		check = is_interrupt_or_delimiter(line, delimiter);
-		if (check == 1)
-			return (handle_heredoc_interrupt(line, content));
-		if (check == 2)
-		{
-			free(line);
-			break ;
-		}
-		line = maybe_expand_line(line, expand, shell);
-		if (!append_line_to_content(content, line))
-		{
-			free(line);
-			return (0);
-		}
-		free(line);
+		current = current->next;
 	}
-	signal(SIGINT, handle_sig_int);
-	if (g_global_sig == 130)
-	{
-		free(*content);
-		*content = NULL;
-		return (0);
-	}
-	return (1);
+	return (0);
 }

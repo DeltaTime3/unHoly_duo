@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/30 17:16:45 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/31 18:06:26 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,8 @@ int	ft_execute(t_shell *shell, t_token *value)
 	expand_tokens(value, shell);
 	prep_cmd_args(value);
 	cmd = find_valid_cmd(value);
+	while (cmd && cmd->value && cmd->value[0] == '\0')
+		cmd = find_valid_cmd(cmd->next);
 	special = handle_special_cmds(shell, cmd, out, in);
 	if (special != -1)
 		return (special);
@@ -90,10 +92,10 @@ int	ft_execute(t_shell *shell, t_token *value)
 
 int	execute2(t_shell *shell, t_token *token)
 {
-	pid_t	pid;
 	char	*full_path;
-	char	**env_array;
 	int		err;
+	char	**env_array;
+	pid_t	pid;
 	int		ret;
 
 	full_path = get_cmd_path(token->value, shell->head);
@@ -102,23 +104,17 @@ int	execute2(t_shell *shell, t_token *token)
 		return (err);
 	env_array = env_list_to_array(shell->head);
 	if (!env_array)
-	{
-		free(full_path);
-		return (-1);
-	}
+		return (free(full_path), -1);
 	pid = fork();
 	if (pid == 0)
 		return (pid_zero(full_path, env_array, token, shell), 0);
-	else if (pid < 0)
+	if (pid < 0)
 		return (pid_neg(full_path, env_array), -1);
-	else
-	{
-		signal(SIGINT, SIG_IGN);
-		signal(SIGQUIT, SIG_IGN);
-		ret = pid_else(full_path, env_array, shell, pid);
-		ft_signals();
-		return (ret);
-	}
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+	ret = pid_else(full_path, env_array, shell, pid);
+	ft_signals();
+	return (ret);
 }
 
 char	*get_cmd_path(char *cmd, t_env *env)

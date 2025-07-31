@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/26 15:56:18 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/31 23:26:06 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ char	*expand_token_arg_to_value(char *value, t_shell *shell)
 	return (result);
 }
 
-static int	append_exp_var(const char *input, int i, char **result,
+int	append_exp_var(const char *input, int i, char **result,
 	t_shell *shell)
 {
 	char	*var_value;
@@ -65,44 +65,45 @@ static int	append_exp_var(const char *input, int i, char **result,
 	return (i);
 }
 
-char	*expand_command_arg(const char *input, t_shell *shell)
+int	handle_command_substitution(const char *input, int i, char **result)
 {
-	char	*result;
+	int		start;
+	int		paren_level;
+	int		len;
 	char	*temp;
-	int		i;
+	char	*substr;
 
-	i = 0;
-	result = ft_strdup("");
-	while (input[i])
+	start = i;
+	paren_level = 1;
+	i += 2;
+	while (input[i] && paren_level > 0)
 	{
-		if (input[i] == '$' && input[i + 1] != '\0' && input[i + 1] != ' ')
-		{
-			i = append_exp_var(input, i, &result, shell);
-		}
-		else
-		{
-			temp = ft_strjoin(result, &input[i]);
-			free(result);
-			result = temp;
-			i++;
-		}
+		if (input[i] == '(')
+			paren_level++;
+		else if (input[i] == ')')
+			paren_level--;
+		i++;
 	}
-	return (result);
+	len = i - start;
+	substr = ft_substr(input, start, len);
+	temp = ft_strjoin(*result, substr);
+	free(*result);
+	free(substr);
+	*result = temp;
+	return (i);
 }
 
-char	*fallback(char *cmd)
+int	handle_env_var2(const char *input, int i, char **result, t_shell *shell)
 {
-	char	cwd[_PC_PATH_MAX];
-	char	*full_path;
+	char	*var_value;
+	char	*temp;
 
-	full_path = NULL;
-	if (!cmd || !*cmd)
-		return (NULL);
-	if (getcwd(cwd, sizeof(cwd)) == NULL)
-		return (NULL);
-	full_path = build_cmb_path(cwd, cmd);
-	if (full_path && access(full_path, X_OK) == 0)
-		return (full_path);
-	free(full_path);
-	return (NULL);
+	var_value = expand_env_var(&input[i], shell);
+	temp = ft_strjoin(*result, var_value);
+	free(*result);
+	free(var_value);
+	*result = temp;
+	while (input[i] && !ft_isspace(input[i]) && input[i] != '=')
+		i++;
+	return (i);
 }

@@ -1,56 +1,48 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   main_helpers2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/31 17:41:59 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/31 23:28:39 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_signals(void)
+int	handle_eof(char *input)
 {
-	signal(SIGINT, handle_sig_int);
-	signal(SIGQUIT, SIG_IGN);
-}
-
-void	handle_sig_int(int sig)
-{
-	(void)sig;
-	write(STDOUT_FILENO, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-	g_global_sig = 130;
-}
-
-void	handle_sig_heredoc(int sig)
-{
-	if (sig == SIGINT)
+	if (!input)
 	{
-		write(STDERR_FILENO, "\n", 1);
-		g_global_sig = 130;
-		close(STDIN_FILENO);
+		write(STDOUT_FILENO, "exit\n", 5);
+		return (1);
 	}
+	return (0);
 }
 
-void	signal_process(t_shell *shell)
+void	main_loop(t_shell *shell)
 {
-	if (g_global_sig == 130)
+	char	*input;
+
+	input = NULL;
+	while (1)
 	{
-		shell->exit_code = 130;
-		g_global_sig = 0;
-	}
-}
-
-void	clean_exit(char *input)
-{
-	if (input)
+		input = readline("minishell> ");
+		signal_process(shell);
+		if (handle_eof(input))
+			break ;
+		if (ft_strlen(input) != 0)
+			handle_input(shell, input);
 		free(input);
+		input = NULL;
+	}
+}
+
+void	cleanup_shell(t_shell *shell)
+{
+	clean_all_resources(shell);
 	rl_clear_history();
-	exit(0);
+	rl_cleanup_after_signal();
 }

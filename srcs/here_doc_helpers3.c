@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   here_doc_helpers.c                                 :+:      :+:    :+:   */
+/*   here_doc_helpers3.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/26 18:26:57 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/31 23:41:37 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ char	*parse_heredoc_delimiter(const char *input, int *i, int *expand)
 	return (final_delimiter);
 }
 
-static int	handle_heredoc_token(t_token *token, t_shell *shell)
+int	handle_heredoc_token(t_token *token, t_shell *shell)
 {
 	char	*content;
 	int		pipe_fd;
@@ -83,24 +83,5 @@ static int	handle_heredoc_token(t_token *token, t_shell *shell)
 	if (pipe_fd == -1)
 		return (1);
 	token->heredoc_fd = pipe_fd;
-	return (0);
-}
-
-int	process_heredocs(t_token **tokens, t_shell *shell)
-{
-	t_token	*current;
-
-	current = *tokens;
-	while (current)
-	{
-		if (current->type == HERE_DOC)
-		{
-			if (!current->next || current->next->type != DELIMETER)
-				return (1);
-			if (handle_heredoc_token(current, shell))
-				return (1);
-		}
-		current = current->next;
-	}
 	return (0);
 }

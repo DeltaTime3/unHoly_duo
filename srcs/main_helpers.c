@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/30 16:32:19 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/31 23:29:32 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,38 @@ void	init_shell_struct(t_shell *shell, char **envp)
 	shell->heredoc_fd = -1;
 }
 
+static int	is_leading_pipe(char *input)
+{
+	int	i;
+
+	i = 0;
+	while (input[i] == ' ')
+		i++;
+	return (input[i] == '|');
+}
+
+static int	handle_leading_pipe_error(t_shell *shell)
+{
+	ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
+	shell->exit_code = 2;
+	return (1);
+}
+
+static int	handle_heredocs_and_execute(t_shell *shell, t_token *tokens)
+{
+	if (process_heredocs(&tokens, shell))
+	{
+		free_tokens(tokens);
+		return (1);
+	}
+	if (tokens)
+	{
+		ft_execute(shell, tokens);
+		free_tokens(tokens);
+	}
+	return (0);
+}
+
 void	handle_input(t_shell *shell, char *input)
 {
 	t_token	*tokens;
@@ -34,51 +66,12 @@ void	handle_input(t_shell *shell, char *input)
 	tokens = NULL;
 	if (!validate_input(input))
 	{
-		tokens = tokenize_input(input);
-		if (process_heredocs(&tokens, shell))
+		if (is_leading_pipe(input))
 		{
-			free_tokens(tokens);
+			handle_leading_pipe_error(shell);
 			return ;
 		}
-		if (tokens)
-		{
-			ft_execute(shell, tokens);
-			free_tokens(tokens);
-		}
+		tokens = tokenize_input(input);
+		handle_heredocs_and_execute(shell, tokens);
 	}
-}
-
-int	handle_eof(char *input)
-{
-	if (!input)
-	{
-		write(STDOUT_FILENO, "exit\n", 5);
-		return (1);
-	}
-	return (0);
-}
-
-void	main_loop(t_shell *shell)
-{
-	char	*input;
-
-	input = NULL;
-	while (1)
-	{
-		input = readline("minishell> ");
-		signal_process(shell);
-		if (handle_eof(input))
-			break ;
-		if (ft_strlen(input) != 0)
-			handle_input(shell, input);
-		free(input);
-		input = NULL;
-	}
-}
-
-void	cleanup_shell(t_shell *shell)
-{
-	clean_all_resources(shell);
-	rl_clear_history();
-	rl_cleanup_after_signal();
 }

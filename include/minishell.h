@@ -6,7 +6,7 @@
 /*   By: ppaula-d <ppaula-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:59:12 by ppaula-d          #+#    #+#             */
-/*   Updated: 2025/07/30 16:12:27 by ppaula-d         ###   ########.fr       */
+/*   Updated: 2025/07/31 23:41:09 by ppaula-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -501,4 +501,12 @@ char		*read_line(void);
 void		kill_exit(t_shell *shell, int exit_code);
 void		ft_rl_cleanup_after_signal(void);
 
+int			append_exp_var(const char *input, int i, char **result,
+				t_shell *shell);
+int			handle_command_substitution(const char *input, int i,
+				char **result);
+int			handle_env_var2(const char *input, int i, char **result,
+				t_shell *shell);
+int			append_char(const char *input, int i, char **result);
+int			handle_heredoc_token(t_token *token, t_shell *shell);
 #endif
