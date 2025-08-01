@@ -18,7 +18,6 @@ void	ft_cd(t_token *token, t_shell *type)
 	int		is_cd_minus;
 	int		arg_count;
 
-	is_cd_minus = 0;
 	if (!token || !token->args || !token->args[0])
 		return ;
 	type->r_code = 0;
