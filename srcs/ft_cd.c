@@ -32,34 +32,47 @@ void	ft_cd(t_token *token, t_shell *type)
 	new_dir = get_cd_target(token, type, &is_cd_minus);
 	if (!new_dir)
 	{
-		ft_printf_fd(2, "cd: Failed to change directory.\n", 1);
+		ft_printf_fd(2, "cd: Failed to change directory.\n");
 		type->r_code = 1;
 		return ;
 	}
-	cd_change_dir(new_dir, type, is_cd_minus);
+	cd_change_dir(new_dir, type);
+	type->exit_code = type->r_code;
 }
 
-void	cd_change_dir(char *new, t_shell *type, int is_cd_minus)
+void	cd_change_dir(char *new, t_shell *type)
 {
-	if (check_dir(new))
-	{
-		change_dir(new, type);
-		if (is_cd_minus)
-			printf("%s\n", type->curr_dir);
-	}
-	else
+	char	cwd[MAX_PATH];
+	
+	if (!check_dir(new))
 	{
 		type->r_code = 1;
 		free(new);
+		return ;
 	}
+	if (!getcwd(cwd, sizeof(cwd)))
+	{
+		print_error("cd: error retrieving current dir before chdir.\n");
+		type->r_code = 1;
+		free(new);
+		return ;
+	}
+	if (chdir(new) == -1)
+	{
+		perror("cd");
+		type->r_code = 1;
+		free (new);
+		return ; 
+	}
+	ft_cd_2(type, new, cwd);
 }
 
-void	ft_cd_2(t_shell *type, char *new_dir)
+void	ft_cd_2(t_shell *type, char *new_dir, char *prev_dir)
 {
 	char	cwd[MAX_PATH];
 
 	free(type->prev_dir);
-	type->prev_dir = ft_strdup(type->curr_dir);
+	type->prev_dir = ft_strdup(prev_dir);
 	free(type->curr_dir);
 	type->curr_dir = ft_strdup(new_dir);
 	if (getcwd(cwd, sizeof(cwd)))

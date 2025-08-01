@@ -22,6 +22,8 @@ int	main(int ac, char **av, char **envp)
 	(void)ac;
 	(void)av;
 	orig_envp = envp;
+	ft_memset(&shell, 0, sizeof(t_shell));
+	shell.exit_code = 0;
 	init_shell_struct(&shell, orig_envp);
 	ft_signals();
 	main_loop(&shell);

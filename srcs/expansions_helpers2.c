@@ -16,6 +16,8 @@ void	handle_exit_code_expansion(char **result, t_shell *shell, int *i)
 {
 	char	*var_value;
 
+	if (!shell)
+		return ;
 	var_value = ft_itoa(shell->exit_code);
 	append_str(result, var_value);
 	free(var_value);

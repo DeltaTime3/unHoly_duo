@@ -367,8 +367,7 @@ void		clean_command_resources(t_shell *shell);
 //cd
 
 void		ft_cd(t_token *token, t_shell *type);
-void		change_dir(char *new_dir, t_shell *type);
-void		ft_cd_2(t_shell *type, char *new_dir);
+void		ft_cd_2(t_shell *type, char *new_dir, char *prev_dir);
 char		*get_cd_target(t_token *token, t_shell *type, int *is_cd_minus);
 int			dir_val(t_token *token, t_shell *type, char **new_dir);
 int			check_dir(char *new_dir);
@@ -377,7 +376,7 @@ void		cd_env(t_shell *type);
 int			ct_nodes(t_token *token);
 char		*get_env_value(t_env *head, const char *key);
 void		add_old_pwd_to_env(t_shell *type);
-void		cd_change_dir(char *new, t_shell *type, int is_cd_minus);
+void		cd_change_dir(char *new, t_shell *type);
 
 //export
 int			ft_export(t_shell *type, char **args);

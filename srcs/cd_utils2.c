@@ -27,16 +27,3 @@ char	*get_env_value(t_env *head, const char *key)
 	}
 	return (NULL);
 }
-
-void	change_dir(char *new_dir, t_shell *type)
-{
-	if (chdir(new_dir) != 0)
-	{
-		free(new_dir);
-		new_dir = NULL;
-		print_error(E_CD);
-		type->r_code = 1;
-	}
-	else
-		ft_cd_2(type, new_dir);
-}
