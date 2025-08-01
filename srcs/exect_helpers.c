@@ -47,7 +47,7 @@ int	handle_special_cmds(t_shell *shell, t_token *cmd, int out, int in)
 
 int	handle_empty_cmd(t_shell *shell, int saved_stdout, int saved_stdin)
 {
-	ft_printf_fd(2, "minishell: : command not found\n");
+	ft_printf_fd(2, "minishell: '': command not found\n");
 	shell->exit_code = 127;
 	restore_fds(saved_stdout, saved_stdin);
 	return (127);

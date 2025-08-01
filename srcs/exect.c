@@ -75,14 +75,19 @@ int	ft_execute(t_shell *shell, t_token *value)
 		return (shell->exit_code = 1, 1);
 	expand_tokens(value, shell);
 	prep_cmd_args(value);
+	if (count_pipes(value) > 0)
+		return (handle_pipes_n_restore(value, shell, out, in));
 	cmd = find_valid_cmd(value);
+	if (cmd && cmd->value && cmd->value[0] == '\0' && !has_pipe_after(cmd))
+	{
+		restore_fds(out, in);
+		return (print_cmd_not_found(shell, cmd));
+	}
 	while (cmd && cmd->value && cmd->value[0] == '\0')
 		cmd = find_valid_cmd(cmd->next);
 	special = handle_special_cmds(shell, cmd, out, in);
 	if (special != -1)
 		return (special);
-	if (count_pipes(value) > 0)
-		return (handle_pipes_n_restore(value, shell, out, in));
 	if (handle_red_n_restore(value, shell, out, in))
 		return (shell->exit_code);
 	exec_cmd_or_b_in(shell, cmd);

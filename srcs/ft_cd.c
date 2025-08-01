@@ -21,6 +21,8 @@ void	ft_cd(t_token *token, t_shell *type)
 	is_cd_minus = 0;
 	if (!token || !token->args || !token->args[0])
 		return ;
+	type->r_code = 0;
+	type->exit_code = 0;
 	arg_count = ct_nodes(token);
 	if (arg_count > 2)
 	{

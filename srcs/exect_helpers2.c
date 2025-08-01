@@ -51,3 +51,17 @@ int	print_cmd_not_found(t_shell *shell, t_token *token)
 	shell->exit_code = 127;
 	return (127);
 }
+
+int	has_pipe_after(t_token *token)
+{
+	t_token	*current;
+
+	current = token;
+	while (current)
+	{
+		if (current->type == PIPE)
+			return (1);
+		current = current->next;
+	}
+	return (0);
+}

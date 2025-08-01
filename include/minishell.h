@@ -221,6 +221,7 @@ int			handle_env_var(const char *value, int i, char **result,
 				t_shell *shell);
 int			handle_dbl_quote_var(const char *value, int i, char **result,
 				t_shell *shell);
+int			has_pipe_after(t_token *token);
 
 // here_doc.c
 int			write_heredoc_to_pipe(const char *content);
